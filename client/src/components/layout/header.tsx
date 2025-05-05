@@ -41,10 +41,10 @@ export function Header() {
               {link.label}
             </Link>
           ))}
-          <a href="tel:(33)3241-1507" className="flex items-center text-primary font-medium">
-            <Phone className="mr-2 h-4 w-4" /> (33) 3241-1507
+          <a href="tel:(28)3027-7065" className="flex items-center text-primary font-medium">
+            <Phone className="mr-2 h-4 w-4" /> (28) 3027-7065
           </a>
-          <a href="https://wa.me/5533991990303" className="ml-4">
+          <a href="https://wa.me/5528999339129" className="ml-4">
             <FaWhatsapp className="text-2xl text-green-500" />
           </a>
           <div className="ml-4">
@@ -85,13 +85,13 @@ export function Header() {
               </nav>
               <div className="mt-auto pt-6 border-t border-white/10 space-y-4">
                 <a 
-                  href="tel:(33)3241-1507" 
+                  href="tel:(28)3027-7065" 
                   className="flex items-center text-primary font-medium"
                 >
-                  <Phone className="mr-2 h-4 w-4" /> (33) 3241-1507
+                  <Phone className="mr-2 h-4 w-4" /> (28) 3027-7065
                 </a>
                 <a 
-                  href="https://wa.me/5533991990303" 
+                  href="https://wa.me/5528999339129" 
                   className="flex items-center text-green-500 font-medium"
                 >
                   <FaWhatsapp className="mr-2 h-5 w-5" /> Whatsapp
@@ -107,10 +107,10 @@ export function Header() {
       
       <div className="lg:hidden bg-[#1f2937] py-2 px-4 text-center">
         <div className="flex justify-between items-center">
-          <a href="tel:(33)3241-1507" className="text-primary flex items-center">
-            <Phone className="mr-1 h-4 w-4" /> (33) 3241-1507
+          <a href="tel:(28)3027-7065" className="text-primary flex items-center">
+            <Phone className="mr-1 h-4 w-4" /> (28) 3027-7065
           </a>
-          <a href="https://wa.me/5533991990303" className="flex items-center text-green-500">
+          <a href="https://wa.me/5528999339129" className="flex items-center text-green-500">
             <FaWhatsapp className="mr-1 h-4 w-4" /> Whatsapp
           </a>
         </div>

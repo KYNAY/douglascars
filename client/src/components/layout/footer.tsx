@@ -47,26 +47,28 @@ export function Footer() {
               <li className="flex items-start">
                 <FaMapMarkerAlt className="text-primary mt-1 mr-3" />
                 <span className="text-gray-400">
-                  Av. Brasil, 1234 - Centro<br />
-                  Governador Valadares - MG
+                  Av. Aristídes Campos, 449/451 -<br />
+                  Gilberto Machado - Cachoeiro de Itapemirim/ES<br />
+                  CEP: 29302-801
                 </span>
               </li>
               <li className="flex items-center">
                 <FaPhoneAlt className="text-primary mr-3" />
-                <a href="tel:(33)3241-1507" className="text-gray-400 hover:text-white">
-                  (33) 3241-1507
-                </a>
+                <div className="text-gray-400">
+                  <a href="tel:(28)3027-7065" className="block hover:text-white">(28) 3027-7065</a>
+                  <a href="tel:(28)99965-1991" className="block hover:text-white">(28) 99965-1991</a>
+                </div>
               </li>
               <li className="flex items-center">
                 <FaWhatsapp className="text-primary mr-3" />
-                <a href="https://wa.me/5533991990303" className="text-gray-400 hover:text-white">
-                  (33) 99199-0303
+                <a href="https://wa.me/5528999339129" className="text-gray-400 hover:text-white">
+                  (28) 99933-9129
                 </a>
               </li>
               <li className="flex items-center">
                 <FaEnvelope className="text-primary mr-3" />
-                <a href="mailto:contato@douglasautocar.com.br" className="text-gray-400 hover:text-white">
-                  contato@douglasautocar.com.br
+                <a href="mailto:marketingdouglasautocar@gmail.com" className="text-gray-400 hover:text-white">
+                  marketingdouglasautocar@gmail.com
                 </a>
               </li>
             </ul>
@@ -77,11 +79,11 @@ export function Footer() {
             <ul className="space-y-2">
               <li className="flex justify-between">
                 <span className="text-gray-400">Segunda à Sexta</span>
-                <span className="text-white">7:30 às 18:00</span>
+                <span className="text-white">07:30 às 18:00</span>
               </li>
               <li className="flex justify-between">
                 <span className="text-gray-400">Sábado</span>
-                <span className="text-white">7:30 às 13:00</span>
+                <span className="text-white">07:30 às 12:00</span>
               </li>
               <li className="flex justify-between">
                 <span className="text-gray-400">Domingo</span>
@@ -103,9 +105,14 @@ export function Footer() {
         </div>
         
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm mb-4 md:mb-0">
-            © {new Date().getFullYear()} Douglas Auto Car. Todos os direitos reservados.
-          </p>
+          <div className="text-gray-500 text-sm mb-4 md:mb-0">
+            <p className="mb-2">
+              © {new Date().getFullYear()} Douglas Auto Car - www.douglasautocar.com.br
+            </p>
+            <p>
+              Desenvolvido por <a href="https://www.digitalenterprise.com.br" target="_blank" rel="noreferrer" className="text-primary hover:underline">Caique Contarini</a>
+            </p>
+          </div>
           <div className="flex space-x-4">
             <Link href="/termos" className="text-gray-500 hover:text-white text-sm">
               Termos de Uso

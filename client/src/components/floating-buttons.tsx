@@ -36,14 +36,6 @@ export function FloatingButtons() {
       >
         <FaArrowUp />
       </Button>
-
-      {/* WhatsApp Floating Button */}
-      <a 
-        href="https://wa.me/5533991990303" 
-        className="fixed bottom-6 left-6 w-16 h-16 rounded-full bg-green-600 text-white flex items-center justify-center shadow-lg hover:bg-green-700 transition-all z-50 text-2xl"
-      >
-        <FaWhatsapp />
-      </a>
     </>
   );
 }
