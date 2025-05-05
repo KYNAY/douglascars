@@ -109,8 +109,8 @@ export function VehicleImagesManager({ vehicleId }: VehicleImagesManagerProps) {
     }
   };
 
-  const handleMoveImage = (imageId: number, currentOrder: number, direction: "up" | "down") => {
-    if (!vehicleImages) return;
+  const handleMoveImage = (imageId: number, currentOrder: number | null, direction: "up" | "down") => {
+    if (!vehicleImages || currentOrder === null) return;
     
     const newOrder = direction === "up" 
       ? Math.max(0, currentOrder - 1) 
@@ -223,7 +223,7 @@ export function VehicleImagesManager({ vehicleId }: VehicleImagesManagerProps) {
                 
                 {/* Ordem da imagem */}
                 <div className="absolute top-2 left-2 bg-black/70 text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {image.order + 1}
+                  {(image.order !== null ? image.order : 0) + 1}
                 </div>
               </div>
             ))}

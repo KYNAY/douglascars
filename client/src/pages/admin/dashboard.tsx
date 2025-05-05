@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag } from "lucide-react";
 import { getInitial, formatPrice } from "@/lib/utils";
+import { VehicleImagesManager } from "@/components/admin/vehicle-images-manager";
 
 interface Dealer {
   id: number;
@@ -492,7 +493,7 @@ export default function AdminDashboard() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="imageUrl">URL da Imagem</Label>
+                  <Label htmlFor="imageUrl">URL da Imagem Principal</Label>
                   <Input id="imageUrl" placeholder="URL da imagem principal" defaultValue={selectedVehicle?.imageUrl} />
                 </div>
                 
@@ -505,6 +506,13 @@ export default function AdminDashboard() {
                     rows={4}
                   />
                 </div>
+                
+                {/* Gerenciador de imagens adicionais - só aparece na edição */}
+                {selectedVehicle && selectedVehicle.id && (
+                  <div className="pt-4 border-t">
+                    <VehicleImagesManager vehicleId={selectedVehicle.id} />
+                  </div>
+                )}
                 
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
