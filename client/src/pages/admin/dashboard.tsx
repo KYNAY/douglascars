@@ -284,6 +284,60 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 
+                {/* Featured Vehicles Configuration */}
+                <div className="border-b border-white/10 pb-6">
+                  <h3 className="text-lg font-medium mb-4">Gerenciar Destaques Especiais</h3>
+                  <p className="text-gray-400 mb-4">
+                    Configure os veículos exibidos na seção de destaques especiais na página inicial.
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    {/* Primeiro destaque */}
+                    <div className="glass-card p-4 rounded-lg">
+                      <h4 className="font-medium mb-2">Destaque 1 - Toyota Hilux 2023</h4>
+                      <div className="flex mb-3">
+                        <img 
+                          src="https://i.pinimg.com/originals/f3/81/f9/f381f9c73492eb5ae0cd14926f174270.jpg" 
+                          alt="Toyota Hilux" 
+                          className="w-24 h-16 object-cover rounded"
+                        />
+                        <div className="ml-3">
+                          <p className="text-sm">Toyota Hilux SRX</p>
+                          <p className="text-xs text-gray-400">R$ 290.900</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline">Alterar</Button>
+                        <Button size="sm" variant="destructive">Remover</Button>
+                      </div>
+                    </div>
+                    
+                    {/* Segundo destaque */}
+                    <div className="glass-card p-4 rounded-lg">
+                      <h4 className="font-medium mb-2">Destaque 2 - Toyota SW4 2025</h4>
+                      <div className="flex mb-3">
+                        <img 
+                          src="https://www.toyota.com.br/wp-content/themes/toyota-2.0.0/frontend/static/images/swbg/sw4-2024.png" 
+                          alt="Toyota SW4" 
+                          className="w-24 h-16 object-cover rounded"
+                        />
+                        <div className="ml-3">
+                          <p className="text-sm">Toyota SW4 Diamond</p>
+                          <p className="text-xs text-gray-400">R$ 410.000</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline">Alterar</Button>
+                        <Button size="sm" variant="destructive">Remover</Button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <Button variant="default" size="sm">
+                    Adicionar Novo Destaque
+                  </Button>
+                </div>
+                
                 {/* Email Configuration Section */}
                 <div>
                   <h3 className="text-lg font-medium mb-4">Configuração de Email</h3>

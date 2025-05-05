@@ -18,6 +18,91 @@ export default function Home() {
       <HeroSection />
       <SearchSection />
       
+      {/* Destaques Especiais - Adicionado como solicitado */}
+      <section className="py-8">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold mb-6 flex items-center">
+            <span className="text-primary mr-2">★</span> Destaques Especiais
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Toyota Hilux 2023 */}
+            <div className="glass-card rounded-xl overflow-hidden featured-card group transition-all duration-500 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]">
+              <div className="relative overflow-hidden h-64">
+                <img 
+                  src="https://i.pinimg.com/originals/f3/81/f9/f381f9c73492eb5ae0cd14926f174270.jpg" 
+                  alt="Toyota Hilux 2023" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute top-0 left-0 bg-gradient-to-r from-primary/80 to-primary/30 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
+                  DESTAQUE
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center">
+                    <img 
+                      src="https://static.vecteezy.com/system/resources/previews/022/100/658/original/toyota-logo-transparent-free-png.png" 
+                      alt="Toyota" 
+                      className="w-8 h-8 mr-2"
+                    />
+                    <span className="text-sm font-medium">Toyota Hilux SRX 2023</span>
+                  </div>
+                  <span className="text-primary font-bold text-xl">R$ 290.900</span>
+                </div>
+                <div className="flex gap-3 text-sm text-gray-300 mb-3">
+                  <span>2023/2023</span>
+                  <span>•</span>
+                  <span>Diesel</span>
+                  <span>•</span>
+                  <span>12.000 km</span>
+                </div>
+                <Button asChild className="w-full bg-primary hover:bg-red-700">
+                  <Link href="/estoque">Ver detalhes</Link>
+                </Button>
+              </div>
+            </div>
+            
+            {/* Toyota SW4 2025 */}
+            <div className="glass-card rounded-xl overflow-hidden featured-card group transition-all duration-500 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]">
+              <div className="relative overflow-hidden h-64">
+                <img 
+                  src="https://www.toyota.com.br/wp-content/themes/toyota-2.0.0/frontend/static/images/swbg/sw4-2024.png" 
+                  alt="Toyota SW4 2025" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute top-0 left-0 bg-gradient-to-r from-primary/80 to-primary/30 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
+                  LANÇAMENTO
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center">
+                    <img 
+                      src="https://static.vecteezy.com/system/resources/previews/022/100/658/original/toyota-logo-transparent-free-png.png" 
+                      alt="Toyota" 
+                      className="w-8 h-8 mr-2"
+                    />
+                    <span className="text-sm font-medium">Toyota SW4 Diamond 2025</span>
+                  </div>
+                  <span className="text-primary font-bold text-xl">R$ 410.000</span>
+                </div>
+                <div className="flex gap-3 text-sm text-gray-300 mb-3">
+                  <span>2025/2025</span>
+                  <span>•</span>
+                  <span>Diesel</span>
+                  <span>•</span>
+                  <span>0 km</span>
+                </div>
+                <Button asChild className="w-full bg-primary hover:bg-red-700">
+                  <Link href="/estoque">Ver detalhes</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Featured Vehicles */}
       <section className="py-12">
         <div className="container mx-auto px-4">

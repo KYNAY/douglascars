@@ -329,16 +329,16 @@ export function SearchSection() {
                 <Link 
                   key={brand.id} 
                   href={`/estoque?brandId=${brand.id}`}
-                  className="brand-card flex flex-col items-center justify-center p-3 rounded-lg hover:bg-white/5 transition-all"
+                  className="brand-logo-card flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer transition-all duration-300 hover:bg-white/10 hover:scale-105"
                 >
-                  <div className="w-12 h-12 flex items-center justify-center brand-logo">
+                  <div className="w-12 h-12 flex items-center justify-center">
                     <img 
                       src={brand.logoUrl} 
                       alt={brand.name} 
-                      className="max-w-full max-h-full" 
+                      className="max-w-full max-h-full transition-all duration-300 brightness-90 hover:brightness-125" 
                     />
                   </div>
-                  <span className="text-xs mt-2 text-gray-300">{brand.name}</span>
+                  <span className="text-xs mt-2 text-gray-300 transition-colors duration-300 hover:text-primary">{brand.name}</span>
                 </Link>
               ))
             )}
