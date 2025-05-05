@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRoute, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
@@ -10,19 +10,55 @@ import {
   FaWhatsapp, 
   FaHeart, 
   FaShare, 
-  FaPhone 
+  FaPhone,
+  FaChevronLeft,
+  FaChevronRight
 } from "react-icons/fa";
 import { formatPrice, formatMileage } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { Vehicle } from "@shared/schema";
+import { Vehicle, VehicleImage } from "@shared/schema";
+import { cn } from "@/lib/utils";
 
 export default function VehicleDetail() {
   const [match, params] = useRoute("/estoque/:id");
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   
-  const { data: vehicle, isLoading, error } = useQuery<Vehicle & { brand: { name: string; logoUrl: string } }>({
+  const { data: vehicle, isLoading, error } = useQuery<Vehicle & { 
+    brand: { name: string; logoUrl: string },
+    additionalImages: VehicleImage[] 
+  }>({
     queryKey: [`/api/vehicles/${params?.id}`],
     enabled: !!params?.id
   });
+  
+  // Função para ir para a próxima imagem
+  const goToNextImage = () => {
+    if (!vehicle) return;
+    
+    const allImages = [vehicle.imageUrl, ...(vehicle.additionalImages?.map(img => img.imageUrl) || [])];
+    if (currentImageIndex < allImages.length - 1) {
+      setCurrentImageIndex(prev => prev + 1);
+    } else {
+      setCurrentImageIndex(0); // Volta para a primeira imagem
+    }
+  };
+  
+  // Função para ir para a imagem anterior
+  const goToPrevImage = () => {
+    if (!vehicle) return;
+    
+    const allImages = [vehicle.imageUrl, ...(vehicle.additionalImages?.map(img => img.imageUrl) || [])];
+    if (currentImageIndex > 0) {
+      setCurrentImageIndex(prev => prev - 1);
+    } else {
+      setCurrentImageIndex(allImages.length - 1); // Vai para a última imagem
+    }
+  };
+  
+  // Função para ir para uma imagem específica
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
   
   useEffect(() => {
     // Scroll to top when component mounts
@@ -98,14 +134,75 @@ export default function VehicleDetail() {
         </Link>
         
         <div className="glass-card rounded-xl overflow-hidden">
-          {/* Vehicle Image */}
+          {/* Vehicle Image Gallery */}
           <div className="relative h-[400px] md:h-[500px]">
-            <img 
-              src={vehicle.imageUrl} 
-              alt={`${vehicle.brand.name} ${vehicle.model}`} 
-              className="w-full h-full object-cover" 
-            />
-            <div className="absolute top-4 right-4 flex space-x-2">
+            {/* Carrossel Principal */}
+            {(() => {
+              // Para cada imagem principal + imagens adicionais
+              const allImages = [
+                vehicle.imageUrl,
+                ...(vehicle.additionalImages?.map(img => img.imageUrl) || [])
+              ];
+              
+              return (
+                <img 
+                  src={allImages[currentImageIndex]} 
+                  alt={`${vehicle.brand.name} ${vehicle.model} - Imagem ${currentImageIndex + 1}`} 
+                  className="w-full h-full object-cover transition-opacity duration-300" 
+                />
+              );
+            })()}
+            
+            {/* Botões de navegação */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={goToPrevImage}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white"
+            >
+              <FaChevronLeft className="h-5 w-5" />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={goToNextImage}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white"
+            >
+              <FaChevronRight className="h-5 w-5" />
+            </Button>
+            
+            {/* Miniaturas das imagens */}
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 px-4">
+              {(() => {
+                const allImages = [
+                  vehicle.imageUrl,
+                  ...(vehicle.additionalImages?.map(img => img.imageUrl) || [])
+                ];
+                
+                return allImages.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => goToImage(index)}
+                    className={cn(
+                      "w-16 h-16 rounded-md overflow-hidden border-2 transition-all",
+                      currentImageIndex === index
+                        ? "border-primary scale-110 z-10"
+                        : "border-transparent opacity-70 hover:opacity-100"
+                    )}
+                  >
+                    <img
+                      src={img}
+                      alt={`Miniatura ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                ));
+              })()}
+            </div>
+            
+            {/* Compartilhar e favoritos */}
+            <div className="absolute top-4 right-4 flex space-x-2 z-10">
               <Button 
                 variant="ghost" 
                 size="icon"
@@ -120,6 +217,17 @@ export default function VehicleDetail() {
               >
                 <FaShare className="h-5 w-5" />
               </Button>
+            </div>
+            
+            {/* Indicador de posição */}
+            <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm rounded-md px-3 py-1 text-sm">
+              {(() => {
+                const allImages = [
+                  vehicle.imageUrl,
+                  ...(vehicle.additionalImages?.map(img => img.imageUrl) || [])
+                ];
+                return `${currentImageIndex + 1} / ${allImages.length}`;
+              })()}
             </div>
           </div>
           
