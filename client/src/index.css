@@ -73,4 +73,28 @@
   .brand-logo {
     @apply filter grayscale opacity-70 transition-all hover:filter-none hover:opacity-100;
   }
+  
+  .brand-logo-card img {
+    @apply transition-all duration-300 filter brightness-75;
+  }
+  
+  .brand-logo-card:hover img {
+    @apply brightness-125 scale-110 drop-shadow-[0_0_8px_rgba(255,255,255,0.5)];
+  }
+  
+  .featured-card {
+    @apply relative overflow-hidden;
+  }
+  
+  .featured-card::before {
+    content: "";
+    @apply absolute -inset-1 bg-gradient-to-r from-transparent via-white/20 to-transparent -z-10 transform -translate-x-full;
+    animation: shimmer 2.5s infinite;
+  }
+  
+  @keyframes shimmer {
+    100% {
+      transform: translateX(150%);
+    }
+  }
 }

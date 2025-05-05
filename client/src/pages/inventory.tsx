@@ -110,7 +110,94 @@ export default function Inventory() {
   return (
     <div className="pt-24 pb-16">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-poppins font-bold mb-8">Nosso Estoque</h1>
+        <h1 className="text-3xl font-poppins font-bold mb-6">Nosso Estoque</h1>
+        
+        {/* Featured Vehicles Section */}
+        <div className="mb-10 overflow-hidden">
+          <h2 className="text-xl font-medium mb-6 flex items-center">
+            <span className="text-primary mr-2">★</span> Veículos em Destaque
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Toyota Hilux 2023 */}
+            <div className="glass-card rounded-xl overflow-hidden featured-card group transition-all duration-500 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]">
+              <div className="relative overflow-hidden h-64">
+                <img 
+                  src="https://i.pinimg.com/originals/f3/81/f9/f381f9c73492eb5ae0cd14926f174270.jpg" 
+                  alt="Toyota Hilux 2023" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute top-0 left-0 bg-gradient-to-r from-primary/80 to-primary/30 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
+                  DESTAQUE
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
+                  <h3 className="text-xl font-bold">Toyota Hilux 2023</h3>
+                  <p className="text-sm opacity-90">SRX 4x4 Diesel Automática</p>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center">
+                    <img 
+                      src="https://static.vecteezy.com/system/resources/previews/022/100/658/original/toyota-logo-transparent-free-png.png" 
+                      alt="Toyota" 
+                      className="w-8 h-8 mr-2"
+                    />
+                    <span className="text-sm">Toyota</span>
+                  </div>
+                  <span className="text-primary font-bold text-xl">R$ 290.900</span>
+                </div>
+                <div className="flex gap-3 text-sm text-gray-300 mb-3">
+                  <span>2023/2023</span>
+                  <span>•</span>
+                  <span>Diesel</span>
+                  <span>•</span>
+                  <span>12.000 km</span>
+                </div>
+                <Button className="w-full bg-primary hover:bg-red-700">Ver detalhes</Button>
+              </div>
+            </div>
+            
+            {/* Toyota SW4 2025 */}
+            <div className="glass-card rounded-xl overflow-hidden featured-card group transition-all duration-500 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]">
+              <div className="relative overflow-hidden h-64">
+                <img 
+                  src="https://www.toyota.com.br/wp-content/themes/toyota-2.0.0/frontend/static/images/swbg/sw4-2024.png" 
+                  alt="Toyota SW4 2025" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute top-0 left-0 bg-gradient-to-r from-primary/80 to-primary/30 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
+                  LANÇAMENTO
+                </div>
+                <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent text-white">
+                  <h3 className="text-xl font-bold">Toyota SW4 2025</h3>
+                  <p className="text-sm opacity-90">Diamond 4x4 Diesel 7L</p>
+                </div>
+              </div>
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-3">
+                  <div className="flex items-center">
+                    <img 
+                      src="https://static.vecteezy.com/system/resources/previews/022/100/658/original/toyota-logo-transparent-free-png.png" 
+                      alt="Toyota" 
+                      className="w-8 h-8 mr-2"
+                    />
+                    <span className="text-sm">Toyota</span>
+                  </div>
+                  <span className="text-primary font-bold text-xl">R$ 410.000</span>
+                </div>
+                <div className="flex gap-3 text-sm text-gray-300 mb-3">
+                  <span>2025/2025</span>
+                  <span>•</span>
+                  <span>Diesel</span>
+                  <span>•</span>
+                  <span>0 km</span>
+                </div>
+                <Button className="w-full bg-primary hover:bg-red-700">Ver detalhes</Button>
+              </div>
+            </div>
+          </div>
+        </div>
         
         {/* Filters */}
         <div className="glass-card rounded-xl p-6 mb-8">
@@ -188,6 +275,41 @@ export default function Inventory() {
               </Select>
             </div>
           </form>
+          
+          {/* Car brands grid */}
+          <div className="mt-8 border-t border-white/10 pt-6">
+            <h3 className="text-lg font-medium mb-4">Escolha por marca</h3>
+            <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-9 gap-4">
+              {brands?.map((brand) => (
+                <div 
+                  key={brand.id}
+                  onClick={() => {
+                    setSelectedBrand(brand.id.toString());
+                    setTimeout(() => {
+                      document.querySelector('form')?.dispatchEvent(
+                        new Event('submit', { cancelable: true, bubbles: true })
+                      );
+                    }, 0);
+                  }}
+                  className={`brand-logo-card flex flex-col items-center justify-center p-3 rounded-lg cursor-pointer transition-all duration-300 
+                    ${selectedBrand === brand.id.toString() ? 'bg-white/15 shadow-lg scale-110' : 'hover:bg-white/10 hover:scale-105'}`}
+                >
+                  <div className="w-12 h-12 flex items-center justify-center">
+                    <img 
+                      src={brand.logoUrl} 
+                      alt={brand.name} 
+                      className={`max-w-full max-h-full transition-all duration-300 
+                        ${selectedBrand === brand.id.toString() ? 'brightness-125' : 'brightness-90 hover:brightness-125'}`}
+                    />
+                  </div>
+                  <span className={`text-xs mt-2 transition-colors duration-300 
+                    ${selectedBrand === brand.id.toString() ? 'text-primary font-medium' : 'text-gray-300'}`}>
+                    {brand.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
         
         {/* Tipo de veículo tabs */}
