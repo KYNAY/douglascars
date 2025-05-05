@@ -9,6 +9,7 @@ import VehicleDetail from "@/pages/vehicle-detail";
 import SellYourCar from "@/pages/sell-your-car";
 import Finance from "@/pages/finance";
 import About from "@/pages/about";
+import Avaliacao from "@/pages/avaliacao";
 import AdminDashboard from "@/pages/admin/dashboard";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";

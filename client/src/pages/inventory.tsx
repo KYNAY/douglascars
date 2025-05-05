@@ -64,6 +64,10 @@ export default function Inventory() {
       params.append('brandId', selectedBrand);
     }
     
+    if (vehicleType !== 'all') {
+      params.append('vehicleType', vehicleType);
+    }
+    
     return params.toString();
   };
   
@@ -186,6 +190,47 @@ export default function Inventory() {
           </form>
         </div>
         
+        {/* Tipo de veículo tabs */}
+        <Tabs 
+          defaultValue={vehicleType} 
+          className="mb-8"
+          onValueChange={(value) => {
+            // Garantir que o valor é um tipo válido
+            const validValue = ['all', 'car', 'motorcycle'].includes(value) 
+              ? value as 'all' | 'car' | 'motorcycle'
+              : 'all';
+            
+            setVehicleType(validValue);
+            // Update URL and load vehicles
+            setTimeout(() => {
+              const queryString = buildQueryString();
+              window.history.pushState(
+                {},
+                '',
+                queryString ? `/estoque?${queryString}` : '/estoque'
+              );
+              // Refresh vehicles with new filter
+              document.querySelector('form')?.dispatchEvent(
+                new Event('submit', { cancelable: true, bubbles: true })
+              );
+            }, 0);
+          }}
+        >
+          <TabsList className="glass-card w-full mb-4 p-1">
+            <TabsTrigger value="all" className="flex items-center gap-2 w-1/3">
+              <span>Todos</span>
+            </TabsTrigger>
+            <TabsTrigger value="car" className="flex items-center gap-2 w-1/3">
+              <FaCar className="mr-1" />
+              <span>Carros</span>
+            </TabsTrigger>
+            <TabsTrigger value="motorcycle" className="flex items-center gap-2 w-1/3">
+              <FaMotorcycle className="mr-1" />
+              <span>Motos</span>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+        
         {/* Results */}
         <div className="mb-6 flex justify-between items-center">
           <h2 className="text-xl font-medium">
@@ -236,6 +281,7 @@ export default function Inventory() {
               onClick={() => {
                 setSearchTerm("");
                 setSelectedBrand("all");
+                setVehicleType("all");
                 window.history.pushState({}, '', '/estoque');
               }}
             >

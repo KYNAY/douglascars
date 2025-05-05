@@ -11,10 +11,11 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinks = [
+    { href: "/", label: "INÍCIO" },
     { href: "/estoque", label: "ESTOQUE" },
     { href: "/venda-seu-carro", label: "VENDA SEU CARRO" },
     { href: "/financie", label: "FINANCIE" },
-    { href: "/atacado", label: "ATACADO" },
+    { href: "/avaliacao", label: "AVALIAÇÃO" },
     { href: "/sobre", label: "SOBRE" },
   ];
 
@@ -63,9 +64,6 @@ export function Header() {
             <div className="flex flex-col h-full">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-lg font-medium">Menu</h2>
-                <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(false)}>
-                  <X className="h-5 w-5" />
-                </Button>
               </div>
               <nav className="flex flex-col space-y-4">
                 {navLinks.map((link) => (
