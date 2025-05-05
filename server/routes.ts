@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { db } from "@db";
 import { brands, vehicles, dealers, sales, reviews, instagramPosts } from "@shared/schema";
-import { eq, and, not, desc, asc, like, or, gte, lte } from "drizzle-orm";
+import { eq, and, not, desc, asc, like, or, gte, lte, count, sql } from "drizzle-orm";
 import { SQL } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -16,6 +16,126 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching brands:", error);
       return res.status(500).json({ error: "Failed to fetch brands" });
+    }
+  });
+
+  // Obter marca específica
+  app.get(`${apiPrefix}/brands/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const brand = await db.select().from(brands).where(eq(brands.id, Number(id))).limit(1);
+      
+      if (!brand.length) {
+        return res.status(404).json({ error: "Brand not found" });
+      }
+      
+      return res.json(brand[0]);
+    } catch (error) {
+      console.error("Error fetching brand:", error);
+      return res.status(500).json({ error: "Failed to fetch brand" });
+    }
+  });
+
+  // Adicionar marca
+  app.post(`${apiPrefix}/brands`, async (req, res) => {
+    try {
+      const { name, logoUrl } = req.body;
+      
+      // Validar dados da marca
+      if (!name) {
+        return res.status(400).json({ error: "Brand name is required" });
+      }
+
+      // Verificar se já existe uma marca com o mesmo nome
+      const existingBrand = await db.select().from(brands).where(eq(brands.name, name)).limit(1);
+      if (existingBrand.length) {
+        return res.status(409).json({ error: "A brand with this name already exists" });
+      }
+
+      const [newBrand] = await db.insert(brands).values({
+        name,
+        logoUrl: logoUrl || ""
+      }).returning();
+
+      return res.status(201).json(newBrand);
+    } catch (error) {
+      console.error("Error creating brand:", error);
+      return res.status(500).json({ error: "Failed to create brand" });
+    }
+  });
+
+  // Atualizar marca
+  app.put(`${apiPrefix}/brands/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, logoUrl } = req.body;
+      
+      // Validar dados da marca
+      if (!name) {
+        return res.status(400).json({ error: "Brand name is required" });
+      }
+
+      // Verificar se a marca existe
+      const existingBrand = await db.select().from(brands).where(eq(brands.id, Number(id))).limit(1);
+      if (!existingBrand.length) {
+        return res.status(404).json({ error: "Brand not found" });
+      }
+
+      // Verificar se já existe outra marca com o mesmo nome
+      const brandWithSameName = await db.select()
+        .from(brands)
+        .where(and(
+          eq(brands.name, name),
+          not(eq(brands.id, Number(id)))
+        ))
+        .limit(1);
+        
+      if (brandWithSameName.length) {
+        return res.status(409).json({ error: "Another brand with this name already exists" });
+      }
+
+      const [updatedBrand] = await db.update(brands)
+        .set({
+          name,
+          logoUrl: logoUrl || ""
+        })
+        .where(eq(brands.id, Number(id)))
+        .returning();
+
+      return res.json(updatedBrand);
+    } catch (error) {
+      console.error("Error updating brand:", error);
+      return res.status(500).json({ error: "Failed to update brand" });
+    }
+  });
+
+  // Excluir marca
+  app.delete(`${apiPrefix}/brands/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verificar se a marca existe
+      const existingBrand = await db.select().from(brands).where(eq(brands.id, Number(id))).limit(1);
+      if (!existingBrand.length) {
+        return res.status(404).json({ error: "Brand not found" });
+      }
+
+      // Verificar se existem veículos vinculados a esta marca
+      const relatedVehicles = await db.select({ count: count() }).from(vehicles).where(eq(vehicles.brandId, Number(id)));
+      
+      if (relatedVehicles[0].count > 0) {
+        return res.status(409).json({ 
+          error: "Cannot delete brand with associated vehicles", 
+          count: relatedVehicles[0].count 
+        });
+      }
+
+      await db.delete(brands).where(eq(brands.id, Number(id)));
+
+      return res.json({ success: true, message: "Brand deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting brand:", error);
+      return res.status(500).json({ error: "Failed to delete brand" });
     }
   });
 
@@ -151,6 +271,116 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Adicionar veículo
+  app.post(`${apiPrefix}/vehicles`, async (req, res) => {
+    try {
+      const vehicleData = req.body;
+      // Validar dados do veículo
+      if (!vehicleData.model || !vehicleData.brandId || !vehicleData.year || !vehicleData.price) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Converter para valores numéricos apropriados
+      const brandId = Number(vehicleData.brandId);
+      const mileage = vehicleData.mileage ? Number(vehicleData.mileage) : 0;
+
+      // Garantir que campos booleanos estejam corretos
+      const featured = vehicleData.featured === true;
+      const sold = vehicleData.sold === true;
+
+      const [newVehicle] = await db.insert(vehicles).values({
+        model: vehicleData.model,
+        brandId,
+        year: vehicleData.year,
+        color: vehicleData.color || "",
+        price: vehicleData.price.toString(),
+        originalPrice: vehicleData.originalPrice ? vehicleData.originalPrice.toString() : null,
+        mileage,
+        description: vehicleData.description || null,
+        featured,
+        sold,
+        imageUrl: vehicleData.imageUrl || "",
+        transmission: vehicleData.transmission || null,
+        fuel: vehicleData.fuel || null,
+        bodyType: vehicleData.bodyType || null,
+        vehicleType: vehicleData.vehicleType || "car"
+      }).returning();
+
+      return res.status(201).json(newVehicle);
+    } catch (error) {
+      console.error("Error creating vehicle:", error);
+      return res.status(500).json({ error: "Failed to create vehicle" });
+    }
+  });
+
+  // Atualizar veículo
+  app.put(`${apiPrefix}/vehicles/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const vehicleData = req.body;
+      
+      // Verificar se o veículo existe
+      const existingVehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(id))).limit(1);
+      if (!existingVehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+
+      // Converter para valores numéricos apropriados
+      const brandId = Number(vehicleData.brandId);
+      const mileage = vehicleData.mileage ? Number(vehicleData.mileage) : 0;
+
+      // Garantir que campos booleanos estejam corretos
+      const featured = vehicleData.featured === true;
+      const sold = vehicleData.sold === true;
+
+      const [updatedVehicle] = await db.update(vehicles)
+        .set({
+          model: vehicleData.model,
+          brandId,
+          year: vehicleData.year,
+          color: vehicleData.color || "",
+          price: vehicleData.price.toString(),
+          originalPrice: vehicleData.originalPrice ? vehicleData.originalPrice.toString() : null,
+          mileage,
+          description: vehicleData.description || null,
+          featured,
+          sold,
+          imageUrl: vehicleData.imageUrl || "",
+          transmission: vehicleData.transmission || null,
+          fuel: vehicleData.fuel || null,
+          bodyType: vehicleData.bodyType || null,
+          vehicleType: vehicleData.vehicleType || "car"
+        })
+        .where(eq(vehicles.id, Number(id)))
+        .returning();
+
+      return res.json(updatedVehicle);
+    } catch (error) {
+      console.error("Error updating vehicle:", error);
+      return res.status(500).json({ error: "Failed to update vehicle" });
+    }
+  });
+
+  // Excluir veículo
+  app.delete(`${apiPrefix}/vehicles/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verificar se o veículo existe
+      const existingVehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(id))).limit(1);
+      if (!existingVehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+
+      await db.delete(vehicles).where(eq(vehicles.id, Number(id)));
+
+      return res.json({ success: true, message: "Vehicle deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting vehicle:", error);
+      return res.status(500).json({ error: "Failed to delete vehicle" });
+    }
+  });
+
   // Dealers and sales routes
   app.get(`${apiPrefix}/dealers/ranking`, async (req, res) => {
     try {
@@ -276,6 +506,153 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching Instagram posts:", error);
       return res.status(500).json({ error: "Failed to fetch Instagram posts" });
+    }
+  });
+
+  // API para destaques especiais
+  app.get(`${apiPrefix}/featured-vehicles`, async (req, res) => {
+    try {
+      // Obter os veículos marcados como destaque
+      const featuredVehicles = await db.select()
+        .from(vehicles)
+        .where(eq(vehicles.featured, true))
+        .orderBy(desc(vehicles.updatedAt));
+      
+      // Buscar os detalhes da marca para cada veículo
+      const vehiclesWithBrands = await Promise.all(
+        featuredVehicles.map(async (vehicle) => {
+          const brand = await db.select().from(brands).where(eq(brands.id, vehicle.brandId)).limit(1);
+          return {
+            ...vehicle,
+            brand: brand[0] || null
+          };
+        })
+      );
+      
+      return res.json(vehiclesWithBrands);
+    } catch (error) {
+      console.error("Error fetching featured vehicles:", error);
+      return res.status(500).json({ error: "Failed to fetch featured vehicles" });
+    }
+  });
+
+  // Marcar/Desmarcar veículo como destaque
+  app.patch(`${apiPrefix}/vehicles/:id/toggle-featured`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verificar se o veículo existe
+      const existingVehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(id))).limit(1);
+      if (!existingVehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+
+      // Alternar o status de destaque
+      const newFeaturedStatus = !existingVehicle[0].featured;
+      
+      const [updatedVehicle] = await db.update(vehicles)
+        .set({
+          featured: newFeaturedStatus
+        })
+        .where(eq(vehicles.id, Number(id)))
+        .returning();
+
+      return res.json({
+        ...updatedVehicle,
+        message: newFeaturedStatus 
+          ? "Vehicle marked as featured successfully" 
+          : "Vehicle removed from featured successfully"
+      });
+    } catch (error) {
+      console.error("Error toggling featured status:", error);
+      return res.status(500).json({ error: "Failed to update featured status" });
+    }
+  });
+
+  // Rota para salvar configurações (email, Instagram token, etc.)
+  app.post(`${apiPrefix}/settings`, async (req, res) => {
+    try {
+      const { contactEmail, instagramToken } = req.body;
+      
+      // Aqui você poderia salvar as configurações em uma tabela específica no banco de dados
+      // Por enquanto, apenas retornamos uma confirmação de sucesso
+      
+      return res.json({ 
+        success: true, 
+        message: "Settings updated successfully",
+        settings: {
+          contactEmail,
+          instagramToken: instagramToken ? "***token salvo***" : null
+        }
+      });
+    } catch (error) {
+      console.error("Error saving settings:", error);
+      return res.status(500).json({ error: "Failed to save settings" });
+    }
+  });
+
+  // API para formulários de avaliação
+  app.post(`${apiPrefix}/evaluation-requests`, async (req, res) => {
+    try {
+      const { name, email, phone, vehicleInfo } = req.body;
+      
+      // Validar campos obrigatórios
+      if (!name || !email || !phone || !vehicleInfo) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      // Aqui você salvaria os dados no banco em uma tabela específica
+      // Por enquanto, apenas simulamos um retorno de sucesso
+      
+      return res.status(201).json({
+        success: true,
+        message: "Evaluation request received successfully",
+        request: {
+          id: Date.now(),
+          name,
+          email,
+          phone,
+          vehicleInfo,
+          requestDate: new Date(),
+          status: 'pending'
+        }
+      });
+    } catch (error) {
+      console.error("Error submitting evaluation request:", error);
+      return res.status(500).json({ error: "Failed to submit evaluation request" });
+    }
+  });
+
+  // API para formulários de financiamento
+  app.post(`${apiPrefix}/financing-requests`, async (req, res) => {
+    try {
+      const { name, email, phone, vehicleInfo, income } = req.body;
+      
+      // Validar campos obrigatórios
+      if (!name || !email || !phone || !vehicleInfo) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      // Aqui você salvaria os dados no banco em uma tabela específica
+      // Por enquanto, apenas simulamos um retorno de sucesso
+      
+      return res.status(201).json({
+        success: true,
+        message: "Financing request received successfully",
+        request: {
+          id: Date.now(),
+          name,
+          email,
+          phone,
+          vehicleInfo,
+          income: income || "Não informado",
+          requestDate: new Date(),
+          status: 'pending'
+        }
+      });
+    } catch (error) {
+      console.error("Error submitting financing request:", error);
+      return res.status(500).json({ error: "Failed to submit financing request" });
     }
   });
 
