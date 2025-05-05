@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
-import { useLocation, useRoute } from "wouter";
+import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Loader2, Trophy, ArrowDown, ArrowUp, Home, User, LogOut } from "lucide-react";
+import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut } from "lucide-react";
 import { getInitial } from "@/lib/utils";
-import { useAuth } from "@/lib/auth-context";
-import { logOut } from "@/lib/firebase";
 
 interface Dealer {
   id: number;
@@ -22,7 +20,9 @@ interface Dealer {
 
 export default function AdminDashboard() {
   const [, navigate] = useLocation();
-  const { currentUser, loading } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [adminEmail, setAdminEmail] = useState("");
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("ranking");
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" }>({
     key: "points",
@@ -31,23 +31,23 @@ export default function AdminDashboard() {
 
   // Verificar autenticação
   useEffect(() => {
-    // Se não estiver carregando e não estiver logado, redirecionar para a página de login
-    if (!loading && !currentUser) {
+    const isLoggedIn = localStorage.getItem("admin_authenticated") === "true";
+    const email = localStorage.getItem("admin_email");
+    
+    if (!isLoggedIn || email !== "caiquewm@gmail.com") {
       navigate("/admin/login");
       return;
     }
     
-    // Verificar se é um administrador (exemplo simplificado)
-    // Na prática, você pode querer verificar claims ou roles no banco de dados
-    if (currentUser && currentUser.email !== "caiquewm@gmail.com") {
-      navigate("/");
-    }
-  }, [currentUser, loading, navigate]);
+    setIsAuthenticated(true);
+    setAdminEmail(email || "");
+    setIsAuthLoading(false);
+  }, [navigate]); // Esta dependência é necessária
 
   // Buscar dados dos vendedores
   const { data: dealers, isLoading } = useQuery<Dealer[]>({
     queryKey: ['/api/dealers/ranking'],
-    enabled: !!currentUser // Só buscar se estiver autenticado
+    enabled: isAuthenticated // Só buscar se estiver autenticado
   });
 
   const handleSort = (key: string) => {
@@ -64,12 +64,14 @@ export default function AdminDashboard() {
     return 0;
   }) : [];
 
-  const handleLogout = async () => {
-    await logOut();
+  const handleLogout = () => {
+    localStorage.removeItem("admin_authenticated");
+    localStorage.removeItem("admin_email");
+    localStorage.removeItem("admin_login_time");
     navigate("/");
   };
 
-  if (loading) {
+  if (isAuthLoading) {
     return (
       <div className="container py-10 flex justify-center items-center min-h-[60vh]">
         <Loader2 className="animate-spin h-8 w-8 text-primary" />
@@ -77,7 +79,7 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!currentUser) {
+  if (!isAuthenticated) {
     return (
       <div className="container py-10">
         <Card>
@@ -116,12 +118,12 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-4">
               <Avatar className="h-12 w-12">
                 <AvatarFallback className="bg-primary text-white">
-                  {currentUser.email ? getInitial(currentUser.email) : "A"}
+                  {adminEmail ? getInitial(adminEmail) : "A"}
                 </AvatarFallback>
               </Avatar>
               <div>
                 <CardTitle>Bem-vindo, Administrador</CardTitle>
-                <CardDescription>{currentUser.email}</CardDescription>
+                <CardDescription>{adminEmail}</CardDescription>
               </div>
             </div>
           </CardHeader>
