@@ -47,9 +47,6 @@ export function Header() {
           <a href="https://wa.me/5528999339129" className="ml-4">
             <FaWhatsapp className="text-2xl text-green-500" />
           </a>
-          <div className="ml-4">
-            <LoginButton />
-          </div>
         </div>
         
         <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -93,9 +90,6 @@ export function Header() {
                 >
                   <FaWhatsapp className="mr-2 h-5 w-5" /> Whatsapp
                 </a>
-                <div className="mt-4">
-                  <LoginButton />
-                </div>
               </div>
             </div>
           </SheetContent>
