@@ -1,0 +1,76 @@
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 33% 12%;
+    --foreground: 0 0% 98%;
+    
+    --card: 220 33% 12%;
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 220 33% 12%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 357 78% 51%;
+    --primary-foreground: 0 0% 98%;
+    
+    --secondary: 222 78% 30%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 220 10% 20%;
+    --muted-foreground: 0 0% 70%;
+    
+    --accent: 220 10% 25%;
+    --accent-foreground: 0 0% 98%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 220 10% 20%;
+    --input: 220 10% 20%;
+    --ring: 220 10% 30%;
+    
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans bg-gradient-to-b from-[#0d1117] to-[#1f2937] text-foreground min-h-screen;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-poppins;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/[0.08] backdrop-blur-md border border-white/10 shadow-lg;
+  }
+  
+  .glass-nav {
+    @apply bg-[rgba(10,15,30,0.75)] backdrop-blur-md border-b border-white/[0.08];
+  }
+  
+  .glass-search {
+    @apply bg-white/5 backdrop-blur-sm border border-white/[0.08];
+  }
+  
+  .car-card {
+    @apply transition-all duration-300 hover:translate-y-[-5px] hover:shadow-xl;
+  }
+  
+  .brand-logo {
+    @apply filter grayscale opacity-70 transition-all hover:filter-none hover:opacity-100;
+  }
+}
