@@ -29,8 +29,7 @@ export const vehicles = pgTable('vehicles', {
   fuel: text('fuel').default('Flex'), // Diesel, Flex, Gasolina, Gasolina e Elétrico
   bodyType: text('body_type'), // Carroceria: Sedan, SUV, etc.
   vehicleType: text('vehicle_type').default('car'), // 'car' ou 'motorcycle'
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull()
+  createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
 // Dealers table

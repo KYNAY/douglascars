@@ -163,10 +163,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (search) {
         const searchTerm = `%${search}%`;
-        conditions.push(or(
-          like(vehicles.model, searchTerm),
-          like(vehicles.description, searchTerm)
-        ));
+        conditions.push(
+          or(
+            like(vehicles.model, searchTerm),
+            sql`${vehicles.description} LIKE ${searchTerm}`
+          )
+        );
       }
       
       if (featured === 'true') {
@@ -181,13 +183,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Filtro de preço
       if (minPrice) {
         conditions.push(
-          gte(vehicles.price, Number(minPrice))
+          gte(sql`CAST(${vehicles.price} AS DECIMAL)`, Number(minPrice))
         );
       }
       
       if (maxPrice) {
         conditions.push(
-          lte(vehicles.price, Number(maxPrice))
+          lte(sql`CAST(${vehicles.price} AS DECIMAL)`, Number(maxPrice))
         );
       }
       
@@ -196,7 +198,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const transmissionValues = Array.isArray(transmission) ? transmission : [transmission];
         if (transmissionValues.length > 0) {
           const transmissionConditions = transmissionValues.map(t => eq(vehicles.transmission, String(t)));
-          conditions.push(or(...transmissionConditions));
+          if (transmissionConditions.length > 0) {
+            conditions.push(or(...transmissionConditions));
+          }
         }
       }
       
@@ -205,7 +209,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const fuelValues = Array.isArray(fuel) ? fuel : [fuel];
         if (fuelValues.length > 0) {
           const fuelConditions = fuelValues.map(f => eq(vehicles.fuel, String(f)));
-          conditions.push(or(...fuelConditions));
+          if (fuelConditions.length > 0) {
+            conditions.push(or(...fuelConditions));
+          }
         }
       }
       
@@ -214,7 +220,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const bodyTypeValues = Array.isArray(bodyType) ? bodyType : [bodyType];
         if (bodyTypeValues.length > 0) {
           const bodyTypeConditions = bodyTypeValues.map(b => eq(vehicles.bodyType, String(b)));
-          conditions.push(or(...bodyTypeConditions));
+          if (bodyTypeConditions.length > 0) {
+            conditions.push(or(...bodyTypeConditions));
+          }
         }
       }
       
@@ -223,7 +231,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const colorValues = Array.isArray(color) ? color : [color];
         if (colorValues.length > 0) {
           const colorConditions = colorValues.map(c => eq(vehicles.color, String(c)));
-          conditions.push(or(...colorConditions));
+          if (colorConditions.length > 0) {
+            conditions.push(or(...colorConditions));
+          }
         }
       }
       
@@ -516,7 +526,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const featuredVehicles = await db.select()
         .from(vehicles)
         .where(eq(vehicles.featured, true))
-        .orderBy(desc(vehicles.updatedAt));
+        .orderBy(desc(vehicles.createdAt));
       
       // Buscar os detalhes da marca para cada veículo
       const vehiclesWithBrands = await Promise.all(
