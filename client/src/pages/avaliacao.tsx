@@ -78,7 +78,7 @@ export default function Avaliacao() {
   };
   
   return (
-    <div className="pt-24 pb-16">
+    <div className="pt-32 pb-16">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-poppins font-bold mb-4 text-white">AVALIE O SEU VEÍCULO COM A GENTE.</h1>
         <p className="text-lg mb-8 text-gray-300">

@@ -89,7 +89,7 @@ export default function Finance() {
   }
   
   return (
-    <div className="pt-24 pb-16">
+    <div className="pt-32 pb-16">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-3xl font-poppins font-bold mb-2">Financiamento Douglas Auto Car</h1>
