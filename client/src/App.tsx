@@ -9,6 +9,7 @@ import VehicleDetail from "@/pages/vehicle-detail";
 import SellYourCar from "@/pages/sell-your-car";
 import Finance from "@/pages/finance";
 import About from "@/pages/about";
+import AdminDashboard from "@/pages/admin/dashboard";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { FloatingButtons } from "@/components/floating-buttons";
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/venda-seu-carro" component={SellYourCar} />
       <Route path="/financie" component={Finance} />
       <Route path="/sobre" component={About} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

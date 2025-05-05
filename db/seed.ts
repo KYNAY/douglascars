@@ -1,15 +1,16 @@
 import { db } from "./index";
-import { brands, vehicles, dealers, reviews, instagramPosts } from "@shared/schema";
+import { brands, vehicles, dealers, reviews, instagramPosts, sales } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
 async function seed() {
   try {
-    // First check if data already exists to avoid duplicates
-    const existingBrands = await db.select().from(brands);
-    if (existingBrands.length > 0) {
-      console.log("Database already seeded with brands. Skipping seeding process.");
-      return;
-    }
+    // Remova os dados existentes primeiro (WARNING: apenas para desenvolvimento)
+    await db.delete(sales);
+    await db.delete(vehicles);
+    await db.delete(dealers);
+    await db.delete(reviews);
+    await db.delete(instagramPosts);
+    await db.delete(brands);
 
     // Seed brands
     const brandsData = [
@@ -121,6 +122,14 @@ async function seed() {
 
     // Seed dealers
     const dealersData = [
+      {
+        name: "Caique Contarini",
+        username: "caiquewm@gmail.com",
+        password: "$2a$10$XExUbDSjHbpEYtU5DsVTE.WgQqH8gZxZRXcVxYLOFvD0QJlAzkGXK", // "102030"
+        startDate: new Date("2021-01-01"),
+        points: 200,
+        sales: 45
+      },
       {
         name: "Marcos Silva",
         username: "marcos",
