@@ -1,22 +1,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { signInWithGoogle, logOut } from "@/lib/firebase";
+import { useLocation } from "wouter";
+import { logOut } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
 import { FaGoogle } from "react-icons/fa";
 
 export function LoginButton() {
   const { currentUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleSignIn = async () => {
-    try {
-      setIsLoading(true);
-      await signInWithGoogle(true); // Use popup for better UX
-    } catch (error) {
-      console.error("Sign in error:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  const [, navigate] = useLocation();
+  
+  const handleSignIn = () => {
+    // Redirecionar para a página de login em vez de abrir o popup diretamente
+    navigate("/admin/login");
   };
 
   const handleSignOut = async () => {

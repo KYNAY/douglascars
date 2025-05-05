@@ -120,6 +120,9 @@ export function Footer() {
             <Link href="/privacidade" className="text-gray-500 hover:text-white text-sm">
               Política de Privacidade
             </Link>
+            <Link href="/admin/login" className="text-gray-500 hover:text-primary text-sm">
+              Área Admin
+            </Link>
           </div>
         </div>
       </div>
