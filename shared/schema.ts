@@ -68,6 +68,15 @@ export const reviews = pgTable('reviews', {
   createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
+// Vehicle images table
+export const vehicleImages = pgTable('vehicle_images', {
+  id: serial('id').primaryKey(),
+  vehicleId: integer('vehicle_id').references(() => vehicles.id).notNull(),
+  imageUrl: text('image_url').notNull(),
+  order: integer('order').default(0), // Para controlar a ordem de exibição
+  createdAt: timestamp('created_at').defaultNow().notNull()
+});
+
 // Instagram posts table
 export const instagramPosts = pgTable('instagram_posts', {
   id: serial('id').primaryKey(),
@@ -84,7 +93,12 @@ export const brandsRelations = relations(brands, ({ many }) => ({
 
 export const vehiclesRelations = relations(vehicles, ({ one, many }) => ({
   brand: one(brands, { fields: [vehicles.brandId], references: [brands.id] }),
-  sales: many(sales)
+  sales: many(sales),
+  images: many(vehicleImages)
+}));
+
+export const vehicleImagesRelations = relations(vehicleImages, ({ one }) => ({
+  vehicle: one(vehicles, { fields: [vehicleImages.vehicleId], references: [vehicles.id] })
 }));
 
 export const dealersRelations = relations(dealers, ({ many }) => ({
@@ -136,6 +150,13 @@ export const reviewsInsertSchema = createInsertSchema(reviews, {
 export type ReviewInsert = z.infer<typeof reviewsInsertSchema>;
 export const reviewsSelectSchema = createSelectSchema(reviews);
 export type Review = z.infer<typeof reviewsSelectSchema>;
+
+export const vehicleImagesInsertSchema = createInsertSchema(vehicleImages, {
+  imageUrl: (schema) => schema.url("Please provide a valid URL for the image")
+});
+export type VehicleImageInsert = z.infer<typeof vehicleImagesInsertSchema>;
+export const vehicleImagesSelectSchema = createSelectSchema(vehicleImages);
+export type VehicleImage = z.infer<typeof vehicleImagesSelectSchema>;
 
 export const instagramPostsInsertSchema = createInsertSchema(instagramPosts);
 export type InstagramPostInsert = z.infer<typeof instagramPostsInsertSchema>;

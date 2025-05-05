@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { db } from "@db";
-import { brands, vehicles, dealers, sales, reviews, instagramPosts } from "@shared/schema";
+import { brands, vehicles, dealers, sales, reviews, instagramPosts, vehicleImages } from "@shared/schema";
 import { eq, and, not, desc, asc, like, or, gte, lte, count, sql } from "drizzle-orm";
 import { SQL } from "drizzle-orm";
 
@@ -269,11 +269,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Vehicle not found" });
       }
       
+      // Buscar a marca
       const brand = await db.select().from(brands).where(eq(brands.id, vehicle[0].brandId)).limit(1);
+      
+      // Buscar todas as imagens adicionais
+      const images = await db.select()
+        .from(vehicleImages)
+        .where(eq(vehicleImages.vehicleId, Number(id)))
+        .orderBy(asc(vehicleImages.order));
       
       return res.json({
         ...vehicle[0],
-        brand: brand[0] || null
+        brand: brand[0] || null,
+        additionalImages: images || []
       });
     } catch (error) {
       console.error("Error fetching vehicle:", error);
@@ -663,6 +671,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error submitting financing request:", error);
       return res.status(500).json({ error: "Failed to submit financing request" });
+    }
+  });
+
+  // APIs para gerenciar imagens adicionais dos veículos
+  app.get(`${apiPrefix}/vehicles/:vehicleId/images`, async (req, res) => {
+    try {
+      const { vehicleId } = req.params;
+      
+      // Verificar se o veículo existe
+      const vehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(vehicleId))).limit(1);
+      if (!vehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+      
+      // Buscar todas as imagens do veículo
+      const images = await db.select()
+        .from(vehicleImages)
+        .where(eq(vehicleImages.vehicleId, Number(vehicleId)))
+        .orderBy(asc(vehicleImages.order));
+      
+      return res.json(images);
+    } catch (error) {
+      console.error("Error fetching vehicle images:", error);
+      return res.status(500).json({ error: "Failed to fetch vehicle images" });
+    }
+  });
+  
+  // Adicionar uma nova imagem a um veículo
+  app.post(`${apiPrefix}/vehicles/:vehicleId/images`, async (req, res) => {
+    try {
+      const { vehicleId } = req.params;
+      const { imageUrl, order } = req.body;
+      
+      // Validar dados
+      if (!imageUrl) {
+        return res.status(400).json({ error: "Image URL is required" });
+      }
+      
+      // Verificar se o veículo existe
+      const vehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(vehicleId))).limit(1);
+      if (!vehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+      
+      // Adicionar a imagem
+      const [newImage] = await db.insert(vehicleImages).values({
+        vehicleId: Number(vehicleId),
+        imageUrl,
+        order: order !== undefined ? Number(order) : 0
+      }).returning();
+      
+      return res.status(201).json(newImage);
+    } catch (error) {
+      console.error("Error adding vehicle image:", error);
+      return res.status(500).json({ error: "Failed to add vehicle image" });
+    }
+  });
+  
+  // Atualizar ordem de uma imagem
+  app.patch(`${apiPrefix}/vehicles/:vehicleId/images/:imageId`, async (req, res) => {
+    try {
+      const { vehicleId, imageId } = req.params;
+      const { order } = req.body;
+      
+      if (order === undefined) {
+        return res.status(400).json({ error: "Order is required" });
+      }
+      
+      // Verificar se a imagem existe e pertence ao veículo correto
+      const image = await db.select()
+        .from(vehicleImages)
+        .where(
+          and(
+            eq(vehicleImages.id, Number(imageId)),
+            eq(vehicleImages.vehicleId, Number(vehicleId))
+          )
+        )
+        .limit(1);
+      
+      if (!image.length) {
+        return res.status(404).json({ error: "Image not found or doesn't belong to this vehicle" });
+      }
+      
+      // Atualizar a ordem
+      const [updatedImage] = await db.update(vehicleImages)
+        .set({ order: Number(order) })
+        .where(eq(vehicleImages.id, Number(imageId)))
+        .returning();
+      
+      return res.json(updatedImage);
+    } catch (error) {
+      console.error("Error updating vehicle image:", error);
+      return res.status(500).json({ error: "Failed to update vehicle image" });
+    }
+  });
+  
+  // Excluir uma imagem
+  app.delete(`${apiPrefix}/vehicles/:vehicleId/images/:imageId`, async (req, res) => {
+    try {
+      const { vehicleId, imageId } = req.params;
+      
+      // Verificar se a imagem existe e pertence ao veículo correto
+      const image = await db.select()
+        .from(vehicleImages)
+        .where(
+          and(
+            eq(vehicleImages.id, Number(imageId)),
+            eq(vehicleImages.vehicleId, Number(vehicleId))
+          )
+        )
+        .limit(1);
+      
+      if (!image.length) {
+        return res.status(404).json({ error: "Image not found or doesn't belong to this vehicle" });
+      }
+      
+      // Excluir a imagem
+      await db.delete(vehicleImages).where(eq(vehicleImages.id, Number(imageId)));
+      
+      return res.json({ success: true, message: "Image deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting vehicle image:", error);
+      return res.status(500).json({ error: "Failed to delete vehicle image" });
     }
   });
 
