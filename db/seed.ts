@@ -5,7 +5,11 @@ import { eq } from "drizzle-orm";
 async function seed() {
   try {
     // Remova os dados existentes primeiro (WARNING: apenas para desenvolvimento)
-    await db.delete(sales);
+    try {
+      await db.delete(sales);
+    } catch (error) {
+      console.log("Não foi possível deletar as vendas", error);
+    }
     await db.delete(vehicles);
     await db.delete(dealers);
     await db.delete(reviews);
