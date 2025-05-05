@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { db } from "@db";
 import { brands, vehicles, dealers, sales, reviews, instagramPosts } from "@shared/schema";
-import { eq, and, not, desc, asc, like, or } from "drizzle-orm";
+import { eq, and, not, desc, asc, like, or, gte, lte } from "drizzle-orm";
 import { SQL } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -22,7 +22,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Vehicles routes
   app.get(`${apiPrefix}/vehicles`, async (req, res) => {
     try {
-      const { brandId, search, featured } = req.query;
+      const { 
+        brandId, 
+        search, 
+        featured,
+        minPrice,
+        maxPrice,
+        transmission,
+        fuel,
+        bodyType,
+        color
+      } = req.query;
       
       let conditions: SQL[] = [not(eq(vehicles.sold, true))];
       
@@ -40,6 +50,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (featured === 'true') {
         conditions.push(eq(vehicles.featured, true));
+      }
+      
+      // Filtro de preço
+      if (minPrice) {
+        conditions.push(
+          gte(vehicles.price, Number(minPrice))
+        );
+      }
+      
+      if (maxPrice) {
+        conditions.push(
+          lte(vehicles.price, Number(maxPrice))
+        );
+      }
+      
+      // Filtro de transmissão (pode ser múltiplo, vem como array)
+      if (transmission) {
+        const transmissionValues = Array.isArray(transmission) ? transmission : [transmission];
+        if (transmissionValues.length > 0) {
+          const transmissionConditions = transmissionValues.map(t => eq(vehicles.transmission, String(t)));
+          conditions.push(or(...transmissionConditions));
+        }
+      }
+      
+      // Filtro de combustível (pode ser múltiplo, vem como array)
+      if (fuel) {
+        const fuelValues = Array.isArray(fuel) ? fuel : [fuel];
+        if (fuelValues.length > 0) {
+          const fuelConditions = fuelValues.map(f => eq(vehicles.fuel, String(f)));
+          conditions.push(or(...fuelConditions));
+        }
+      }
+      
+      // Filtro de tipo de carroceria (pode ser múltiplo, vem como array)
+      if (bodyType) {
+        const bodyTypeValues = Array.isArray(bodyType) ? bodyType : [bodyType];
+        if (bodyTypeValues.length > 0) {
+          const bodyTypeConditions = bodyTypeValues.map(b => eq(vehicles.bodyType, String(b)));
+          conditions.push(or(...bodyTypeConditions));
+        }
+      }
+      
+      // Filtro de cor (pode ser múltiplo, vem como array)
+      if (color) {
+        const colorValues = Array.isArray(color) ? color : [color];
+        if (colorValues.length > 0) {
+          const colorConditions = colorValues.map(c => eq(vehicles.color, String(c)));
+          conditions.push(or(...colorConditions));
+        }
       }
       
       const result = await db.select()

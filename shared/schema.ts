@@ -25,6 +25,9 @@ export const vehicles = pgTable('vehicles', {
   featured: boolean('featured').default(false),
   sold: boolean('sold').default(false),
   imageUrl: text('image_url').notNull(),
+  transmission: text('transmission').default('Manual'), // Automatizado, Automático, Manual
+  fuel: text('fuel').default('Flex'), // Diesel, Flex, Gasolina, Gasolina e Elétrico
+  bodyType: text('body_type'), // Carroceria: Sedan, SUV, etc.
   createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
