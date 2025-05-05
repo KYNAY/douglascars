@@ -10,6 +10,7 @@ import Finance from "@/pages/finance";
 import About from "@/pages/about";
 import Avaliacao from "@/pages/avaliacao";
 import AdminDashboard from "@/pages/admin/dashboard";
+import AdminLogin from "@/pages/admin/login";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { FloatingButtons } from "@/components/floating-buttons";
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/financie" component={Finance} />
       <Route path="/avaliacao" component={Avaliacao} />
       <Route path="/sobre" component={About} />
+      <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>

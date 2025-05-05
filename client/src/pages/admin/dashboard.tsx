@@ -31,9 +31,10 @@ export default function AdminDashboard() {
 
   // Verificar autenticação
   useEffect(() => {
-    // Se não estiver carregando e não estiver logado, redirecionar
+    // Se não estiver carregando e não estiver logado, redirecionar para a página de login
     if (!loading && !currentUser) {
-      navigate("/");
+      navigate("/admin/login");
+      return;
     }
     
     // Verificar se é um administrador (exemplo simplificado)
@@ -85,7 +86,10 @@ export default function AdminDashboard() {
             <CardDescription>Você precisa estar logado para acessar esta área.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => navigate("/")}>Voltar para Home</Button>
+            <div className="flex gap-2">
+              <Button onClick={() => navigate("/admin/login")}>Fazer Login</Button>
+              <Button variant="outline" onClick={() => navigate("/")}>Voltar para Home</Button>
+            </div>
           </CardContent>
         </Card>
       </div>
