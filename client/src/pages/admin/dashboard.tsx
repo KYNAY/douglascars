@@ -1170,6 +1170,129 @@ export default function AdminDashboard() {
           </Dialog>
         </TabsContent>
         
+        <TabsContent value="featured" className="space-y-4">
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <CardTitle>Destaques Especiais</CardTitle>
+                <CardDescription>
+                  Configure os veículos exibidos na seção de destaques especiais na página inicial.
+                </CardDescription>
+              </div>
+              <Button onClick={() => {
+                // Implementar funcionalidade de adicionar
+              }} className="flex items-center gap-2">
+                <Plus size={16} /> Adicionar Destaque
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Primeiro destaque */}
+                <Card>
+                  <CardHeader className="p-4 pb-2">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">Destaque 1 - Toyota Hilux 2023</CardTitle>
+                      <div className="flex gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => {
+                            // Implementar funcionalidade de editar
+                          }}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => {
+                            // Implementar funcionalidade de remover
+                          }}
+                        >
+                          <Trash2 className="h-3.5 w-3.5 text-red-500" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="flex mb-3">
+                      <div className="w-32 h-24 overflow-hidden rounded">
+                        <img 
+                          src="https://i.pinimg.com/originals/f3/81/f9/f381f9c73492eb5ae0cd14926f174270.jpg" 
+                          alt="Toyota Hilux" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="ml-4 flex flex-col justify-center">
+                        <p className="text-lg font-medium">Toyota Hilux SRX</p>
+                        <p className="text-primary font-bold text-xl">R$ 290.900</p>
+                        <Badge variant="outline" className="mt-1 w-fit">Destaque Principal</Badge>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-400">Selecionado em: 05/05/2025</p>
+                      <p className="text-sm text-gray-400">Status: Ativo</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Segundo destaque */}
+                <Card>
+                  <CardHeader className="p-4 pb-2">
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">Destaque 2 - Toyota SW4 2025</CardTitle>
+                      <div className="flex gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => {
+                            // Implementar funcionalidade de editar
+                          }}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="h-7 w-7"
+                          onClick={() => {
+                            // Implementar funcionalidade de remover
+                          }}
+                        >
+                          <Trash2 className="h-3.5 w-3.5 text-red-500" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-4">
+                    <div className="flex mb-3">
+                      <div className="w-32 h-24 overflow-hidden rounded">
+                        <img 
+                          src="https://www.toyota.com.br/wp-content/themes/toyota-2.0.0/frontend/static/images/swbg/sw4-2024.png" 
+                          alt="Toyota SW4" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="ml-4 flex flex-col justify-center">
+                        <p className="text-lg font-medium">Toyota SW4 Diamond</p>
+                        <p className="text-primary font-bold text-xl">R$ 410.000</p>
+                        <Badge variant="outline" className="mt-1 w-fit">Destaque Secundário</Badge>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-400">Selecionado em: 05/05/2025</p>
+                      <p className="text-sm text-gray-400">Status: Ativo</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="settings" className="space-y-4">
           <Card>
             <CardHeader>
@@ -1208,60 +1331,6 @@ export default function AdminDashboard() {
                       </p>
                     </div>
                   </div>
-                </div>
-                
-                {/* Featured Vehicles Configuration */}
-                <div className="border-b border-white/10 pb-6">
-                  <h3 className="text-lg font-medium mb-4">Gerenciar Destaques Especiais</h3>
-                  <p className="text-gray-400 mb-4">
-                    Configure os veículos exibidos na seção de destaques especiais na página inicial.
-                  </p>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    {/* Primeiro destaque */}
-                    <div className="glass-card p-4 rounded-lg">
-                      <h4 className="font-medium mb-2">Destaque 1 - Toyota Hilux 2023</h4>
-                      <div className="flex mb-3">
-                        <img 
-                          src="https://i.pinimg.com/originals/f3/81/f9/f381f9c73492eb5ae0cd14926f174270.jpg" 
-                          alt="Toyota Hilux" 
-                          className="w-24 h-16 object-cover rounded"
-                        />
-                        <div className="ml-3">
-                          <p className="text-sm">Toyota Hilux SRX</p>
-                          <p className="text-xs text-gray-400">R$ 290.900</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">Alterar</Button>
-                        <Button size="sm" variant="destructive">Remover</Button>
-                      </div>
-                    </div>
-                    
-                    {/* Segundo destaque */}
-                    <div className="glass-card p-4 rounded-lg">
-                      <h4 className="font-medium mb-2">Destaque 2 - Toyota SW4 2025</h4>
-                      <div className="flex mb-3">
-                        <img 
-                          src="https://www.toyota.com.br/wp-content/themes/toyota-2.0.0/frontend/static/images/swbg/sw4-2024.png" 
-                          alt="Toyota SW4" 
-                          className="w-24 h-16 object-cover rounded"
-                        />
-                        <div className="ml-3">
-                          <p className="text-sm">Toyota SW4 Diamond</p>
-                          <p className="text-xs text-gray-400">R$ 410.000</p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline">Alterar</Button>
-                        <Button size="sm" variant="destructive">Remover</Button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Button variant="default" size="sm">
-                    Adicionar Novo Destaque
-                  </Button>
                 </div>
                 
                 {/* Email Configuration Section */}
