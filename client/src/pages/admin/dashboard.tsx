@@ -1,13 +1,20 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut } from "lucide-react";
-import { getInitial } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag } from "lucide-react";
+import { getInitial, formatPrice } from "@/lib/utils";
 
 interface Dealer {
   id: number;
@@ -18,16 +25,76 @@ interface Dealer {
   sales: number;
 }
 
+interface Brand {
+  id: number;
+  name: string;
+  logoUrl: string;
+}
+
+interface Vehicle {
+  id: number;
+  brandId: number;
+  model: string;
+  year: string;
+  color: string;
+  price: string | number;
+  originalPrice: string | number | null;
+  mileage: number;
+  description: string | null;
+  featured: boolean;
+  sold: boolean;
+  imageUrl: string;
+  transmission?: string;
+  fuel?: string;
+  bodyType?: string;
+  vehicleType?: 'car' | 'motorcycle';
+  brand?: Brand;
+}
+
+interface EvaluationRequest {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  vehicleInfo: string;
+  requestDate: string;
+  status: 'pending' | 'contacted' | 'completed' | 'cancelled';
+}
+
+interface FinancingRequest {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  vehicleInfo: string;
+  income: string;
+  requestDate: string;
+  status: 'pending' | 'approved' | 'denied' | 'in_review';
+}
+
 export default function AdminDashboard() {
   const [, navigate] = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("ranking");
+  const [activeTab, setActiveTab] = useState("vehicles");
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" }>({
     key: "points",
     direction: "desc"
   });
+  
+  // Estado para o diálogo de criação/edição de veículos
+  const [isVehicleDialogOpen, setIsVehicleDialogOpen] = useState(false);
+  const [isDeleteVehicleDialogOpen, setIsDeleteVehicleDialogOpen] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [searchVehicle, setSearchVehicle] = useState("");
+  const [brandFilter, setBrandFilter] = useState<number | null>(null);
+  
+  // Estado para o diálogo de criação/edição de marcas
+  const [isBrandDialogOpen, setIsBrandDialogOpen] = useState(false);
+  const [isDeleteBrandDialogOpen, setIsDeleteBrandDialogOpen] = useState(false);
+  const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
+  const [searchBrand, setSearchBrand] = useState("");
 
   // Verificar autenticação
   useEffect(() => {
@@ -131,9 +198,12 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="ranking">Ranking de Vendedores</TabsTrigger>
-          <TabsTrigger value="sales">Vendas</TabsTrigger>
+        <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap">
+          <TabsTrigger value="vehicles">Veículos</TabsTrigger>
+          <TabsTrigger value="requests">Solicitações</TabsTrigger>
+          <TabsTrigger value="ranking">Vendedores</TabsTrigger>
+          <TabsTrigger value="brands">Marcas</TabsTrigger>
+          <TabsTrigger value="featured">Destaques</TabsTrigger>
           <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
         
