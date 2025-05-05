@@ -1,5 +1,15 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, signInWithPopup, signOut, onAuthStateChanged, getRedirectResult } from "firebase/auth";
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithRedirect, 
+  signInWithPopup, 
+  signOut, 
+  onAuthStateChanged, 
+  getRedirectResult,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from "firebase/auth";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -25,6 +35,26 @@ export const signInWithGoogle = async (usePopup = false) => {
     }
   } catch (error) {
     console.error("Error signing in with Google", error);
+    throw error;
+  }
+};
+
+// Login com email e senha
+export const loginWithEmailPassword = async (email: string, password: string) => {
+  try {
+    return await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    console.error("Error signing in with email/password", error);
+    throw error;
+  }
+};
+
+// Registrar um novo usuário com email e senha (apenas para uso administrativo)
+export const registerWithEmailPassword = async (email: string, password: string) => {
+  try {
+    return await createUserWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    console.error("Error registering with email/password", error);
     throw error;
   }
 };

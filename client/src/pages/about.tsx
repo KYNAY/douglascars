@@ -55,7 +55,7 @@ export default function About() {
   ];
   
   return (
-    <div className="pt-24 pb-16">
+    <div className="pt-32 pb-16">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-poppins font-bold mb-2">Sobre a Douglas Auto Car</h1>
@@ -146,7 +146,7 @@ export default function About() {
             <div className="relative z-10">
               <h2 className="text-2xl font-poppins font-semibold mb-4">Venha nos Conhecer</h2>
               <p className="text-gray-300 mb-6">
-                Estamos localizados na Av. Brasil, 1234 - Centro, Governador Valadares - MG. Nossa equipe está pronta para te receber e ajudar a encontrar o veículo ideal para você.
+                Estamos localizados na Av. Aristídes Campos, 449/451, Gilberto Machado, Cachoeiro de Itapemirim/ES, CEP: 29302-801. Nossa equipe está pronta para te receber e ajudar a encontrar o veículo ideal para você.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild className="bg-primary hover:bg-red-700">
