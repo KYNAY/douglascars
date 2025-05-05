@@ -6,7 +6,6 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Inventory from "@/pages/inventory";
 import VehicleDetail from "@/pages/vehicle-detail";
-import SellYourCar from "@/pages/sell-your-car";
 import Finance from "@/pages/finance";
 import About from "@/pages/about";
 import Avaliacao from "@/pages/avaliacao";
@@ -22,7 +21,6 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/estoque" component={Inventory} />
       <Route path="/estoque/:id" component={VehicleDetail} />
-      <Route path="/venda-seu-carro" component={SellYourCar} />
       <Route path="/financie" component={Finance} />
       <Route path="/avaliacao" component={Avaliacao} />
       <Route path="/sobre" component={About} />

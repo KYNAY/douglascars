@@ -2,7 +2,7 @@ import { HeroSection } from "@/components/hero-section";
 import { SearchSection } from "@/components/search-section";
 import { CarCard } from "@/components/car-card";
 import { ServicesSection } from "@/components/services-section";
-import { DealerDashboard } from "@/components/dealer-dashboard";
+
 import { IntegrationsSection } from "@/components/integrations-section";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
@@ -68,7 +68,6 @@ export default function Home() {
       </section>
       
       <ServicesSection />
-      <DealerDashboard />
       <IntegrationsSection />
     </>
   );

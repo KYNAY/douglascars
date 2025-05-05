@@ -13,7 +13,6 @@ export function Header() {
   const navLinks = [
     { href: "/", label: "INÍCIO" },
     { href: "/estoque", label: "ESTOQUE" },
-    { href: "/venda-seu-carro", label: "VENDA SEU CARRO" },
     { href: "/financie", label: "FINANCIE" },
     { href: "/avaliacao", label: "AVALIAÇÃO" },
     { href: "/sobre", label: "SOBRE" },

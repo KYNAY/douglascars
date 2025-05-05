@@ -128,6 +128,7 @@ export default function AdminDashboard() {
         <TabsList>
           <TabsTrigger value="ranking">Ranking de Vendedores</TabsTrigger>
           <TabsTrigger value="sales">Vendas</TabsTrigger>
+          <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
         
         <TabsContent value="ranking" className="space-y-4">
@@ -234,6 +235,78 @@ export default function AdminDashboard() {
                 <Button variant="default" className="mt-4">
                   Ver vendas
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="settings" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações</CardTitle>
+              <CardDescription>
+                Configure integrações e parâmetros do sistema.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                {/* Instagram API Section */}
+                <div className="border-b border-white/10 pb-6">
+                  <h3 className="text-lg font-medium mb-4">Integração Instagram</h3>
+                  <p className="text-gray-400 mb-4">
+                    Conecte o perfil @douglas.autocar para exibir as postagens mais recentes no site.
+                  </p>
+                  
+                  <div className="space-y-4">
+                    <div className="grid gap-2">
+                      <label htmlFor="instagram-token" className="text-sm font-medium">
+                        Token de Acesso do Instagram
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          id="instagram-token"
+                          type="password"
+                          placeholder="Insira o token de acesso"
+                          className="flex h-10 w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm"
+                        />
+                        <Button variant="outline" size="sm">
+                          Salvar
+                        </Button>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        Obtenha um token do Instagram através do Facebook Developer Portal.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Email Configuration Section */}
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Configuração de Email</h3>
+                  <p className="text-gray-400 mb-4">
+                    Defina o email para recebimento dos formulários de contato e avaliação.
+                  </p>
+                  
+                  <div className="space-y-4">
+                    <div className="grid gap-2">
+                      <label htmlFor="contact-email" className="text-sm font-medium">
+                        Email para Contato
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          id="contact-email"
+                          type="email"
+                          placeholder="exemplo@email.com"
+                          defaultValue="caiquewm@gmail.com"
+                          className="flex h-10 w-full rounded-md border border-white/10 bg-transparent px-3 py-2 text-sm"
+                        />
+                        <Button variant="outline" size="sm">
+                          Salvar
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
