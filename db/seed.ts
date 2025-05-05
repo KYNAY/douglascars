@@ -47,6 +47,7 @@ async function seed() {
 
     // Seed vehicles
     const vehiclesData = [
+      // Carros
       {
         brandId: brandMap.get("Volkswagen"),
         model: "Nivus Highline 1.0 200 TSI Flex Aut.",
@@ -57,6 +58,10 @@ async function seed() {
         mileage: 32183,
         description: "Volkswagen Nivus Highline 1.0 200 TSI Flex Aut. - Cinza - 2024",
         featured: true,
+        vehicleType: "car",
+        transmission: "Automático",
+        fuel: "Flex",
+        bodyType: "SUV",
         imageUrl: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
       },
       {
@@ -69,6 +74,10 @@ async function seed() {
         mileage: 49076,
         description: "Volkswagen Nivus Highline 1.0 200 TSI Flex Aut. - Branco - 2024",
         featured: true,
+        vehicleType: "car",
+        transmission: "Automático",
+        fuel: "Flex",
+        bodyType: "SUV",
         imageUrl: "https://images.unsplash.com/photo-1617814076668-11183bc12271?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
       },
       {
@@ -81,6 +90,10 @@ async function seed() {
         mileage: 34076,
         description: "PULSE IMPETUS 1.0 TURBO 200 Flex Aut.",
         featured: true,
+        vehicleType: "car",
+        transmission: "Automático",
+        fuel: "Flex",
+        bodyType: "SUV",
         imageUrl: "https://images.unsplash.com/photo-1619767886558-efdc259cde1a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
       },
       {
@@ -93,6 +106,10 @@ async function seed() {
         mileage: 15780,
         description: "HB20 Comfort Plus 1.0 TB Flex 12V Mec. - Prata - 2023",
         featured: true,
+        vehicleType: "car",
+        transmission: "Manual",
+        fuel: "Flex",
+        bodyType: "Hatch",
         imageUrl: "https://images.unsplash.com/photo-1609521263047-f8f205293f24?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
       },
       {
@@ -105,6 +122,10 @@ async function seed() {
         mileage: 45230,
         description: "Ranger Limited 2.0 4x4 CD Aut.",
         featured: false,
+        vehicleType: "car",
+        transmission: "Automático",
+        fuel: "Diesel",
+        bodyType: "Picape",
         imageUrl: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&q=80"
       },
       {
@@ -117,7 +138,44 @@ async function seed() {
         mileage: 22500,
         description: "Corolla Cross XRE 2.0 16V Flex Aut.",
         featured: false,
+        vehicleType: "car",
+        transmission: "Automático",
+        fuel: "Flex",
+        bodyType: "SUV",
         imageUrl: "https://images.unsplash.com/photo-1547038577-da80abbc4f19?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&q=80"
+      },
+      // Motos
+      {
+        brandId: brandMap.get("YAMAHA"),
+        model: "MT-07 690cc",
+        year: "2023/2023",
+        color: "Azul",
+        price: "52900",
+        originalPrice: "54900",
+        mileage: 3500,
+        description: "YAMAHA MT-07 690cc - Moto esportiva em excelente estado",
+        featured: true,
+        vehicleType: "motorcycle",
+        transmission: "Manual",
+        fuel: "Gasolina",
+        bodyType: "Naked",
+        imageUrl: "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
+      },
+      {
+        brandId: brandMap.get("Honda"),
+        model: "CG 160 Titan",
+        year: "2022/2022",
+        color: "Vermelho",
+        price: "16900",
+        originalPrice: "17500",
+        mileage: 12000,
+        description: "Honda CG 160 Titan - Motocicleta ideal para o dia a dia",
+        featured: false,
+        vehicleType: "motorcycle",
+        transmission: "Manual",
+        fuel: "Flex",
+        bodyType: "Street",
+        imageUrl: "https://images.unsplash.com/photo-1558979159-2b18a4070a87?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&q=80"
       }
     ];
 

@@ -28,6 +28,7 @@ export const vehicles = pgTable('vehicles', {
   transmission: text('transmission').default('Manual'), // Automatizado, Automático, Manual
   fuel: text('fuel').default('Flex'), // Diesel, Flex, Gasolina, Gasolina e Elétrico
   bodyType: text('body_type'), // Carroceria: Sedan, SUV, etc.
+  vehicleType: text('vehicle_type').default('car'), // 'car' ou 'motorcycle'
   createdAt: timestamp('created_at').defaultNow().notNull()
 });
 

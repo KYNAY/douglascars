@@ -4,7 +4,8 @@ import { CarCard } from "@/components/car-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FaSearch, FaSort } from "react-icons/fa";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FaSearch, FaSort, FaCar, FaMotorcycle } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 
 interface Brand {
@@ -26,6 +27,10 @@ interface Vehicle {
   featured: boolean;
   sold: boolean;
   imageUrl: string;
+  transmission?: string;
+  fuel?: string;
+  bodyType?: string;
+  vehicleType?: 'car' | 'motorcycle';
   brand?: Brand;
 }
 
@@ -38,6 +43,9 @@ export default function Inventory() {
   const [searchTerm, setSearchTerm] = useState(urlParams.get('search') || "");
   const [selectedBrand, setSelectedBrand] = useState(urlParams.get('brandId') || "all");
   const [sortBy, setSortBy] = useState("newest");
+  const [vehicleType, setVehicleType] = useState<'all' | 'car' | 'motorcycle'>(
+    (urlParams.get('vehicleType') as 'car' | 'motorcycle' | null) || 'all'
+  );
   
   // Query for brands
   const { data: brands } = useQuery<Brand[]>({

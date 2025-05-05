@@ -31,7 +31,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         transmission,
         fuel,
         bodyType,
-        color
+        color,
+        vehicleType
       } = req.query;
       
       let conditions: SQL[] = [not(eq(vehicles.sold, true))];
@@ -50,6 +51,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (featured === 'true') {
         conditions.push(eq(vehicles.featured, true));
+      }
+      
+      // Filtro por tipo de veículo (carro ou moto)
+      if (vehicleType) {
+        conditions.push(eq(vehicles.vehicleType, String(vehicleType)));
       }
       
       // Filtro de preço
