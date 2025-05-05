@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import { LineChart, DollarSign, Calculator, CheckCircle, AlertCircle } from "lucide-react";
+import { DollarSign, Calculator, CheckCircle } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
 const formSchema = z.object({
@@ -93,11 +92,12 @@ export default function Finance() {
     <div className="pt-24 pb-16">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-3xl font-poppins font-bold mb-2">Simule seu Financiamento</h1>
+          <h1 className="text-3xl font-poppins font-bold mb-2">Financiamento Douglas Auto Car</h1>
           <p className="text-gray-400 mb-8">
-            Faça uma simulação do financiamento do seu novo veículo e veja as condições oferecidas pelas principais financeiras do mercado.
+            Facilidade e taxas especiais para financiamento do seu veículo.
           </p>
           
+          {/* Simulador */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <div className="glass-card rounded-xl p-8">
@@ -268,7 +268,7 @@ export default function Finance() {
                     
                     <Button 
                       type="submit" 
-                      className="w-full bg-primary hover:bg-red-700 h-12 text-lg" 
+                      className="w-full bg-primary hover:bg-blue-700 h-12 text-lg" 
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? "Enviando..." : "Simular Financiamento"}

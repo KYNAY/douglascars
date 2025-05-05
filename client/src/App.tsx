@@ -24,6 +24,7 @@ function Router() {
       <Route path="/estoque/:id" component={VehicleDetail} />
       <Route path="/venda-seu-carro" component={SellYourCar} />
       <Route path="/financie" component={Finance} />
+      <Route path="/avaliacao" component={Avaliacao} />
       <Route path="/sobre" component={About} />
       <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
