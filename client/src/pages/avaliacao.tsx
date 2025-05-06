@@ -63,8 +63,6 @@ export default function Avaliacao() {
       email: values.email,
       phone: values.telefone,
       vehicleInfo: `${values.marca} ${values.modelo} ${values.anoModelo}, ${values.cor}, ${values.combustivel}`,
-      requestDate: new Date().toISOString(),
-      status: 'pending',
       notes: values.informacoesAdicionais || null,
     };
     

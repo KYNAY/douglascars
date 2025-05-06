@@ -88,8 +88,6 @@ export default function Finance() {
       phone: values.phone,
       income: values.income,
       vehicleInfo: `Veículo de R$ ${formatPrice(values.vehicleValue)} com entrada de R$ ${formatPrice(values.downPayment)}`,
-      requestDate: new Date().toISOString(),
-      status: 'pending',
       notes: `Simulação: ${values.term} meses, parcela de ${formatPrice(payment)}, CPF: ${values.cpf}`
     };
     
