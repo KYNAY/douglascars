@@ -809,7 +809,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let query = db.select().from(evaluationRequests);
       
       if (status && status !== 'all') {
-        query = query.where(eq(evaluationRequests.status, String(status)));
+        // Usamos a verificação de casting para garantir que o status seja um valor válido
+        const statusStr = String(status);
+        const validStatus = ['pending', 'contacted', 'completed', 'cancelled'].includes(statusStr) 
+          ? statusStr as 'pending' | 'contacted' | 'completed' | 'cancelled'
+          : 'pending';
+          
+        query = query.where(eq(evaluationRequests.status, validStatus));
       }
       
       const evaluationRequestsList = await query.orderBy(desc(evaluationRequests.requestDate));
@@ -910,7 +916,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let query = db.select().from(financingRequests);
       
       if (status && status !== 'all') {
-        query = query.where(eq(financingRequests.status, String(status)));
+        // Usamos a verificação de casting para garantir que o status seja um valor válido
+        const statusStr = String(status);
+        const validStatus = ['pending', 'in_review', 'approved', 'denied'].includes(statusStr) 
+          ? statusStr as 'pending' | 'in_review' | 'approved' | 'denied' 
+          : 'pending';
+          
+        query = query.where(eq(financingRequests.status, validStatus));
       }
       
       const financingRequestsList = await query.orderBy(desc(financingRequests.requestDate));
