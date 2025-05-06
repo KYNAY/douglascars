@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { FaSearch, FaWhatsapp, FaChevronLeft, FaChevronRight } from "react-icons/fa";
@@ -53,6 +53,14 @@ export function HeroSection() {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
+  
+  // Desativar a rotação automática que estava causando o efeito de piscar
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     nextSlide();
+  //   }, 5000);
+  //   return () => clearInterval(interval);
+  // }, []);
   
   return (
     <section className="pt-24 pb-16">

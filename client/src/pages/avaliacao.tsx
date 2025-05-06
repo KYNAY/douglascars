@@ -24,7 +24,6 @@ const formSchema = z.object({
   nome: z.string().min(1, "Campo obrigatório"),
   email: z.string().email("E-mail inválido"),
   telefone: z.string().min(10, "Número inválido"),
-  celular: z.string().min(10, "Número inválido"),
   
   // Informações Adicionais
   informacoesAdicionais: z.string().optional(),
@@ -48,7 +47,6 @@ export default function Avaliacao() {
       nome: "",
       email: "",
       telefone: "",
-      celular: "",
       informacoesAdicionais: "",
       aceitaTermos: false,
     },
@@ -258,25 +256,9 @@ export default function Avaliacao() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Telefone</FormLabel>
-                      <div className="flex">
-                        <Input placeholder="DDD" className="w-16 mr-2" />
-                        <Input placeholder="Telefone" className="flex-1" />
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="celular"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Celular</FormLabel>
-                      <div className="flex">
-                        <Input placeholder="DDD" className="w-16 mr-2" />
-                        <Input placeholder="Seu celular" className="flex-1" />
-                      </div>
+                      <FormControl>
+                        <Input placeholder="(00) 00000-0000" className="glass-search border-none" {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
