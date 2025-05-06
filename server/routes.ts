@@ -958,7 +958,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         createdAt: new Date().toISOString()
       }).returning();
       
-      return res.status(201).json(newRequest);
+      return res.status(201).json({
+        success: true,
+        message: "Evaluation request received successfully",
+        request: newRequest
+      });
     } catch (error) {
       console.error("Error creating evaluation request:", error);
       return res.status(500).json({ error: "Failed to create evaluation request" });
@@ -1067,7 +1071,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         createdAt: new Date().toISOString()
       }).returning();
       
-      return res.status(201).json(newRequest);
+      return res.status(201).json({
+        success: true,
+        message: "Financing request received successfully",
+        request: newRequest
+      });
     } catch (error) {
       console.error("Error creating financing request:", error);
       return res.status(500).json({ error: "Failed to create financing request" });
