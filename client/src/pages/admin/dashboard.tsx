@@ -447,7 +447,323 @@ export default function AdminDashboard() {
           <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
         
-        {/* Conteúdo existente... */}
+        <TabsContent value="vehicles" className="space-y-4">
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <CardTitle>Gerenciar Veículos</CardTitle>
+                <CardDescription>
+                  Adicione, edite ou remova veículos do inventário.
+                </CardDescription>
+              </div>
+              <Button className="flex items-center gap-2">
+                <Plus size={16} /> Adicionar Veículo
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {isLoadingVehicles ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                </div>
+              ) : (
+                <div className="rounded-md border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Modelo</TableHead>
+                        <TableHead>Marca</TableHead>
+                        <TableHead>Ano</TableHead>
+                        <TableHead>Preço</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {vehicles?.map((vehicle) => (
+                        <TableRow key={vehicle.id}>
+                          <TableCell className="font-medium">{vehicle.model}</TableCell>
+                          <TableCell>{brands?.find(b => b.id === vehicle.brandId)?.name || "-"}</TableCell>
+                          <TableCell>{vehicle.year}</TableCell>
+                          <TableCell>{formatPrice(vehicle.price)}</TableCell>
+                          <TableCell>
+                            {vehicle.sold ? (
+                              <Badge variant="destructive">Vendido</Badge>
+                            ) : vehicle.featured ? (
+                              <Badge variant="default">Destaque</Badge>
+                            ) : (
+                              <Badge variant="outline">Disponível</Badge>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => {
+                                  // Implementar edição de veículo
+                                }}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                onClick={() => {
+                                  // Implementar gerenciamento de imagens
+                                }}
+                              >
+                                <ImageIcon className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {!vehicles || vehicles.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={6} className="h-24 text-center">
+                            Nenhum veículo cadastrado.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="ranking" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Ranking de Vendedores</CardTitle>
+              <CardDescription>
+                Desempenho dos vendedores da concessionária.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingDealers ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                </div>
+              ) : (
+                <div className="rounded-md border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Posição</TableHead>
+                        <TableHead className="cursor-pointer" onClick={() => handleSort("name")}>
+                          Nome {sortConfig.key === "name" && (
+                            sortConfig.direction === "asc" ? <ArrowUp className="inline h-4 w-4" /> : <ArrowDown className="inline h-4 w-4" />
+                          )}
+                        </TableHead>
+                        <TableHead className="cursor-pointer" onClick={() => handleSort("sales")}>
+                          Vendas {sortConfig.key === "sales" && (
+                            sortConfig.direction === "asc" ? <ArrowUp className="inline h-4 w-4" /> : <ArrowDown className="inline h-4 w-4" />
+                          )}
+                        </TableHead>
+                        <TableHead className="cursor-pointer" onClick={() => handleSort("points")}>
+                          Pontos {sortConfig.key === "points" && (
+                            sortConfig.direction === "asc" ? <ArrowUp className="inline h-4 w-4" /> : <ArrowDown className="inline h-4 w-4" />
+                          )}
+                        </TableHead>
+                        <TableHead>Data de Início</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {sortedDealers.map((dealer, index) => (
+                        <TableRow key={dealer.id}>
+                          <TableCell>
+                            {index === 0 ? (
+                              <Trophy className="h-5 w-5 text-yellow-500" />
+                            ) : index === 1 ? (
+                              <Trophy className="h-5 w-5 text-gray-400" />
+                            ) : index === 2 ? (
+                              <Trophy className="h-5 w-5 text-amber-600" />
+                            ) : (
+                              `${index + 1}º`
+                            )}
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            <div className="flex items-center gap-2">
+                              <Avatar className="h-7 w-7">
+                                <AvatarFallback>{getInitial(dealer.name)}</AvatarFallback>
+                              </Avatar>
+                              {dealer.name}
+                            </div>
+                          </TableCell>
+                          <TableCell>{dealer.sales}</TableCell>
+                          <TableCell>{dealer.points}</TableCell>
+                          <TableCell>{dealer.startDate}</TableCell>
+                        </TableRow>
+                      ))}
+                      {!dealers || dealers.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="h-24 text-center">
+                            Nenhum vendedor cadastrado.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="brands" className="space-y-4">
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <CardTitle>Gerenciar Marcas</CardTitle>
+                <CardDescription>
+                  Adicione, edite ou remova marcas de veículos.
+                </CardDescription>
+              </div>
+              <Button className="flex items-center gap-2">
+                <Plus size={16} /> Adicionar Marca
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {isLoadingBrands ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {brands?.map((brand) => (
+                    <Card key={brand.id} className="overflow-hidden">
+                      <div className="p-6 flex flex-col items-center text-center">
+                        <div className="w-20 h-20 flex items-center justify-center mb-4">
+                          <img 
+                            src={brand.logoUrl} 
+                            alt={`Logo da ${brand.name}`} 
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        </div>
+                        <h3 className="font-semibold">{brand.name}</h3>
+                      </div>
+                      <CardFooter className="flex justify-center gap-2 p-4 pt-0">
+                        <Button variant="ghost" size="sm">
+                          <Pencil className="h-4 w-4 mr-1" /> Editar
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))}
+                  {!brands || brands.length === 0 && (
+                    <div className="col-span-full text-center py-8">
+                      Nenhuma marca cadastrada.
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="featured" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Veículos em Destaque</CardTitle>
+              <CardDescription>
+                Gerencie os veículos que aparecem em destaque na página inicial.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingVehicles ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                </div>
+              ) : (
+                <div className="rounded-md border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Modelo</TableHead>
+                        <TableHead>Marca</TableHead>
+                        <TableHead>Preço</TableHead>
+                        <TableHead>Em destaque</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {vehicles?.map((vehicle) => (
+                        <TableRow key={vehicle.id}>
+                          <TableCell className="font-medium">{vehicle.model}</TableCell>
+                          <TableCell>{brands?.find(b => b.id === vehicle.brandId)?.name || "-"}</TableCell>
+                          <TableCell>{formatPrice(vehicle.price)}</TableCell>
+                          <TableCell>
+                            <Checkbox
+                              checked={vehicle.featured}
+                              onCheckedChange={() => {
+                                // Implementar mudança de destaque
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => {
+                                // Implementar visualização
+                              }}
+                            >
+                              <Eye className="h-4 w-4 mr-1" /> Visualizar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {!vehicles || vehicles.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="h-24 text-center">
+                            Nenhum veículo cadastrado.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="settings" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações</CardTitle>
+              <CardDescription>
+                Configurações gerais do sistema.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Email para Recebimento de Contatos</h3>
+                  <div className="flex gap-2">
+                    <Input defaultValue="caiquewm@gmail.com" />
+                    <Button>Salvar</Button>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-medium mb-2">Configurações de Notificações</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="notification-email" />
+                      <Label htmlFor="notification-email">Receber notificações por email</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="notification-sms" />
+                      <Label htmlFor="notification-sms">Receber notificações por SMS</Label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="requests" className="space-y-4">
           <Card>
