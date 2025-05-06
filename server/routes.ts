@@ -946,14 +946,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required fields" });
       }
       
+      // Criar a solicitação no banco de dados
       const [newRequest] = await db.insert(evaluationRequests).values({
         name,
         email,
         phone,
         vehicleInfo,
-        requestDate: new Date(),
+        requestDate: new Date().toISOString(),
         status: 'pending',
-        notes: req.body.notes || null
+        notes: req.body.notes || null,
+        createdAt: new Date().toISOString()
       }).returning();
       
       return res.status(201).json(newRequest);
