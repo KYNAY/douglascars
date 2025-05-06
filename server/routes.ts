@@ -753,38 +753,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // API para formulários de financiamento
-  app.post(`${apiPrefix}/financing-requests`, async (req, res) => {
-    try {
-      const { name, email, phone, vehicleInfo, income } = req.body;
-      
-      // Validar campos obrigatórios
-      if (!name || !email || !phone || !vehicleInfo) {
-        return res.status(400).json({ error: "Missing required fields" });
-      }
-      
-      // Aqui você salvaria os dados no banco em uma tabela específica
-      // Por enquanto, apenas simulamos um retorno de sucesso
-      
-      return res.status(201).json({
-        success: true,
-        message: "Financing request received successfully",
-        request: {
-          id: Date.now(),
-          name,
-          email,
-          phone,
-          vehicleInfo,
-          income: income || "Não informado",
-          requestDate: new Date(),
-          status: 'pending'
-        }
-      });
-    } catch (error) {
-      console.error("Error submitting financing request:", error);
-      return res.status(500).json({ error: "Failed to submit financing request" });
-    }
-  });
+  // API para formulários de financiamento - redirecionado para a implementação principal
 
   // APIs para gerenciar imagens adicionais dos veículos
   app.get(`${apiPrefix}/vehicles/:vehicleId/images`, async (req, res) => {

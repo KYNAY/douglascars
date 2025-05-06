@@ -161,11 +161,9 @@ export default function Avaliacao() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Ano/Modelo</FormLabel>
-                      <div className="flex">
-                        <Input placeholder="Fab" className="w-16 mr-2" {...field} />
-                        <span className="flex items-center">/</span>
-                        <Input placeholder="Mod" className="w-16 ml-2" />
-                      </div>
+                      <FormControl>
+                        <Input placeholder="2023/2024" className="w-full" {...field} />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
