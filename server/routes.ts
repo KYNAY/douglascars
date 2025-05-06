@@ -1061,9 +1061,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phone,
         vehicleInfo,
         income,
-        requestDate: new Date(),
+        requestDate: new Date().toISOString(),
         status: 'pending',
-        notes: req.body.notes || null
+        notes: req.body.notes || null,
+        createdAt: new Date().toISOString()
       }).returning();
       
       return res.status(201).json(newRequest);
