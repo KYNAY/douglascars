@@ -1,0 +1,19 @@
+{
+  auto_https off
+}
+
+:80 {
+  root * /app/dist/public
+  encode gzip
+  try_files {path} /index.html
+  
+  # Proxy API requests to the Node.js backend
+  handle /api/* {
+    reverse_proxy localhost:3000
+  }
+  
+  # Serve static files
+  handle {
+    file_server
+  }
+}

@@ -1,0 +1,149 @@
+Commit: Configure the application for deployment on various hosting platforms
+
+Adds deployment configurations for NixPak, Netlify, and Vercel, including environment variables, redirects and build commands.
+
+Replit-Commit-Author: Agent
+Replit-Commit-Session-Id: a549b8c4-38ce-47c3-948d-a60eddf172c1
+Replit-Commit-Screenshot-Url: https://storage.googleapis.com/screenshot-production-us-central1/2316283c-e4c7-4fca-a141-be46eb69a731/bf5eecac-c3e3-4232-b424-8ee7b95b3060.jpg 
+##########################################
+### Download Github Archive Started...
+### Tue, 06 May 2025 22:33:13 GMT
+##########################################
+
+
+╔══════════════════════════════ Nixpacks v1.34.1 ══════════════════════════════╗
+║ setup      │ nodejs_18, npm-9_x, openssl                                     ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ caddy      │ pkgs: caddy                                                     ║
+║            │ cmds: caddy fmt --overwrite /assets/Caddyfile                   ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ install    │ npm ci                                                          ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ build      │ npm run build                                                   ║
+║──────────────────────────────────────────────────────────────────────────────║
+║ start      │ exec caddy run --config /assets/Caddyfile --adapter caddyfile   ║
+║            │ 2>&1                                                            ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+
+Saved output to:
+  /etc/easypanel/projects/tracker/douglascars/code/
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.47kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for ghcr.io/railwayapp/nixpacks:ubuntu-1741046653
+#2 DONE 0.2s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [stage-0  1/15] FROM ghcr.io/railwayapp/nixpacks:ubuntu-1741046653@sha256:ed406b77fb751927991b8655e76c33a4521c4957c2afeab293be7c63c2a373d2
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 15.71MB 0.1s done
+#5 DONE 0.1s
+
+#6 [stage-0  5/15] COPY .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix
+#6 CACHED
+
+#7 [stage-0  2/15] WORKDIR /app/
+#7 CACHED
+
+#8 [stage-0  3/15] COPY .nixpacks/nixpkgs-ba913eda2df8eb72147259189d55932012df6301.nix .nixpacks/nixpkgs-ba913eda2df8eb72147259189d55932012df6301.nix
+#8 CACHED
+
+#9 [stage-0  6/15] RUN nix-env -if .nixpacks/nixpkgs-ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7.nix && nix-collect-garbage -d
+#9 CACHED
+
+#10 [stage-0  4/15] RUN nix-env -if .nixpacks/nixpkgs-ba913eda2df8eb72147259189d55932012df6301.nix && nix-collect-garbage -d
+#10 CACHED
+
+#11 [stage-0  7/15] COPY .nixpacks/assets /assets/
+#11 CACHED
+
+#12 [stage-0  8/15] COPY . /app/.
+#12 DONE 0.1s
+
+#13 [stage-0  9/15] RUN  caddy fmt --overwrite /assets/Caddyfile
+#13 DONE 0.3s
+
+#14 [stage-0 10/15] COPY . /app/.
+#14 DONE 0.1s
+
+#15 [stage-0 11/15] RUN --mount=type=cache,id=6mA861KeX5Q-/root/npm,target=/root/.npm npm ci
+#15 8.323 npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+#15 8.611 npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+#15 23.76 
+#15 23.76 added 554 packages, and audited 555 packages in 23s
+#15 23.76 
+#15 23.76 61 packages are looking for funding
+#15 23.76   run `npm fund` for details
+#15 23.83 
+#15 23.83 5 moderate severity vulnerabilities
+#15 23.83 
+#15 23.83 To address issues that do not require attention, run:
+#15 23.83   npm audit fix
+#15 23.83 
+#15 23.83 To address all issues (including breaking changes), run:
+#15 23.83   npm audit fix --force
+#15 23.83 
+#15 23.83 Run `npm audit` for details.
+#15 DONE 24.3s
+
+#16 [stage-0 12/15] COPY . /app/.
+#16 DONE 0.3s
+
+#17 [stage-0 13/15] RUN --mount=type=cache,id=6mA861KeX5Q-node_modules/cache,target=/app/node_modules/.cache npm run build
+#17 0.837 
+#17 0.837 > rest-express@1.0.0 build
+#17 0.837 > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+#17 0.837 
+#17 1.257 vite v5.4.18 building for production...
+#17 1.377 transforming...
+#17 10.83 ✓ 1762 modules transformed.
+#17 11.82 rendering chunks...
+#17 11.83 computing gzip size...
+#17 11.86 ../dist/public/index.html                   1.11 kB │ gzip:   0.61 kB
+#17 11.86 ../dist/public/assets/index-DLLPVLCV.css   76.44 kB │ gzip:  12.81 kB
+#17 11.86 ../dist/public/assets/index-CZTlRN1x.js   716.75 kB │ gzip: 198.99 kB
+#17 11.86 
+#17 11.86 (!) Some chunks are larger than 500 kB after minification. Consider:
+#17 11.86 - Using dynamic import() to code-split the application
+#17 11.86 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+#17 11.86 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+#17 11.86 ✓ built in 10.55s
+#17 11.94 
+#17 11.94   dist/index.js  45.6kb
+#17 11.94 
+#17 11.94 ⚡ Done in 22ms
+#17 11.95 npm notice
+#17 11.95 npm notice New major version of npm available! 10.8.2 -> 11.3.0
+#17 11.95 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+#17 11.95 npm notice To update run: npm install -g npm@11.3.0
+#17 11.95 npm notice
+#17 DONE 12.0s
+
+#18 [stage-0 14/15] RUN printf '\nPATH=/app/node_modules/.bin:$PATH' >> /root/.profile
+#18 DONE 0.1s
+
+#19 [stage-0 15/15] COPY . /app
+#19 DONE 0.1s
+
+#20 exporting to image
+#20 exporting layers
+#20 exporting layers 12.3s done
+#20 writing image sha256:772031d0e0837a9d8955795f5d07d5da47afaa51eb8273d6dd4bb4219ce8f18a done
+#20 naming to docker.io/easypanel/tracker/douglascars done
+#20 DONE 12.3s
+
+ 1 warning found (use docker --debug to expand):
+ - UndefinedVar: Usage of undefined variable '$NIXPACKS_PATH' (line 24)
+##########################################
+### Success
+### Tue, 06 May 2025 22:34:06 GMT
+##########################################
