@@ -402,7 +402,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Dealers and sales routes
+  // Dealer routes
   app.get(`${apiPrefix}/dealers/ranking`, async (req, res) => {
     try {
       const dealersRanking = await db.select().from(dealers).orderBy(desc(dealers.points));
@@ -410,6 +410,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching dealer rankings:", error);
       return res.status(500).json({ error: "Failed to fetch dealer rankings" });
+    }
+  });
+  
+  // Create new dealer
+  app.post(`${apiPrefix}/dealers`, async (req, res) => {
+    try {
+      const dealerData = dealersInsertSchema.parse(req.body);
+      
+      // Check if dealer with same email already exists
+      const existingDealer = await db.select().from(dealers).where(eq(dealers.email, dealerData.email)).limit(1);
+      if (existingDealer.length > 0) {
+        return res.status(400).json({ error: "Dealer with this email already exists" });
+      }
+      
+      const [newDealer] = await db.insert(dealers).values(dealerData).returning();
+      return res.status(201).json(newDealer);
+    } catch (error) {
+      console.error("Error creating dealer:", error);
+      return res.status(500).json({ error: "Failed to create dealer" });
+    }
+  });
+  
+  // Delete dealer
+  app.delete(`${apiPrefix}/dealers/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Check if dealer exists
+      const existingDealer = await db.select().from(dealers).where(eq(dealers.id, Number(id))).limit(1);
+      if (!existingDealer.length) {
+        return res.status(404).json({ error: "Dealer not found" });
+      }
+      
+      await db.delete(dealers).where(eq(dealers.id, Number(id)));
+      return res.json({ success: true, message: "Dealer deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting dealer:", error);
+      return res.status(500).json({ error: "Failed to delete dealer" });
+    }
+  });
+  
+  // Delete all dealers
+  app.delete(`${apiPrefix}/dealers`, async (req, res) => {
+    try {
+      await db.delete(dealers);
+      return res.json({ success: true, message: "All dealers deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting all dealers:", error);
+      return res.status(500).json({ error: "Failed to delete all dealers" });
+    }
+  });
+  
+  // Mark vehicle as sold and assign to dealer
+  app.patch(`${apiPrefix}/vehicles/:id/sold`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { dealerId, soldDate } = req.body;
+      
+      if (!dealerId) {
+        return res.status(400).json({ error: "Dealer ID is required" });
+      }
+      
+      // Check if vehicle exists and is not sold
+      const vehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(id))).limit(1);
+      if (!vehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+      if (vehicle[0].sold) {
+        return res.status(400).json({ error: "Vehicle is already sold" });
+      }
+      
+      // Check if dealer exists
+      const dealer = await db.select().from(dealers).where(eq(dealers.id, dealerId)).limit(1);
+      if (!dealer.length) {
+        return res.status(404).json({ error: "Dealer not found" });
+      }
+      
+      // Update vehicle as sold
+      await db.update(vehicles)
+        .set({ sold: true })
+        .where(eq(vehicles.id, Number(id)));
+      
+      // Record the sale
+      const salePrice = typeof vehicle[0].price === 'string' 
+        ? parseFloat(vehicle[0].price) 
+        : vehicle[0].price;
+        
+      const [newSale] = await db.insert(sales).values({
+        vehicleId: Number(id),
+        dealerId: dealerId,
+        salePrice: salePrice,
+        saleDate: soldDate ? new Date(soldDate) : new Date()
+      }).returning();
+      
+      // Update dealer points and sales count
+      await db.update(dealers)
+        .set({ 
+          sales: dealer[0].sales + 1,
+          points: dealer[0].points + 10 // 10 points per sale
+        })
+        .where(eq(dealers.id, dealerId));
+      
+      return res.status(201).json({
+        success: true,
+        sale: newSale
+      });
+    } catch (error) {
+      console.error("Error marking vehicle as sold:", error);
+      return res.status(500).json({ error: "Failed to mark vehicle as sold" });
     }
   });
 

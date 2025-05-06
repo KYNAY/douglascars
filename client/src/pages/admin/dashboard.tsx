@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag } from "lucide-react";
+import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag, ShoppingCart } from "lucide-react";
 import { getInitial, formatPrice } from "@/lib/utils";
 import { VehicleImagesManager } from "@/components/admin/vehicle-images-manager";
 import { useToast } from "@/hooks/use-toast";
@@ -547,7 +547,9 @@ export default function AdminDashboard() {
     refetch: refetchEvaluations
   } = useQuery<EvaluationRequest[]>({
     queryKey: ['/api/evaluation-requests'],
-    enabled: isAuthenticated && activeTab === 'requests'
+    enabled: isAuthenticated,
+    // Refetch a cada 30 segundos para verificar novas solicitações
+    refetchInterval: 30000
   });
   
   // Buscar dados de solicitações de financiamento
@@ -557,8 +559,53 @@ export default function AdminDashboard() {
     refetch: refetchFinancing
   } = useQuery<FinancingRequest[]>({
     queryKey: ['/api/financing-requests'],
-    enabled: isAuthenticated && activeTab === 'requests'
+    enabled: isAuthenticated,
+    // Refetch a cada 30 segundos para verificar novas solicitações
+    refetchInterval: 30000
   });
+  
+  // Verificar novas solicitações
+  useEffect(() => {
+    // Verificar se há novas solicitações de avaliação
+    if (evaluationRequests && evaluationRequests.length > 0) {
+      // Inicializar contagem se for a primeira verificação
+      if (lastCheckedEvaluationCount === 0) {
+        setLastCheckedEvaluationCount(evaluationRequests.length);
+      } 
+      // Verificar se há novas solicitações
+      else if (evaluationRequests.length > lastCheckedEvaluationCount) {
+        setHasNewEvaluations(true);
+      }
+    }
+    
+    // Verificar se há novas solicitações de financiamento
+    if (financingRequests && financingRequests.length > 0) {
+      // Inicializar contagem se for a primeira verificação
+      if (lastCheckedFinancingCount === 0) {
+        setLastCheckedFinancingCount(financingRequests.length);
+      } 
+      // Verificar se há novas solicitações
+      else if (financingRequests.length > lastCheckedFinancingCount) {
+        setHasNewFinancings(true);
+      }
+    }
+  }, [evaluationRequests, financingRequests, lastCheckedEvaluationCount, lastCheckedFinancingCount]);
+  
+  // Resetar notificações quando a aba de solicitações for aberta
+  useEffect(() => {
+    if (activeTab === 'requests') {
+      // Atualizar contagens
+      if (evaluationRequests) {
+        setLastCheckedEvaluationCount(evaluationRequests.length);
+        setHasNewEvaluations(false);
+      }
+      
+      if (financingRequests) {
+        setLastCheckedFinancingCount(financingRequests.length);
+        setHasNewFinancings(false);
+      }
+    }
+  }, [activeTab, evaluationRequests, financingRequests]);
 
   // Ordenar vendedores para o ranking
   const sortedDealers = dealers ? [...dealers].sort((a, b) => {
@@ -630,7 +677,17 @@ export default function AdminDashboard() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap">
           <TabsTrigger value="vehicles">Veículos</TabsTrigger>
-          <TabsTrigger value="requests">Solicitações</TabsTrigger>
+          <TabsTrigger value="requests" className="relative">
+            Solicitações
+            {(hasNewEvaluations || hasNewFinancings) && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-primary items-center justify-center">
+                  <span className="text-[10px] font-bold text-white">!</span>
+                </span>
+              </span>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="ranking">Vendedores</TabsTrigger>
           <TabsTrigger value="brands">Marcas</TabsTrigger>
           <TabsTrigger value="featured">Destaques</TabsTrigger>
