@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +16,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag } from "lucide-react";
 import { getInitial, formatPrice } from "@/lib/utils";
 import { VehicleImagesManager } from "@/components/admin/vehicle-images-manager";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface Dealer {
   id: number;
@@ -83,6 +85,8 @@ export default function AdminDashboard() {
     key: "points",
     direction: "desc"
   });
+  const { toast } = useToast();
+  const vehicleFormRef = useRef<HTMLFormElement>(null);
   
   // Estado para o diálogo de criação/edição de veículos
   const [isVehicleDialogOpen, setIsVehicleDialogOpen] = useState(false);
@@ -102,6 +106,80 @@ export default function AdminDashboard() {
   const [selectedEvaluation, setSelectedEvaluation] = useState<EvaluationRequest | null>(null);
   const [selectedFinancing, setSelectedFinancing] = useState<FinancingRequest | null>(null);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  
+  // Mutação para atualizar veículo
+  const updateVehicleMutation = useMutation({
+    mutationFn: async (updatedVehicle: Vehicle) => {
+      return await apiRequest(`/api/vehicles/${updatedVehicle.id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updatedVehicle),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Veículo atualizado",
+        description: "O veículo foi atualizado com sucesso.",
+      });
+      setIsVehicleDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['/api/vehicles'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao atualizar veículo",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Mutação para criar veículo
+  const createVehicleMutation = useMutation({
+    mutationFn: async (newVehicle: Omit<Vehicle, 'id'>) => {
+      return await apiRequest('/api/vehicles', {
+        method: 'POST',
+        body: JSON.stringify(newVehicle),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Veículo adicionado",
+        description: "O veículo foi adicionado com sucesso.",
+      });
+      setIsVehicleDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['/api/vehicles'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao adicionar veículo",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Mutação para excluir veículo
+  const deleteVehicleMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/vehicles/${id}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Veículo excluído",
+        description: "O veículo foi excluído com sucesso.",
+      });
+      setIsDeleteVehicleDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['/api/vehicles'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao excluir veículo",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
 
   // Verificar autenticação
   useEffect(() => {
@@ -447,93 +525,139 @@ export default function AdminDashboard() {
                 </DialogDescription>
               </DialogHeader>
               
-              <div className="grid gap-4 py-4">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <Label htmlFor="model">Modelo</Label>
-                    <Input id="model" placeholder="Ex.: Hilux SRX" defaultValue={selectedVehicle?.model} />
+              <form
+                ref={vehicleFormRef}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  
+                  const vehicleData = {
+                    brandId: Number(formData.get('brand')),
+                    model: formData.get('model') as string,
+                    year: formData.get('year') as string,
+                    color: formData.get('color') as string,
+                    price: Number(formData.get('price')),
+                    originalPrice: formData.get('originalPrice') ? Number(formData.get('originalPrice')) : null,
+                    mileage: Number(formData.get('mileage')),
+                    description: formData.get('description') as string,
+                    imageUrl: formData.get('imageUrl') as string,
+                    featured: formData.get('featured') === 'on',
+                    sold: formData.get('sold') === 'on',
+                  };
+                  
+                  if (selectedVehicle) {
+                    // Atualizar veículo existente
+                    updateVehicleMutation.mutate({
+                      ...vehicleData,
+                      id: selectedVehicle.id,
+                    });
+                  } else {
+                    // Criar novo veículo
+                    createVehicleMutation.mutate(vehicleData);
+                  }
+                }}
+              >
+                <div className="grid gap-4 py-4">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1">
+                      <Label htmlFor="model">Modelo</Label>
+                      <Input id="model" name="model" placeholder="Ex.: Hilux SRX" defaultValue={selectedVehicle?.model} required />
+                    </div>
+                    <div className="w-full md:w-1/3">
+                      <Label htmlFor="year">Ano</Label>
+                      <Input id="year" name="year" placeholder="Ex.: 2023" defaultValue={selectedVehicle?.year} required />
+                    </div>
                   </div>
-                  <div className="w-full md:w-1/3">
-                    <Label htmlFor="year">Ano</Label>
-                    <Input id="year" placeholder="Ex.: 2023" defaultValue={selectedVehicle?.year} />
+                  
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1">
+                      <Label htmlFor="brand">Marca</Label>
+                      <Select name="brand" defaultValue={selectedVehicle?.brandId?.toString()} required>
+                        <SelectTrigger id="brand">
+                          <SelectValue placeholder="Selecione a marca" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {brands?.map((brand) => (
+                            <SelectItem key={brand.id} value={brand.id.toString()}>
+                              {brand.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex-1">
+                      <Label htmlFor="color">Cor</Label>
+                      <Input id="color" name="color" placeholder="Ex.: Preto Metálico" defaultValue={selectedVehicle?.color} required />
+                    </div>
                   </div>
-                </div>
-                
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <Label htmlFor="brand">Marca</Label>
-                    <Select defaultValue={selectedVehicle?.brandId?.toString()}>
-                      <SelectTrigger id="brand">
-                        <SelectValue placeholder="Selecione a marca" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {brands?.map((brand) => (
-                          <SelectItem key={brand.id} value={brand.id.toString()}>
-                            {brand.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1">
+                      <Label htmlFor="price">Preço</Label>
+                      <Input id="price" name="price" placeholder="Ex.: 290900" defaultValue={selectedVehicle?.price} required />
+                    </div>
+                    <div className="flex-1">
+                      <Label htmlFor="originalPrice">Preço Original (opcional)</Label>
+                      <Input id="originalPrice" name="originalPrice" placeholder="Ex.: 310000" defaultValue={selectedVehicle?.originalPrice} />
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <Label htmlFor="color">Cor</Label>
-                    <Input id="color" placeholder="Ex.: Preto Metálico" defaultValue={selectedVehicle?.color} />
-                  </div>
-                </div>
-                
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1">
-                    <Label htmlFor="price">Preço</Label>
-                    <Input id="price" placeholder="Ex.: 290900" defaultValue={selectedVehicle?.price} />
-                  </div>
-                  <div className="flex-1">
+                  
+                  <div>
                     <Label htmlFor="mileage">Kilometragem</Label>
-                    <Input id="mileage" placeholder="Ex.: 15000" defaultValue={selectedVehicle?.mileage} />
+                    <Input id="mileage" name="mileage" type="number" placeholder="Ex.: 15000" defaultValue={selectedVehicle?.mileage} required />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="imageUrl">URL da Imagem Principal</Label>
+                    <Input id="imageUrl" name="imageUrl" placeholder="URL da imagem principal" defaultValue={selectedVehicle?.imageUrl} required />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="description">Descrição</Label>
+                    <Textarea 
+                      id="description" 
+                      name="description"
+                      placeholder="Descreva o veículo, seus opcionais e características"
+                      defaultValue={selectedVehicle?.description || ""}
+                      rows={4}
+                    />
+                  </div>
+                  
+                  {/* Gerenciador de imagens adicionais - só aparece na edição */}
+                  {selectedVehicle && selectedVehicle.id && (
+                    <div className="pt-4 border-t">
+                      <VehicleImagesManager vehicleId={selectedVehicle.id} />
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Checkbox id="featured" name="featured" defaultChecked={selectedVehicle?.featured} />
+                      <Label htmlFor="featured" className="cursor-pointer">Veículo em Destaque</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Checkbox id="sold" name="sold" defaultChecked={selectedVehicle?.sold} />
+                      <Label htmlFor="sold" className="cursor-pointer">Vendido</Label>
+                    </div>
                   </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="imageUrl">URL da Imagem Principal</Label>
-                  <Input id="imageUrl" placeholder="URL da imagem principal" defaultValue={selectedVehicle?.imageUrl} />
-                </div>
-                
-                <div>
-                  <Label htmlFor="description">Descrição</Label>
-                  <Textarea 
-                    id="description" 
-                    placeholder="Descreva o veículo, seus opcionais e características"
-                    defaultValue={selectedVehicle?.description || ""}
-                    rows={4}
-                  />
-                </div>
-                
-                {/* Gerenciador de imagens adicionais - só aparece na edição */}
-                {selectedVehicle && selectedVehicle.id && (
-                  <div className="pt-4 border-t">
-                    <VehicleImagesManager vehicleId={selectedVehicle.id} />
-                  </div>
-                )}
-                
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Checkbox id="featured" defaultChecked={selectedVehicle?.featured} />
-                    <Label htmlFor="featured" className="cursor-pointer">Veículo em Destaque</Label>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox id="sold" defaultChecked={selectedVehicle?.sold} />
-                    <Label htmlFor="sold" className="cursor-pointer">Vendido</Label>
-                  </div>
-                </div>
-              </div>
-              
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsVehicleDialogOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button type="submit">
-                  {selectedVehicle ? "Salvar Alterações" : "Adicionar Veículo"}
-                </Button>
-              </DialogFooter>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setIsVehicleDialogOpen(false)}>
+                    Cancelar
+                  </Button>
+                  <Button type="submit" disabled={createVehicleMutation.isPending || updateVehicleMutation.isPending}>
+                    {(createVehicleMutation.isPending || updateVehicleMutation.isPending) ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Salvando...
+                      </>
+                    ) : (
+                      selectedVehicle ? "Salvar Alterações" : "Adicionar Veículo"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
 
@@ -557,11 +681,20 @@ export default function AdminDashboard() {
                 <Button 
                   variant="destructive"
                   onClick={() => {
-                    // Implementar exclusão
-                    setIsDeleteVehicleDialogOpen(false);
+                    if (selectedVehicle) {
+                      deleteVehicleMutation.mutate(selectedVehicle.id);
+                    }
                   }}
+                  disabled={deleteVehicleMutation.isPending}
                 >
-                  Excluir
+                  {deleteVehicleMutation.isPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Excluindo...
+                    </>
+                  ) : (
+                    "Excluir"
+                  )}
                 </Button>
               </DialogFooter>
             </DialogContent>
