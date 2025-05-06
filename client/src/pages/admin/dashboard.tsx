@@ -310,13 +310,6 @@ export default function AdminDashboard() {
     }));
   };
 
-  const sortedDealers = dealers ? [...dealers].sort((a, b) => {
-    const key = sortConfig.key as keyof Dealer;
-    if (a[key] < b[key]) return sortConfig.direction === "asc" ? -1 : 1;
-    if (a[key] > b[key]) return sortConfig.direction === "asc" ? 1 : -1;
-    return 0;
-  }) : [];
-
   const handleLogout = () => {
     localStorage.removeItem("admin_authenticated");
     localStorage.removeItem("admin_email");
@@ -376,6 +369,14 @@ export default function AdminDashboard() {
     queryKey: ['/api/financing-requests'],
     enabled: isAuthenticated && activeTab === 'requests'
   });
+
+  // Ordenar vendedores para o ranking
+  const sortedDealers = dealers ? [...dealers].sort((a, b) => {
+    const key = sortConfig.key as keyof Dealer;
+    if (a[key] < b[key]) return sortConfig.direction === "asc" ? -1 : 1;
+    if (a[key] > b[key]) return sortConfig.direction === "asc" ? 1 : -1;
+    return 0;
+  }) : [];
 
   if (isAuthLoading) {
     return (
