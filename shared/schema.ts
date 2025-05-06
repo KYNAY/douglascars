@@ -1,7 +1,11 @@
-import { pgTable, text, serial, integer, timestamp, boolean, decimal } from 'drizzle-orm/pg-core';
+import { pgTable, text, serial, integer, timestamp, boolean, decimal, pgEnum } from 'drizzle-orm/pg-core';
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { relations } from 'drizzle-orm';
 import { z } from 'zod';
+
+// Enums para status das solicitações
+export const evaluationStatusEnum = pgEnum('evaluation_status', ['pending', 'contacted', 'completed', 'cancelled']);
+export const financingStatusEnum = pgEnum('financing_status', ['pending', 'in_review', 'approved', 'denied']);
 
 // Brands table
 export const brands = pgTable('brands', {
@@ -86,6 +90,33 @@ export const instagramPosts = pgTable('instagram_posts', {
   createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
+// Solicitações de avaliação
+export const evaluationRequests = pgTable('evaluation_requests', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone').notNull(),
+  vehicleInfo: text('vehicle_info').notNull(),
+  requestDate: timestamp('request_date').defaultNow().notNull(),
+  status: evaluationStatusEnum('status').default('pending').notNull(),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull()
+});
+
+// Solicitações de financiamento
+export const financingRequests = pgTable('financing_requests', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull(),
+  phone: text('phone').notNull(),
+  vehicleInfo: text('vehicle_info').notNull(),
+  income: text('income').notNull(),
+  requestDate: timestamp('request_date').defaultNow().notNull(),
+  status: financingStatusEnum('status').default('pending').notNull(),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow().notNull()
+});
+
 // Relations
 export const brandsRelations = relations(brands, ({ many }) => ({
   vehicles: many(vehicles)
@@ -162,3 +193,24 @@ export const instagramPostsInsertSchema = createInsertSchema(instagramPosts);
 export type InstagramPostInsert = z.infer<typeof instagramPostsInsertSchema>;
 export const instagramPostsSelectSchema = createSelectSchema(instagramPosts);
 export type InstagramPost = z.infer<typeof instagramPostsSelectSchema>;
+
+export const evaluationRequestsInsertSchema = createInsertSchema(evaluationRequests, {
+  name: (schema) => schema.min(2, "Nome deve ter pelo menos 2 caracteres"),
+  email: (schema) => schema.email("Email inválido"),
+  phone: (schema) => schema.min(8, "Telefone deve ter pelo menos 8 caracteres"),
+  vehicleInfo: (schema) => schema.min(3, "Informação do veículo deve ter pelo menos 3 caracteres")
+});
+export type EvaluationRequestInsert = z.infer<typeof evaluationRequestsInsertSchema>;
+export const evaluationRequestsSelectSchema = createSelectSchema(evaluationRequests);
+export type EvaluationRequest = z.infer<typeof evaluationRequestsSelectSchema>;
+
+export const financingRequestsInsertSchema = createInsertSchema(financingRequests, {
+  name: (schema) => schema.min(2, "Nome deve ter pelo menos 2 caracteres"),
+  email: (schema) => schema.email("Email inválido"),
+  phone: (schema) => schema.min(8, "Telefone deve ter pelo menos 8 caracteres"),
+  vehicleInfo: (schema) => schema.min(3, "Informação do veículo deve ter pelo menos 3 caracteres"),
+  income: (schema) => schema.min(1, "Renda deve ser informada")
+});
+export type FinancingRequestInsert = z.infer<typeof financingRequestsInsertSchema>;
+export const financingRequestsSelectSchema = createSelectSchema(financingRequests);
+export type FinancingRequest = z.infer<typeof financingRequestsSelectSchema>;
