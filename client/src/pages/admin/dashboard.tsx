@@ -112,6 +112,7 @@ export default function AdminDashboard() {
     mutationFn: async (updatedVehicle: Vehicle) => {
       return await apiRequest(`/api/vehicles/${updatedVehicle.id}`, {
         method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedVehicle),
       });
     },
@@ -137,6 +138,7 @@ export default function AdminDashboard() {
     mutationFn: async (newVehicle: Omit<Vehicle, 'id'>) => {
       return await apiRequest('/api/vehicles', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newVehicle),
       });
     },
@@ -162,6 +164,7 @@ export default function AdminDashboard() {
     mutationFn: async (id: number) => {
       return await apiRequest(`/api/vehicles/${id}`, {
         method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
       });
     },
     onSuccess: () => {
@@ -598,7 +601,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="flex-1">
                       <Label htmlFor="originalPrice">Preço Original (opcional)</Label>
-                      <Input id="originalPrice" name="originalPrice" placeholder="Ex.: 310000" defaultValue={selectedVehicle?.originalPrice} />
+                      <Input id="originalPrice" name="originalPrice" placeholder="Ex.: 310000" defaultValue={selectedVehicle?.originalPrice?.toString() || ''} />
                     </div>
                   </div>
                   
