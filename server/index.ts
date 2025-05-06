@@ -59,11 +59,14 @@ app.use((req, res, next) => {
   // Serve the app on the specified port or default to 5000
   // This serves both the API and the client
   const port = process.env.PORT || 5000;
+  const host = process.env.HOST || "0.0.0.0";
+  
   server.listen({
     port: Number(port),
-    host: "0.0.0.0",
+    host: host,
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`serving on ${host}:${port}`);
+    log(`NODE_ENV: ${process.env.NODE_ENV}`);
   });
 })();

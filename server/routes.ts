@@ -10,6 +10,20 @@ import { SQL } from "drizzle-orm";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const apiPrefix = "/api";
+  
+  // Healthcheck routes
+  app.get(`${apiPrefix}/health`, (_req, res) => {
+    return res.json({ 
+      status: "ok",
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development'
+    });
+  });
+  
+  // Rota de healthcheck para o EasyPanel
+  app.get("/health", (_req, res) => {
+    return res.json({ status: "ok" });
+  });
 
   // Brands routes
   app.get(`${apiPrefix}/brands`, async (req, res) => {
