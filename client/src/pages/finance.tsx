@@ -401,7 +401,7 @@ export default function Finance() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="https://logodownload.org/wp-content/uploads/2019/06/banco-do-brasil-logo-0-1.png" 
+                  src="/assets/banks/banco-do-brasil.png" 
                   alt="Banco do Brasil" 
                   className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
                 />
@@ -409,7 +409,7 @@ export default function Finance() {
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="https://logodownload.org/wp-content/uploads/2014/05/bradesco-logo-1.png" 
+                  src="/assets/banks/bradesco.png" 
                   alt="Bradesco" 
                   className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
                 />
@@ -417,7 +417,7 @@ export default function Finance() {
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="https://logodownload.org/wp-content/uploads/2014/05/caixa-logo-1.png" 
+                  src="/assets/banks/caixa.png" 
                   alt="Caixa" 
                   className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
                 />
@@ -425,7 +425,7 @@ export default function Finance() {
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="https://logodownload.org/wp-content/uploads/2016/09/banco-itau-logo-8.png" 
+                  src="/assets/banks/itau.png" 
                   alt="Itaú" 
                   className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
                 />
@@ -433,7 +433,7 @@ export default function Finance() {
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="https://logodownload.org/wp-content/uploads/2014/05/santander-logo-1.png" 
+                  src="/assets/banks/santander.png" 
                   alt="Santander" 
                   className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
                 />
@@ -441,7 +441,7 @@ export default function Finance() {
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="https://logodownload.org/wp-content/uploads/2018/09/bv-logo-banco-votorantim-1.png" 
+                  src="/assets/banks/bv.png" 
                   alt="BV Financeira" 
                   className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
                 />
