@@ -54,10 +54,35 @@ export default function Avaliacao() {
     },
   });
   
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+    
+    // Prepare data for API
+    const evaluationRequest = {
+      name: values.nome,
+      email: values.email,
+      phone: values.telefone,
+      vehicleInfo: `${values.marca} ${values.modelo} ${values.anoModelo}, ${values.cor}, ${values.combustivel}`,
+      requestDate: new Date().toLocaleDateString('pt-BR'),
+      status: 'pending',
+      notes: values.informacoesAdicionais || null,
+    };
+    
+    // Send to API
     try {
-      // Aqui enviaria para o e-mail caiquewm@gmail.com
-      console.log("Enviando dados de avaliação:", values);
+      const response = await fetch('/api/evaluation-requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(evaluationRequest),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Falha ao enviar solicitação');
+      }
       
       // Mostrar toast de sucesso
       toast({
@@ -74,6 +99,8 @@ export default function Avaliacao() {
         description: "Por favor, tente novamente mais tarde.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
   

@@ -52,6 +52,9 @@ export default function Finance() {
   const downPayment = form.watch("downPayment");
   const term = form.watch("term");
   
+  // Quando o valor do veículo mudar, não ajustamos automaticamente o valor da entrada
+  // Isso mantém o valor da entrada constante quando o usuário manipula o valor do veículo
+  
   // Calculate monthly payment
   const calculateMonthlyPayment = () => {
     const principal = vehicleValue - downPayment;
@@ -78,14 +81,58 @@ export default function Finance() {
     const payment = calculateMonthlyPayment();
     setMonthlyPayment(payment);
     
-    // Simulate API call
-    setTimeout(() => {
+    // Prepare data for API
+    const financingRequest = {
+      name: values.name,
+      email: values.email,
+      phone: values.phone,
+      income: values.income,
+      vehicleInfo: `Veículo de R$ ${formatPrice(values.vehicleValue)} com entrada de R$ ${formatPrice(values.downPayment)}`,
+      requestDate: new Date().toLocaleDateString('pt-BR'),
+      status: 'pending',
+      notes: `Simulação: ${values.term} meses, parcela de ${formatPrice(payment)}, CPF: ${values.cpf}`
+    };
+    
+    // Send to API
+    fetch('/api/financing-requests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(financingRequest),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Falha ao enviar solicitação');
+      }
+      return response.json();
+    })
+    .then(data => {
       setIsSubmitting(false);
       toast({
         title: "Simulação enviada com sucesso!",
         description: "Em breve um de nossos consultores entrará em contato.",
       });
-    }, 1500);
+      
+      // Reset the form fields but keep vehicle/financing values
+      form.reset({
+        ...form.getValues(),
+        name: "",
+        cpf: "",
+        phone: "",
+        email: "",
+        income: "",
+      });
+    })
+    .catch(error => {
+      console.error('Erro:', error);
+      setIsSubmitting(false);
+      toast({
+        title: "Erro ao enviar simulação",
+        description: "Por favor, tente novamente mais tarde.",
+        variant: "destructive",
+      });
+    });
   }
   
   return (
