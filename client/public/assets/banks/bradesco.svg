@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <rect x="10" y="10" width="180" height="40" rx="5" ry="5" fill="#FFFFFF" />
+  <polygon points="40,20 160,20 150,40 30,40" fill="#CC0000" />
+  <text x="100" y="35" font-family="Arial" font-weight="bold" font-size="14" text-anchor="middle" fill="#FFFFFF">BRADESCO</text>
+</svg>

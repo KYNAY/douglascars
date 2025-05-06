@@ -65,10 +65,12 @@ export default function Avaliacao() {
       email: values.email,
       phone: values.telefone,
       vehicleInfo: `${values.marca} ${values.modelo} ${values.anoModelo}, ${values.cor}, ${values.combustivel}`,
-      requestDate: new Date().toLocaleDateString('pt-BR'),
+      requestDate: new Date().toISOString(),
       status: 'pending',
       notes: values.informacoesAdicionais || null,
     };
+    
+    console.log("Enviando dados de avaliação:", evaluationRequest);
     
     // Send to API
     try {
@@ -80,9 +82,16 @@ export default function Avaliacao() {
         body: JSON.stringify(evaluationRequest),
       });
       
+      console.log("Status da resposta:", response.status);
+      
       if (!response.ok) {
+        const responseText = await response.text();
+        console.error("Texto de erro:", responseText);
         throw new Error('Falha ao enviar solicitação');
       }
+      
+      const data = await response.json();
+      console.log("Resposta do servidor:", data);
       
       // Mostrar toast de sucesso
       toast({

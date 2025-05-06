@@ -88,10 +88,12 @@ export default function Finance() {
       phone: values.phone,
       income: values.income,
       vehicleInfo: `Veículo de R$ ${formatPrice(values.vehicleValue)} com entrada de R$ ${formatPrice(values.downPayment)}`,
-      requestDate: new Date().toLocaleDateString('pt-BR'),
+      requestDate: new Date().toISOString(),
       status: 'pending',
       notes: `Simulação: ${values.term} meses, parcela de ${formatPrice(payment)}, CPF: ${values.cpf}`
     };
+    
+    console.log("Enviando dados:", financingRequest);
     
     // Send to API
     fetch('/api/financing-requests', {
@@ -102,12 +104,14 @@ export default function Finance() {
       body: JSON.stringify(financingRequest),
     })
     .then(response => {
+      console.log("Status da resposta:", response.status);
       if (!response.ok) {
         throw new Error('Falha ao enviar solicitação');
       }
       return response.json();
     })
     .then(data => {
+      console.log("Resposta:", data);
       setIsSubmitting(false);
       toast({
         title: "Simulação enviada com sucesso!",
@@ -125,7 +129,7 @@ export default function Finance() {
       });
     })
     .catch(error => {
-      console.error('Erro:', error);
+      console.error('Erro ao enviar solicitação:', error);
       setIsSubmitting(false);
       toast({
         title: "Erro ao enviar simulação",
@@ -401,49 +405,49 @@ export default function Finance() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="/assets/banks/banco-do-brasil.png" 
+                  src="/assets/banks/banco-do-brasil.svg" 
                   alt="Banco do Brasil" 
-                  className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
+                  className="h-10 filter opacity-70 hover:opacity-100 transition-opacity" 
                 />
               </div>
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="/assets/banks/bradesco.png" 
+                  src="/assets/banks/bradesco.svg" 
                   alt="Bradesco" 
-                  className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
+                  className="h-10 filter opacity-70 hover:opacity-100 transition-opacity" 
                 />
               </div>
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="/assets/banks/caixa.png" 
+                  src="/assets/banks/caixa.svg" 
                   alt="Caixa" 
-                  className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
+                  className="h-10 filter opacity-70 hover:opacity-100 transition-opacity" 
                 />
               </div>
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="/assets/banks/itau.png" 
+                  src="/assets/banks/itau.svg" 
                   alt="Itaú" 
-                  className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
+                  className="h-10 filter opacity-70 hover:opacity-100 transition-opacity" 
                 />
               </div>
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="/assets/banks/santander.png" 
+                  src="/assets/banks/santander.svg" 
                   alt="Santander" 
-                  className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
+                  className="h-10 filter opacity-70 hover:opacity-100 transition-opacity" 
                 />
               </div>
               
               <div className="glass-card p-4 rounded-lg flex items-center justify-center">
                 <img 
-                  src="/assets/banks/bv.png" 
+                  src="/assets/banks/bv.svg" 
                   alt="BV Financeira" 
-                  className="h-10 filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity" 
+                  className="h-10 filter opacity-70 hover:opacity-100 transition-opacity" 
                 />
               </div>
             </div>

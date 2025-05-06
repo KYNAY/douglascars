@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+  <path d="M30,10 L170,10 C180,10 190,20 190,30 C190,40 180,50 170,50 L30,50 C20,50 10,40 10,30 C10,20 20,10 30,10 Z" fill="#FFFFFF" />
+  <path d="M42,18 L158,18 C166,18 172,24 172,32 C172,40 166,46 158,46 L42,46 C34,46 28,40 28,32 C28,24 34,18 42,18 Z" fill="#FFDE00" />
+  <path d="M70,25 L130,25 C134,25 138,28 138,32 C138,36 134,39 130,39 L70,39 C66,39 62,36 62,32 C62,28 66,25 70,25 Z" fill="#FFFFFF" />
+  <text x="100" y="35" font-family="Arial" font-weight="bold" font-size="12" text-anchor="middle" fill="#003976">BANCO DO BRASIL</text>
+</svg>
