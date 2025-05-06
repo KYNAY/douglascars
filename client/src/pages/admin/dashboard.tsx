@@ -105,6 +105,16 @@ export default function AdminDashboard() {
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
   const [searchBrand, setSearchBrand] = useState("");
   
+  // Estados para a gestão de vendedores
+  const [isNewDealerDialogOpen, setIsNewDealerDialogOpen] = useState(false);
+  const [isDeleteAllDealersDialogOpen, setIsDeleteAllDealersDialogOpen] = useState(false);
+  const [isMarkAsAsSoldDialogOpen, setIsMarkAsAsSoldDialogOpen] = useState(false);
+  const [vehicleToMarkAsSold, setVehicleToMarkAsSold] = useState<Vehicle | null>(null);
+  const [selectedDealerForSale, setSelectedDealerForSale] = useState<number | null>(null);
+  const [newDealerName, setNewDealerName] = useState("");
+  const [newDealerEmail, setNewDealerEmail] = useState("");
+  const [newDealerPassword, setNewDealerPassword] = useState("");
+  
   // Estados para a aba de solicitações
   const [requestsTab, setRequestsTab] = useState<"evaluations" | "financing">("evaluations");
   const [selectedEvaluation, setSelectedEvaluation] = useState<EvaluationRequest | null>(null);
@@ -115,6 +125,12 @@ export default function AdminDashboard() {
   const [evaluationSearchTerm, setEvaluationSearchTerm] = useState<string>("");
   const [financingSearchTerm, setFinancingSearchTerm] = useState<string>("");
   const [notesText, setNotesText] = useState<string>("");
+  
+  // Estado para notificações
+  const [hasNewEvaluations, setHasNewEvaluations] = useState(false);
+  const [hasNewFinancings, setHasNewFinancings] = useState(false);
+  const [lastCheckedEvaluationCount, setLastCheckedEvaluationCount] = useState(0);
+  const [lastCheckedFinancingCount, setLastCheckedFinancingCount] = useState(0);
   
   // Mutação para atualizar veículo
   const updateVehicleMutation = useMutation({
@@ -302,6 +318,124 @@ export default function AdminDashboard() {
       });
     },
   });
+  
+  // Mutação para adicionar vendedor
+  const addDealerMutation = useMutation({
+    mutationFn: async (newDealer: { name: string, username: string, email: string, password: string }) => {
+      return await apiRequest('/api/dealers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newDealer.name,
+          username: newDealer.username,
+          email: newDealer.email,
+          password: newDealer.password,
+          startDate: new Date().toLocaleDateString('pt-BR'),
+          points: 0,
+          sales: 0
+        }),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Vendedor adicionado",
+        description: "O vendedor foi adicionado com sucesso."
+      });
+      setIsNewDealerDialogOpen(false);
+      setNewDealerName("");
+      setNewDealerEmail("");
+      setNewDealerPassword("");
+      queryClient.invalidateQueries({ queryKey: ['/api/dealers/ranking'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao adicionar vendedor",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Mutação para excluir vendedor
+  const deleteDealerMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/dealers/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Vendedor excluído",
+        description: "O vendedor foi excluído com sucesso."
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/dealers/ranking'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao excluir vendedor",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Mutação para excluir todos os vendedores
+  const deleteAllDealersMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest('/api/dealers', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Vendedores excluídos",
+        description: "Todos os vendedores foram excluídos com sucesso."
+      });
+      setIsDeleteAllDealersDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['/api/dealers/ranking'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao excluir vendedores",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Mutação para marcar veículo como vendido
+  const markVehicleAsSoldMutation = useMutation({
+    mutationFn: async (data: { vehicleId: number, dealerId: number }) => {
+      return await apiRequest(`/api/vehicles/${data.vehicleId}/sold`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          dealerId: data.dealerId,
+          soldDate: new Date().toISOString()
+        }),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Veículo marcado como vendido",
+        description: "O veículo foi marcado como vendido com sucesso."
+      });
+      setIsMarkAsAsSoldDialogOpen(false);
+      setVehicleToMarkAsSold(null);
+      setSelectedDealerForSale(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/vehicles'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/dealers/ranking'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao marcar veículo como vendido",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive"
+      });
+    }
+  });
 
   const handleSort = (key: string) => {
     setSortConfig(prevConfig => ({
@@ -315,6 +449,62 @@ export default function AdminDashboard() {
     localStorage.removeItem("admin_email");
     localStorage.removeItem("admin_login_time");
     navigate("/");
+  };
+  
+  // Função para adicionar novo vendedor
+  const handleAddDealer = () => {
+    if (!newDealerName || !newDealerEmail || !newDealerPassword) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Preencha todos os campos para cadastrar um novo vendedor.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const username = newDealerEmail.split('@')[0]; // Usar primeira parte do email como username
+    
+    addDealerMutation.mutate({
+      name: newDealerName,
+      username,
+      email: newDealerEmail,
+      password: newDealerPassword
+    });
+  };
+  
+  // Função para excluir vendedor
+  const handleDeleteDealer = (id: number) => {
+    if (window.confirm("Tem certeza que deseja excluir este vendedor?")) {
+      deleteDealerMutation.mutate(id);
+    }
+  };
+  
+  // Função para excluir todos os vendedores
+  const handleDeleteAllDealers = () => {
+    deleteAllDealersMutation.mutate();
+  };
+  
+  // Função para marcar veículo como vendido
+  const handleMarkAsSold = (vehicle: Vehicle) => {
+    setVehicleToMarkAsSold(vehicle);
+    setIsMarkAsAsSoldDialogOpen(true);
+  };
+  
+  // Função para confirmar venda
+  const handleConfirmSale = () => {
+    if (!vehicleToMarkAsSold || !selectedDealerForSale) {
+      toast({
+        title: "Informações incompletas",
+        description: "Selecione um vendedor para registrar a venda.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    markVehicleAsSoldMutation.mutate({
+      vehicleId: vehicleToMarkAsSold.id,
+      dealerId: selectedDealerForSale
+    });
   };
 
   // Verificar autenticação
@@ -514,6 +704,15 @@ export default function AdminDashboard() {
                               >
                                 <ImageIcon className="h-4 w-4" />
                               </Button>
+                              {!vehicle.sold && (
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon"
+                                  onClick={() => handleMarkAsSold(vehicle)}
+                                >
+                                  <ShoppingCart className="h-4 w-4 text-green-500" />
+                                </Button>
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -535,11 +734,21 @@ export default function AdminDashboard() {
 
         <TabsContent value="ranking" className="space-y-4">
           <Card>
-            <CardHeader>
-              <CardTitle>Ranking de Vendedores</CardTitle>
-              <CardDescription>
-                Desempenho dos vendedores da concessionária.
-              </CardDescription>
+            <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <CardTitle>Ranking de Vendedores</CardTitle>
+                <CardDescription>
+                  Desempenho dos vendedores da concessionária.
+                </CardDescription>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button className="flex items-center gap-2" onClick={() => setIsNewDealerDialogOpen(true)}>
+                  <Plus size={16} /> Cadastrar Vendedor
+                </Button>
+                <Button variant="outline" className="flex items-center gap-2" onClick={() => setIsDeleteAllDealersDialogOpen(true)}>
+                  <Trash2 size={16} /> Excluir Todos
+                </Button>
+              </div>
             </CardHeader>
             <CardContent>
               {isLoadingDealers ? (
@@ -568,6 +777,7 @@ export default function AdminDashboard() {
                           )}
                         </TableHead>
                         <TableHead>Data de Início</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -595,11 +805,16 @@ export default function AdminDashboard() {
                           <TableCell>{dealer.sales}</TableCell>
                           <TableCell>{dealer.points}</TableCell>
                           <TableCell>{dealer.startDate}</TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="icon" onClick={() => handleDeleteDealer(dealer.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       ))}
                       {!dealers || dealers.length === 0 && (
                         <TableRow>
-                          <TableCell colSpan={5} className="h-24 text-center">
+                          <TableCell colSpan={6} className="h-24 text-center">
                             Nenhum vendedor cadastrado.
                           </TableCell>
                         </TableRow>
@@ -610,6 +825,160 @@ export default function AdminDashboard() {
               )}
             </CardContent>
           </Card>
+          
+          {/* Dialog para adicionar novo vendedor */}
+          <Dialog open={isNewDealerDialogOpen} onOpenChange={setIsNewDealerDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Cadastrar Novo Vendedor</DialogTitle>
+                <DialogDescription>
+                  Preencha os dados do novo vendedor para adicioná-lo ao sistema.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="dealer-name">Nome</Label>
+                  <Input
+                    id="dealer-name"
+                    placeholder="Nome do vendedor"
+                    value={newDealerName}
+                    onChange={(e) => setNewDealerName(e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="dealer-email">Email</Label>
+                  <Input
+                    id="dealer-email"
+                    placeholder="Email do vendedor"
+                    type="email"
+                    value={newDealerEmail}
+                    onChange={(e) => setNewDealerEmail(e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="dealer-password">Senha</Label>
+                  <Input
+                    id="dealer-password"
+                    placeholder="Senha de acesso"
+                    type="password"
+                    value={newDealerPassword}
+                    onChange={(e) => setNewDealerPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsNewDealerDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handleAddDealer}
+                  disabled={!newDealerName || !newDealerEmail || !newDealerPassword || addDealerMutation.isPending}
+                >
+                  {addDealerMutation.isPending ? "Salvando..." : "Salvar"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
+          {/* Dialog para confirmar exclusão de todos os vendedores */}
+          <Dialog open={isDeleteAllDealersDialogOpen} onOpenChange={setIsDeleteAllDealersDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Excluir Todos os Vendedores</DialogTitle>
+                <DialogDescription>
+                  Você tem certeza que deseja excluir todos os vendedores? Esta ação não pode ser desfeita.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsDeleteAllDealersDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDeleteAllDealers}
+                  disabled={deleteAllDealersMutation.isPending}
+                >
+                  {deleteAllDealersMutation.isPending ? "Excluindo..." : "Sim, excluir todos"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
+          {/* Dialog para marcar veículo como vendido */}
+          <Dialog open={isMarkAsAsSoldDialogOpen} onOpenChange={setIsMarkAsAsSoldDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Registrar Venda</DialogTitle>
+                <DialogDescription>
+                  Selecione o vendedor responsável pela venda do veículo {vehicleToMarkAsSold?.model}.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="dealer-select">Vendedor</Label>
+                  <Select 
+                    onValueChange={(value) => setSelectedDealerForSale(Number(value))}
+                    value={selectedDealerForSale?.toString() || ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o vendedor" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {dealers?.map((dealer) => (
+                        <SelectItem key={dealer.id} value={dealer.id.toString()}>
+                          {dealer.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {dealers?.length === 0 && (
+                    <p className="text-sm text-yellow-500 mt-2">
+                      Nenhum vendedor cadastrado. Cadastre um vendedor na aba "Vendedores" antes de registrar uma venda.
+                    </p>
+                  )}
+                </div>
+                
+                <div className="mt-6">
+                  <div className="rounded-md bg-slate-100 dark:bg-slate-800 p-4">
+                    <div className="flex items-center gap-4">
+                      {vehicleToMarkAsSold?.imageUrl && (
+                        <div className="w-16 h-16 rounded-md overflow-hidden">
+                          <img 
+                            src={vehicleToMarkAsSold.imageUrl}
+                            alt={vehicleToMarkAsSold.model}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="font-medium">{vehicleToMarkAsSold?.model}</h4>
+                        <p className="text-sm text-slate-500">{formatPrice(vehicleToMarkAsSold?.price || 0)}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsMarkAsAsSoldDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handleConfirmSale}
+                  disabled={!selectedDealerForSale || markVehicleAsSoldMutation.isPending}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  {markVehicleAsSoldMutation.isPending ? "Registrando..." : "Registrar Venda"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </TabsContent>
 
         <TabsContent value="brands" className="space-y-4">
