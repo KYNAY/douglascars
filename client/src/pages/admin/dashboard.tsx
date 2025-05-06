@@ -62,6 +62,8 @@ interface EvaluationRequest {
   vehicleInfo: string;
   requestDate: string;
   status: 'pending' | 'contacted' | 'completed' | 'cancelled';
+  notes?: string | null;
+  createdAt?: string;
 }
 
 interface FinancingRequest {
@@ -72,7 +74,9 @@ interface FinancingRequest {
   vehicleInfo: string;
   income: string;
   requestDate: string;
-  status: 'pending' | 'approved' | 'denied' | 'in_review';
+  status: 'pending' | 'in_review' | 'approved' | 'denied';
+  notes?: string | null;
+  createdAt?: string;
 }
 
 export default function AdminDashboard() {
@@ -106,6 +110,11 @@ export default function AdminDashboard() {
   const [selectedEvaluation, setSelectedEvaluation] = useState<EvaluationRequest | null>(null);
   const [selectedFinancing, setSelectedFinancing] = useState<FinancingRequest | null>(null);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  const [evaluationStatusFilter, setEvaluationStatusFilter] = useState<string>("all");
+  const [financingStatusFilter, setFinancingStatusFilter] = useState<string>("all");
+  const [evaluationSearchTerm, setEvaluationSearchTerm] = useState<string>("");
+  const [financingSearchTerm, setFinancingSearchTerm] = useState<string>("");
+  const [notesText, setNotesText] = useState<string>("");
   
   // Mutação para atualizar veículo
   const updateVehicleMutation = useMutation({
@@ -217,60 +226,127 @@ export default function AdminDashboard() {
     enabled: isAuthenticated
   });
   
-  // Mock de dados para solicitações de avaliação - Será substituído pela API real
-  const evaluationRequests: EvaluationRequest[] = [
-    {
-      id: 1,
-      name: "Carlos Silva",
-      email: "carlos.silva@gmail.com",
-      phone: "(28)99988-7766",
-      vehicleInfo: "Honda Civic 2020 LX",
-      requestDate: "2025-05-04",
-      status: "pending"
-    },
-    {
-      id: 2,
-      name: "Mariana Oliveira",
-      email: "mari.oliveira@hotmail.com",
-      phone: "(28)99932-1234",
-      vehicleInfo: "Toyota Corolla 2019 XEI",
-      requestDate: "2025-05-04",
-      status: "contacted"
-    },
-    {
-      id: 3,
-      name: "João Mendes",
-      email: "joao.mendes@gmail.com",
-      phone: "(28)99912-3456",
-      vehicleInfo: "Hyundai HB20 2021",
-      requestDate: "2025-05-03",
-      status: "completed"
-    }
-  ];
+  // Buscar dados de solicitações de avaliação
+  const { 
+    data: evaluationRequests, 
+    isLoading: isLoadingEvaluations,
+    refetch: refetchEvaluations
+  } = useQuery<EvaluationRequest[]>({
+    queryKey: ['/api/evaluation-requests'],
+    enabled: isAuthenticated && activeTab === 'requests'
+  });
   
-  // Mock de dados para solicitações de financiamento - Será substituído pela API real
-  const financingRequests: FinancingRequest[] = [
-    {
-      id: 1,
-      name: "Ana Beatriz",
-      email: "ana.beatriz@gmail.com",
-      phone: "(28)99876-5432",
-      vehicleInfo: "Jeep Renegade 2022",
-      income: "R$ 5.000,00",
-      requestDate: "2025-05-04",
-      status: "pending"
+  // Buscar dados de solicitações de financiamento
+  const { 
+    data: financingRequests, 
+    isLoading: isLoadingFinancing,
+    refetch: refetchFinancing
+  } = useQuery<FinancingRequest[]>({
+    queryKey: ['/api/financing-requests'],
+    enabled: isAuthenticated && activeTab === 'requests'
+  });
+  
+  // Mutação para atualizar status da solicitação de avaliação
+  const updateEvaluationStatusMutation = useMutation({
+    mutationFn: async ({ id, status, notes }: { id: number, status: string, notes?: string }) => {
+      return await apiRequest(`/api/evaluation-requests/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, notes }),
+      });
     },
-    {
-      id: 2,
-      name: "Roberto Almeida",
-      email: "roberto.almeida@hotmail.com",
-      phone: "(28)99945-6789",
-      vehicleInfo: "Fiat Pulse 2023",
-      income: "R$ 7.500,00",
-      requestDate: "2025-05-03",
-      status: "approved"
-    }
-  ];
+    onSuccess: () => {
+      toast({
+        title: "Status atualizado",
+        description: "O status da solicitação foi atualizado com sucesso.",
+      });
+      setIsStatusDialogOpen(false);
+      setSelectedEvaluation(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/evaluation-requests'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao atualizar status",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Mutação para excluir solicitação de avaliação
+  const deleteEvaluationMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/evaluation-requests/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Solicitação excluída",
+        description: "A solicitação de avaliação foi excluída com sucesso.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/evaluation-requests'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao excluir solicitação",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Mutação para atualizar status da solicitação de financiamento
+  const updateFinancingStatusMutation = useMutation({
+    mutationFn: async ({ id, status, notes }: { id: number, status: string, notes?: string }) => {
+      return await apiRequest(`/api/financing-requests/${id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, notes }),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Status atualizado",
+        description: "O status da solicitação foi atualizado com sucesso.",
+      });
+      setIsStatusDialogOpen(false);
+      setSelectedFinancing(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/financing-requests'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao atualizar status",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Mutação para excluir solicitação de financiamento
+  const deleteFinancingMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/financing-requests/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Solicitação excluída",
+        description: "A solicitação de financiamento foi excluída com sucesso.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/financing-requests'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao excluir solicitação",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleSort = (key: string) => {
     setSortConfig(prevConfig => ({
