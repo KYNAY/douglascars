@@ -1,7 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { db } from "@db";
-import { brands, vehicles, dealers, sales, reviews, instagramPosts, vehicleImages } from "@shared/schema";
+import { 
+  brands, vehicles, dealers, sales, reviews, instagramPosts, vehicleImages,
+  evaluationRequests, financingRequests, evaluationStatusEnum, financingStatusEnum
+} from "@shared/schema";
 import { eq, and, not, desc, asc, like, or, gte, lte, count, sql } from "drizzle-orm";
 import { SQL } from "drizzle-orm";
 
@@ -794,6 +797,209 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting vehicle image:", error);
       return res.status(500).json({ error: "Failed to delete vehicle image" });
+    }
+  });
+
+  // Rotas para solicitações de avaliação
+  // Listar todas as solicitações de avaliação
+  app.get(`${apiPrefix}/evaluation-requests`, async (req, res) => {
+    try {
+      const { status, limit } = req.query;
+      
+      let query = db.select().from(evaluationRequests);
+      
+      if (status && status !== 'all') {
+        query = query.where(eq(evaluationRequests.status, String(status)));
+      }
+      
+      const evaluationRequestsList = await query.orderBy(desc(evaluationRequests.requestDate));
+      
+      return res.json(evaluationRequestsList);
+    } catch (error) {
+      console.error("Error fetching evaluation requests:", error);
+      return res.status(500).json({ error: "Failed to fetch evaluation requests" });
+    }
+  });
+  
+  // Criar uma nova solicitação de avaliação
+  app.post(`${apiPrefix}/evaluation-requests`, async (req, res) => {
+    try {
+      const { name, email, phone, vehicleInfo } = req.body;
+      
+      // Validação básica
+      if (!name || !email || !phone || !vehicleInfo) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      const [newRequest] = await db.insert(evaluationRequests).values({
+        name,
+        email,
+        phone,
+        vehicleInfo,
+        requestDate: new Date(),
+        status: 'pending',
+        notes: req.body.notes || null
+      }).returning();
+      
+      return res.status(201).json(newRequest);
+    } catch (error) {
+      console.error("Error creating evaluation request:", error);
+      return res.status(500).json({ error: "Failed to create evaluation request" });
+    }
+  });
+  
+  // Atualizar status da solicitação de avaliação
+  app.patch(`${apiPrefix}/evaluation-requests/:id/status`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, notes } = req.body;
+      
+      // Validação
+      if (!status || !['pending', 'contacted', 'completed', 'cancelled'].includes(status)) {
+        return res.status(400).json({ error: "Invalid status" });
+      }
+      
+      // Verificar se a solicitação existe
+      const request = await db.select().from(evaluationRequests).where(eq(evaluationRequests.id, Number(id))).limit(1);
+      if (!request.length) {
+        return res.status(404).json({ error: "Evaluation request not found" });
+      }
+      
+      // Atualizar status
+      const [updatedRequest] = await db.update(evaluationRequests)
+        .set({ 
+          status: status as any,
+          notes: notes || request[0].notes
+        })
+        .where(eq(evaluationRequests.id, Number(id)))
+        .returning();
+      
+      return res.json(updatedRequest);
+    } catch (error) {
+      console.error("Error updating evaluation request status:", error);
+      return res.status(500).json({ error: "Failed to update evaluation request status" });
+    }
+  });
+  
+  // Excluir solicitação de avaliação
+  app.delete(`${apiPrefix}/evaluation-requests/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verificar se a solicitação existe
+      const request = await db.select().from(evaluationRequests).where(eq(evaluationRequests.id, Number(id))).limit(1);
+      if (!request.length) {
+        return res.status(404).json({ error: "Evaluation request not found" });
+      }
+      
+      await db.delete(evaluationRequests).where(eq(evaluationRequests.id, Number(id)));
+      
+      return res.json({ success: true, message: "Evaluation request deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting evaluation request:", error);
+      return res.status(500).json({ error: "Failed to delete evaluation request" });
+    }
+  });
+  
+  // Rotas para solicitações de financiamento
+  // Listar todas as solicitações de financiamento
+  app.get(`${apiPrefix}/financing-requests`, async (req, res) => {
+    try {
+      const { status, limit } = req.query;
+      
+      let query = db.select().from(financingRequests);
+      
+      if (status && status !== 'all') {
+        query = query.where(eq(financingRequests.status, String(status)));
+      }
+      
+      const financingRequestsList = await query.orderBy(desc(financingRequests.requestDate));
+      
+      return res.json(financingRequestsList);
+    } catch (error) {
+      console.error("Error fetching financing requests:", error);
+      return res.status(500).json({ error: "Failed to fetch financing requests" });
+    }
+  });
+  
+  // Criar uma nova solicitação de financiamento
+  app.post(`${apiPrefix}/financing-requests`, async (req, res) => {
+    try {
+      const { name, email, phone, vehicleInfo, income } = req.body;
+      
+      // Validação básica
+      if (!name || !email || !phone || !vehicleInfo || !income) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      const [newRequest] = await db.insert(financingRequests).values({
+        name,
+        email,
+        phone,
+        vehicleInfo,
+        income,
+        requestDate: new Date(),
+        status: 'pending',
+        notes: req.body.notes || null
+      }).returning();
+      
+      return res.status(201).json(newRequest);
+    } catch (error) {
+      console.error("Error creating financing request:", error);
+      return res.status(500).json({ error: "Failed to create financing request" });
+    }
+  });
+  
+  // Atualizar status da solicitação de financiamento
+  app.patch(`${apiPrefix}/financing-requests/:id/status`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { status, notes } = req.body;
+      
+      // Validação
+      if (!status || !['pending', 'in_review', 'approved', 'denied'].includes(status)) {
+        return res.status(400).json({ error: "Invalid status" });
+      }
+      
+      // Verificar se a solicitação existe
+      const request = await db.select().from(financingRequests).where(eq(financingRequests.id, Number(id))).limit(1);
+      if (!request.length) {
+        return res.status(404).json({ error: "Financing request not found" });
+      }
+      
+      // Atualizar status
+      const [updatedRequest] = await db.update(financingRequests)
+        .set({ 
+          status: status as any,
+          notes: notes || request[0].notes
+        })
+        .where(eq(financingRequests.id, Number(id)))
+        .returning();
+      
+      return res.json(updatedRequest);
+    } catch (error) {
+      console.error("Error updating financing request status:", error);
+      return res.status(500).json({ error: "Failed to update financing request status" });
+    }
+  });
+  
+  // Excluir solicitação de financiamento
+  app.delete(`${apiPrefix}/financing-requests/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verificar se a solicitação existe
+      const request = await db.select().from(financingRequests).where(eq(financingRequests.id, Number(id))).limit(1);
+      if (!request.length) {
+        return res.status(404).json({ error: "Financing request not found" });
+      }
+      
+      await db.delete(financingRequests).where(eq(financingRequests.id, Number(id)));
+      
+      return res.json({ success: true, message: "Financing request deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting financing request:", error);
+      return res.status(500).json({ error: "Failed to delete financing request" });
     }
   });
 
