@@ -915,18 +915,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required fields" });
       }
       
-      // Criar a solicitação no banco de dados
-      const requestDate = new Date().toISOString();
-      
+      // Criar a solicitação no banco de dados      
       const [newRequest] = await db.insert(evaluationRequests).values({
         name,
         email,
         phone,
         vehicleInfo,
-        requestDate,
         status: 'pending',
-        notes: req.body.notes || null,
-        createdAt: requestDate
+        notes: req.body.notes || null
       }).returning();
       
       return res.status(201).json({
@@ -1030,18 +1026,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required fields" });
       }
       
-      const requestDate = new Date().toISOString();
-      
       const [newRequest] = await db.insert(financingRequests).values({
         name,
         email,
         phone,
         vehicleInfo,
         income,
-        requestDate,
-        status: 'pending',
-        notes: req.body.notes || null,
-        createdAt: requestDate
+        notes: req.body.notes || null
       }).returning();
       
       return res.status(201).json({
