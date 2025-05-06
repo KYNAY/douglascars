@@ -192,6 +192,68 @@ export default function AdminDashboard() {
       });
     },
   });
+  
+  // Mutação para atualizar status de solicitação de avaliação
+  const updateEvaluationStatusMutation = useMutation({
+    mutationFn: async (data: { id: number, status: string, notes: string | null }) => {
+      return await apiRequest(`/api/evaluation-requests/${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          status: data.status,
+          notes: data.notes
+        }),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Status atualizado",
+        description: "A solicitação de avaliação foi atualizada com sucesso.",
+      });
+      setIsStatusDialogOpen(false);
+      setSelectedEvaluation(null);
+      setNotesText("");
+      queryClient.invalidateQueries({ queryKey: ['/api/evaluation-requests'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao atualizar status",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Mutação para atualizar status de solicitação de financiamento
+  const updateFinancingStatusMutation = useMutation({
+    mutationFn: async (data: { id: number, status: string, notes: string | null }) => {
+      return await apiRequest(`/api/financing-requests/${data.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          status: data.status,
+          notes: data.notes
+        }),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Status atualizado",
+        description: "A solicitação de financiamento foi atualizada com sucesso.",
+      });
+      setIsStatusDialogOpen(false);
+      setSelectedFinancing(null);
+      setNotesText("");
+      queryClient.invalidateQueries({ queryKey: ['/api/financing-requests'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao atualizar status",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive",
+      });
+    },
+  });
 
   // Verificar autenticação
   useEffect(() => {
@@ -246,33 +308,6 @@ export default function AdminDashboard() {
     enabled: isAuthenticated && activeTab === 'requests'
   });
   
-  // Mutação para atualizar status da solicitação de avaliação
-  const updateEvaluationStatusMutation = useMutation({
-    mutationFn: async ({ id, status, notes }: { id: number, status: string, notes?: string }) => {
-      return await apiRequest(`/api/evaluation-requests/${id}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, notes }),
-      });
-    },
-    onSuccess: () => {
-      toast({
-        title: "Status atualizado",
-        description: "O status da solicitação foi atualizado com sucesso.",
-      });
-      setIsStatusDialogOpen(false);
-      setSelectedEvaluation(null);
-      queryClient.invalidateQueries({ queryKey: ['/api/evaluation-requests'] });
-    },
-    onError: (error) => {
-      toast({
-        title: "Erro ao atualizar status",
-        description: `Ocorreu um erro: ${error}`,
-        variant: "destructive",
-      });
-    },
-  });
-  
   // Mutação para excluir solicitação de avaliação
   const deleteEvaluationMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -291,33 +326,6 @@ export default function AdminDashboard() {
     onError: (error) => {
       toast({
         title: "Erro ao excluir solicitação",
-        description: `Ocorreu um erro: ${error}`,
-        variant: "destructive",
-      });
-    },
-  });
-  
-  // Mutação para atualizar status da solicitação de financiamento
-  const updateFinancingStatusMutation = useMutation({
-    mutationFn: async ({ id, status, notes }: { id: number, status: string, notes?: string }) => {
-      return await apiRequest(`/api/financing-requests/${id}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, notes }),
-      });
-    },
-    onSuccess: () => {
-      toast({
-        title: "Status atualizado",
-        description: "O status da solicitação foi atualizado com sucesso.",
-      });
-      setIsStatusDialogOpen(false);
-      setSelectedFinancing(null);
-      queryClient.invalidateQueries({ queryKey: ['/api/financing-requests'] });
-    },
-    onError: (error) => {
-      toast({
-        title: "Erro ao atualizar status",
         description: `Ocorreu um erro: ${error}`,
         variant: "destructive",
       });
@@ -1455,7 +1463,12 @@ export default function AdminDashboard() {
                   
                   <div>
                     <h3 className="text-sm font-medium mb-1">Status da Solicitação</h3>
-                    <Select defaultValue={selectedFinancing.status}>
+                    <Select 
+                      defaultValue={selectedFinancing.status}
+                      onValueChange={(value) => {
+                        setSelectedFinancing(prev => prev ? {...prev, status: value as any} : null);
+                      }}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
@@ -1466,6 +1479,16 @@ export default function AdminDashboard() {
                         <SelectItem value="denied">Negado</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-sm font-medium mb-1">Observações</h3>
+                    <Textarea 
+                      className="h-24" 
+                      placeholder="Observações sobre a solicitação"
+                      value={selectedFinancing.notes || ""}
+                      onChange={(e) => setNotesText(e.target.value)}
+                    />
                   </div>
                 </div>
               )}
