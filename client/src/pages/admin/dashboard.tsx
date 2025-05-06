@@ -1079,6 +1079,59 @@ export default function AdminDashboard() {
                     </TabsTrigger>
                   </TabsList>
                   
+                  {/* Filtros e busca para solicitações */}
+                  <div className="mt-6 flex flex-col sm:flex-row gap-4">
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                      <Input 
+                        placeholder={requestsTab === "evaluations" ? "Buscar avaliações..." : "Buscar financiamentos..."} 
+                        className="pl-9"
+                        value={requestsTab === "evaluations" ? evaluationSearchTerm : financingSearchTerm}
+                        onChange={(e) => {
+                          if (requestsTab === "evaluations") {
+                            setEvaluationSearchTerm(e.target.value);
+                          } else {
+                            setFinancingSearchTerm(e.target.value);
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <Label htmlFor="status-filter" className="whitespace-nowrap">Filtrar por status:</Label>
+                      <Select
+                        value={requestsTab === "evaluations" ? evaluationStatusFilter : financingStatusFilter}
+                        onValueChange={(value) => {
+                          if (requestsTab === "evaluations") {
+                            setEvaluationStatusFilter(value);
+                          } else {
+                            setFinancingStatusFilter(value);
+                          }
+                        }}
+                      >
+                        <SelectTrigger id="status-filter" className="w-44">
+                          <SelectValue placeholder="Todos os status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">Todos os status</SelectItem>
+                          {requestsTab === "evaluations" ? (
+                            <>
+                              <SelectItem value="pending">Pendentes</SelectItem>
+                              <SelectItem value="contacted">Contatados</SelectItem>
+                              <SelectItem value="completed">Concluídos</SelectItem>
+                              <SelectItem value="cancelled">Cancelados</SelectItem>
+                            </>
+                          ) : (
+                            <>
+                              <SelectItem value="pending">Pendentes</SelectItem>
+                              <SelectItem value="in_review">Em Análise</SelectItem>
+                              <SelectItem value="approved">Aprovados</SelectItem>
+                              <SelectItem value="denied">Negados</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                   <div className="mt-6">
                     {requestsTab === "evaluations" && (
                       <div className="rounded-md border overflow-hidden">
@@ -1094,7 +1147,19 @@ export default function AdminDashboard() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {evaluationRequests.map((request) => (
+                            {evaluationRequests?.filter(request => {
+                              // Filtrar por termo de busca
+                              const matchesSearch = 
+                                evaluationSearchTerm === "" || 
+                                request.name.toLowerCase().includes(evaluationSearchTerm.toLowerCase()) ||
+                                request.email.toLowerCase().includes(evaluationSearchTerm.toLowerCase()) ||
+                                request.vehicleInfo.toLowerCase().includes(evaluationSearchTerm.toLowerCase());
+                              
+                              // Filtrar por status
+                              const matchesStatus = evaluationStatusFilter === "all" || request.status === evaluationStatusFilter;
+                              
+                              return matchesSearch && matchesStatus;
+                            }).map((request) => (
                               <TableRow key={request.id}>
                                 <TableCell className="whitespace-nowrap">{request.requestDate}</TableCell>
                                 <TableCell>{request.name}</TableCell>
@@ -1144,7 +1209,7 @@ export default function AdminDashboard() {
                                 </TableCell>
                               </TableRow>
                             ))}
-                            {evaluationRequests.length === 0 && (
+                            {(!evaluationRequests || evaluationRequests.length === 0) && (
                               <TableRow>
                                 <TableCell colSpan={6} className="text-center py-8 text-gray-500">
                                   Nenhuma solicitação de avaliação encontrada.
@@ -1171,7 +1236,19 @@ export default function AdminDashboard() {
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {financingRequests.map((request) => (
+                            {financingRequests?.filter(request => {
+                              // Filtrar por termo de busca
+                              const matchesSearch = 
+                                financingSearchTerm === "" || 
+                                request.name.toLowerCase().includes(financingSearchTerm.toLowerCase()) ||
+                                request.email.toLowerCase().includes(financingSearchTerm.toLowerCase()) ||
+                                request.vehicleInfo.toLowerCase().includes(financingSearchTerm.toLowerCase());
+                              
+                              // Filtrar por status
+                              const matchesStatus = financingStatusFilter === "all" || request.status === financingStatusFilter;
+                              
+                              return matchesSearch && matchesStatus;
+                            }).map((request) => (
                               <TableRow key={request.id}>
                                 <TableCell className="whitespace-nowrap">{request.requestDate}</TableCell>
                                 <TableCell>{request.name}</TableCell>
@@ -1222,7 +1299,7 @@ export default function AdminDashboard() {
                                 </TableCell>
                               </TableRow>
                             ))}
-                            {financingRequests.length === 0 && (
+                            {(!financingRequests || financingRequests.length === 0) && (
                               <TableRow>
                                 <TableCell colSpan={7} className="text-center py-8 text-gray-500">
                                   Nenhuma solicitação de financiamento encontrada.
@@ -1285,7 +1362,12 @@ export default function AdminDashboard() {
                   
                   <div>
                     <h3 className="text-sm font-medium mb-1">Status da Solicitação</h3>
-                    <Select defaultValue={selectedEvaluation.status}>
+                    <Select 
+                      defaultValue={selectedEvaluation.status}
+                      onValueChange={(value) => {
+                        setSelectedEvaluation(prev => prev ? {...prev, status: value as any} : null);
+                      }}
+                    >
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
@@ -1296,6 +1378,16 @@ export default function AdminDashboard() {
                         <SelectItem value="cancelled">Cancelado</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-sm font-medium mb-1">Observações</h3>
+                    <Textarea 
+                      className="h-24" 
+                      placeholder="Observações sobre a solicitação"
+                      value={selectedEvaluation.notes || ""}
+                      onChange={(e) => setNotesText(e.target.value)}
+                    />
                   </div>
                 </div>
               )}
