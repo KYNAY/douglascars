@@ -19,7 +19,10 @@ import {
   FaCheck,
   FaShieldAlt,
   FaCarAlt,
-  FaCarSide
+  FaCarSide,
+  FaMapMarkerAlt,
+  FaClock,
+  FaEnvelope
 } from "react-icons/fa";
 import { formatPrice, formatMileage } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -186,7 +189,7 @@ export default function VehicleDetail() {
         </Link>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Coluna da galeria e detalhes principais */}
+          {/* Coluna da galeria */}
           <div className="lg:col-span-2">
             {/* Vehicle Image Gallery */}
             <div className="glass-card rounded-xl overflow-hidden mb-6">
@@ -287,154 +290,16 @@ export default function VehicleDetail() {
               </div>
             </div>
             
-            {/* Detalhes do veículo */}
+            {/* Título e descrição do veículo */}
             <div className="glass-card rounded-xl p-6 mb-6">
-              <Tabs defaultValue="details" className="w-full">
-                <TabsList className="mb-6 grid grid-cols-3 w-full">
-                  <TabsTrigger value="details">Informações</TabsTrigger>
-                  <TabsTrigger value="specs">Ficha Técnica</TabsTrigger>
-                  <TabsTrigger value="optionals">Opcionais</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="details" className="space-y-6">
-                  <div>
-                    <h2 className="text-xl font-semibold mb-2">Descrição</h2>
-                    <p className="text-gray-300">
-                      {vehicle.description || `${vehicle.brand.name} ${vehicle.model} ${vehicle.year} - ${vehicle.color} em excelente estado.`}
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <h2 className="text-xl font-semibold mb-2">Garantia</h2>
-                    <p className="text-gray-300 flex items-center">
-                      <FaShieldAlt className="mr-2 text-primary" />
-                      {vehicle.warranty || "Garantia de fábrica"} 
-                    </p>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="specs" className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-2">Ficha Técnica</h2>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col">
-                      <span className="text-gray-400 text-sm">Ano</span>
-                      <span className="font-medium">{vehicle.year}</span>
-                    </div>
-                    
-                    <div className="flex flex-col">
-                      <span className="text-gray-400 text-sm">Cor</span>
-                      <span className="font-medium">{vehicle.color}</span>
-                    </div>
-                    
-                    <div className="flex flex-col">
-                      <span className="text-gray-400 text-sm">Quilometragem</span>
-                      <span className="font-medium">{formatMileage(vehicle.mileage)}</span>
-                    </div>
-                    
-                    <div className="flex flex-col">
-                      <span className="text-gray-400 text-sm">Combustível</span>
-                      <span className="font-medium">{vehicle.fuel || "Flex"}</span>
-                    </div>
-                    
-                    <div className="flex flex-col">
-                      <span className="text-gray-400 text-sm">Câmbio</span>
-                      <span className="font-medium">{vehicle.transmission || "Automático"}</span>
-                    </div>
-                    
-                    <div className="flex flex-col">
-                      <span className="text-gray-400 text-sm">Carroceria</span>
-                      <span className="font-medium">{vehicle.bodyType || "Sedan"}</span>
-                    </div>
-                    
-                    {vehicle.doors && (
-                      <div className="flex flex-col">
-                        <span className="text-gray-400 text-sm">Portas</span>
-                        <span className="font-medium">{vehicle.doors}</span>
-                      </div>
-                    )}
-                    
-                    {vehicle.enginePower && (
-                      <div className="flex flex-col">
-                        <span className="text-gray-400 text-sm">Motor</span>
-                        <span className="font-medium">{vehicle.enginePower}</span>
-                      </div>
-                    )}
-                    
-                    {vehicle.engineTorque && (
-                      <div className="flex flex-col">
-                        <span className="text-gray-400 text-sm">Torque</span>
-                        <span className="font-medium">{vehicle.engineTorque}</span>
-                      </div>
-                    )}
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="optionals">
-                  <h2 className="text-xl font-semibold mb-4">Opcionais</h2>
-                  
-                  {optionalsList.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {optionalsList.map((optional: string, index: number) => (
-                        <div key={index} className="flex items-center">
-                          <FaCheck className="mr-2 text-primary" />
-                          <span>{optional}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <div className="flex items-center">
-                        <FaCheck className="mr-2 text-primary" />
-                        <span>Ar condicionado</span>
-                      </div>
-                      <div className="flex items-center">
-                        <FaCheck className="mr-2 text-primary" />
-                        <span>Direção hidráulica</span>
-                      </div>
-                      <div className="flex items-center">
-                        <FaCheck className="mr-2 text-primary" />
-                        <span>Vidros elétricos</span>
-                      </div>
-                      <div className="flex items-center">
-                        <FaCheck className="mr-2 text-primary" />
-                        <span>Travas elétricas</span>
-                      </div>
-                      <div className="flex items-center">
-                        <FaCheck className="mr-2 text-primary" />
-                        <span>Som</span>
-                      </div>
-                      <div className="flex items-center">
-                        <FaCheck className="mr-2 text-primary" />
-                        <span>Alarme</span>
-                      </div>
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
-          
-          {/* Coluna lateral com informações e ações */}
-          <div className="lg:col-span-1">
-            <div className="glass-card rounded-xl p-6 mb-6 sticky top-24">
-              {/* Vehicle Title */}
-              <div className="flex items-center mb-4">
-                <img src={vehicle.brand.logoUrl} alt={vehicle.brand.name} className="w-8 h-8 mr-3" />
-                <div>
-                  <h1 className="text-2xl font-poppins font-bold">
-                    {vehicle.brand.name} {vehicle.model}
-                  </h1>
-                  <p className="text-gray-300 text-sm">{vehicle.year} • {vehicle.color}</p>
-                </div>
-              </div>
+              <h1 className="text-2xl font-bold mb-2">
+                {vehicle.brand.name} {vehicle.model}
+              </h1>
+              <p className="text-gray-400 mb-4">{vehicle.year} • {vehicle.color}</p>
               
-              <Separator className="mb-4" />
-              
-              {/* Quick Info */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                 <div className="flex items-center">
-                  <FaCalendarAlt className="text-primary mr-2" />
+                  <FaCalendarAlt className="text-primary mr-2 flex-shrink-0" />
                   <div>
                     <span className="text-gray-400 text-xs block">Ano</span>
                     <span className="font-medium">{vehicle.year}</span>
@@ -442,7 +307,7 @@ export default function VehicleDetail() {
                 </div>
                 
                 <div className="flex items-center">
-                  <FaTachometerAlt className="text-primary mr-2" />
+                  <FaTachometerAlt className="text-primary mr-2 flex-shrink-0" />
                   <div>
                     <span className="text-gray-400 text-xs block">KM</span>
                     <span className="font-medium">{formatMileage(vehicle.mileage)}</span>
@@ -450,7 +315,7 @@ export default function VehicleDetail() {
                 </div>
                 
                 <div className="flex items-center">
-                  <FaGasPump className="text-primary mr-2" />
+                  <FaGasPump className="text-primary mr-2 flex-shrink-0" />
                   <div>
                     <span className="text-gray-400 text-xs block">Combustível</span>
                     <span className="font-medium">{vehicle.fuel || "Flex"}</span>
@@ -458,10 +323,173 @@ export default function VehicleDetail() {
                 </div>
                 
                 <div className="flex items-center">
-                  <FaCog className="text-primary mr-2" />
+                  <FaCog className="text-primary mr-2 flex-shrink-0" />
                   <div>
                     <span className="text-gray-400 text-xs block">Câmbio</span>
                     <span className="font-medium">{vehicle.transmission || "Automático"}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold mb-3">Descrição</h2>
+                <p className="text-gray-300">
+                  {vehicle.description || `${vehicle.brand.name} ${vehicle.model} ${vehicle.year} - ${vehicle.color} em excelente estado.`}
+                </p>
+              </div>
+            </div>
+            
+            {/* Abas com informações detalhadas */}
+            <div className="glass-card rounded-xl p-6 mb-6">
+              <Tabs defaultValue="specs" className="w-full">
+                <TabsList className="mb-6 grid grid-cols-3 w-full">
+                  <TabsTrigger value="specs">Ficha Técnica</TabsTrigger>
+                  <TabsTrigger value="optionals">Opcionais</TabsTrigger>
+                  <TabsTrigger value="warranty">Garantia</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="specs" className="space-y-4">                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col p-3 rounded-lg bg-gray-800/30">
+                      <span className="text-gray-400 text-sm">Carroceria</span>
+                      <span className="font-medium">{vehicle.bodyType || "Sedan"}</span>
+                    </div>
+                    
+                    {vehicle.doors && (
+                      <div className="flex flex-col p-3 rounded-lg bg-gray-800/30">
+                        <span className="text-gray-400 text-sm">Portas</span>
+                        <span className="font-medium">{vehicle.doors}</span>
+                      </div>
+                    )}
+                    
+                    {vehicle.enginePower && (
+                      <div className="flex flex-col p-3 rounded-lg bg-gray-800/30">
+                        <span className="text-gray-400 text-sm">Motor</span>
+                        <span className="font-medium">{vehicle.enginePower}</span>
+                      </div>
+                    )}
+                    
+                    {vehicle.engineTorque && (
+                      <div className="flex flex-col p-3 rounded-lg bg-gray-800/30">
+                        <span className="text-gray-400 text-sm">Torque</span>
+                        <span className="font-medium">{vehicle.engineTorque}</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex flex-col p-3 rounded-lg bg-gray-800/30">
+                      <span className="text-gray-400 text-sm">Cor</span>
+                      <span className="font-medium">{vehicle.color}</span>
+                    </div>
+                    
+                    <div className="flex flex-col p-3 rounded-lg bg-gray-800/30">
+                      <span className="text-gray-400 text-sm">Quilometragem</span>
+                      <span className="font-medium">{formatMileage(vehicle.mileage)}</span>
+                    </div>
+                    
+                    <div className="flex flex-col p-3 rounded-lg bg-gray-800/30">
+                      <span className="text-gray-400 text-sm">Combustível</span>
+                      <span className="font-medium">{vehicle.fuel || "Flex"}</span>
+                    </div>
+                    
+                    <div className="flex flex-col p-3 rounded-lg bg-gray-800/30">
+                      <span className="text-gray-400 text-sm">Câmbio</span>
+                      <span className="font-medium">{vehicle.transmission || "Automático"}</span>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="optionals">
+                  {optionalsList.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {optionalsList.map((optional: string, index: number) => (
+                        <div key={index} className="flex items-center p-3 rounded-lg bg-gray-800/30">
+                          <FaCheck className="mr-2 text-primary flex-shrink-0" />
+                          <span>{optional}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div className="flex items-center p-3 rounded-lg bg-gray-800/30">
+                        <FaCheck className="mr-2 text-primary flex-shrink-0" />
+                        <span>Ar condicionado</span>
+                      </div>
+                      <div className="flex items-center p-3 rounded-lg bg-gray-800/30">
+                        <FaCheck className="mr-2 text-primary flex-shrink-0" />
+                        <span>Direção hidráulica</span>
+                      </div>
+                      <div className="flex items-center p-3 rounded-lg bg-gray-800/30">
+                        <FaCheck className="mr-2 text-primary flex-shrink-0" />
+                        <span>Vidros elétricos</span>
+                      </div>
+                      <div className="flex items-center p-3 rounded-lg bg-gray-800/30">
+                        <FaCheck className="mr-2 text-primary flex-shrink-0" />
+                        <span>Travas elétricas</span>
+                      </div>
+                      <div className="flex items-center p-3 rounded-lg bg-gray-800/30">
+                        <FaCheck className="mr-2 text-primary flex-shrink-0" />
+                        <span>Alarme</span>
+                      </div>
+                      <div className="flex items-center p-3 rounded-lg bg-gray-800/30">
+                        <FaCheck className="mr-2 text-primary flex-shrink-0" />
+                        <span>Som</span>
+                      </div>
+                    </div>
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="warranty" className="space-y-4">
+                  <div className="p-4 rounded-lg bg-gray-800/30 flex items-center">
+                    <FaShieldAlt className="mr-3 text-primary text-xl flex-shrink-0" />
+                    <div>
+                      <h3 className="font-medium mb-1">Garantia</h3>
+                      <p className="text-gray-300">
+                        {vehicle.warranty || "Garantia de fábrica"} 
+                      </p>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
+          
+          {/* Coluna lateral com preço e ações */}
+          <div className="lg:col-span-1">
+            <div className="glass-card rounded-xl p-6 mb-6 sticky top-24">
+              <h2 className="text-xl font-semibold mb-4">Informações de contato</h2>
+              
+              <div className="mb-6 space-y-4">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mr-3 flex-shrink-0">
+                    <FaMapMarkerAlt className="text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-sm">Endereço</h3>
+                    <p className="text-gray-400 text-sm">Av. Aristídes Campos, 449/451, Gilberto Machado</p>
+                    <p className="text-gray-400 text-sm">Cachoeiro de Itapemirim/ES, CEP: 29302-801</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mr-3 flex-shrink-0">
+                    <FaClock className="text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-sm">Horário de Funcionamento</h3>
+                    <p className="text-gray-400 text-sm">Seg-Sex: 07:30-18:00</p>
+                    <p className="text-gray-400 text-sm">Sáb: 07:30-12:00</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center mr-3 flex-shrink-0">
+                    <FaEnvelope className="text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-sm">Email</h3>
+                    <a href="mailto:marketingdouglasautocar@gmail.com" className="text-gray-400 text-sm hover:text-primary">
+                      marketingdouglasautocar@gmail.com
+                    </a>
                   </div>
                 </div>
               </div>
