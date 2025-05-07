@@ -751,7 +751,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Barra de administrador para mobile - simplificada com botão de sair */}
-      <div className="sm:hidden bg-slate-800 text-white py-3 px-4 mb-4 border-b border-slate-700 rounded-sm">
+      <div className="fixed sm:hidden top-0 left-0 right-0 z-50 bg-slate-800 text-white py-3 px-4 shadow-md">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <Avatar className="h-8 w-8 mr-2">
@@ -764,16 +764,29 @@ export default function AdminDashboard() {
               <div className="text-xs text-slate-300">{adminEmail}</div>
             </div>
           </div>
-          <Button 
-            variant="destructive" 
-            size="sm" 
-            onClick={handleLogout} 
-            className="px-4 h-8 text-sm flex items-center gap-1 rounded-lg"
-          >
-            <LogOut className="h-4 w-4 mr-1" /> Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate("/")} 
+              className="px-3 h-8 text-xs flex items-center gap-1 rounded-lg bg-transparent text-white border-slate-600"
+            >
+              <Home className="h-3 w-3" /> Home
+            </Button>
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={handleLogout} 
+              className="px-3 h-8 text-xs flex items-center gap-1 rounded-lg"
+            >
+              <LogOut className="h-3 w-3" /> Sair
+            </Button>
+          </div>
         </div>
       </div>
+      
+      {/* Espaço para compensar a barra fixa no mobile */}
+      <div className="sm:hidden h-14 mb-4"></div>
       
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Área Administrativa</h1>
@@ -861,30 +874,26 @@ export default function AdminDashboard() {
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-1">
                               <Button 
-                                variant="ghost" 
-                                size="icon"
+                                variant="outline" 
+                                size="sm"
+                                className="h-8 px-2 py-1 bg-slate-50"
                                 onClick={() => {
-                                  // Implementar edição de veículo
+                                  toast({
+                                    title: "Editar veículo",
+                                    description: "Funcionalidade de edição a ser implementada",
+                                  });
                                 }}
                               >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button 
-                                variant="ghost" 
-                                size="icon"
-                                onClick={() => {
-                                  // Implementar gerenciamento de imagens
-                                }}
-                              >
-                                <ImageIcon className="h-4 w-4" />
+                                <Pencil className="h-3.5 w-3.5 mr-1" /> <span className="text-xs">Editar</span>
                               </Button>
                               {!vehicle.sold && (
                                 <Button 
-                                  variant="ghost" 
-                                  size="icon"
+                                  variant="outline" 
+                                  size="sm"
+                                  className="h-8 px-2 py-1 text-green-600 border-green-200 bg-green-50 hover:bg-green-100 hover:text-green-700"
                                   onClick={() => handleMarkAsSold(vehicle)}
                                 >
-                                  <ShoppingCart className="h-4 w-4 text-green-500" />
+                                  <ShoppingCart className="h-3.5 w-3.5 mr-1" /> <span className="text-xs">Vender</span>
                                 </Button>
                               )}
                             </div>
