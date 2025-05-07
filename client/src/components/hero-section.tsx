@@ -14,14 +14,11 @@ type CarouselSlide = {
 export function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  const { data: featuredVehicles } = useQuery<(Vehicle & { brand: { name: string; logoUrl: string } })[]>({
-    queryKey: ['/api/vehicles?featured=true'],
-  });
-  
-  // Default slides if API data is not available
-  const defaultSlides: CarouselSlide[] = [
+  // Slides fixos com a Ferrari em destaque como primeiro slide
+  const slides: CarouselSlide[] = [
     {
-      imageUrl: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+      // Slide fixo com Ferrari vermelha
+      imageUrl: "https://images.unsplash.com/photo-1592198084033-aade902d1aae?q=80&w=1470&auto=format&fit=crop",
       title: "Encontre seu próximo carro dos sonhos",
       subtitle: "Fale com nossa equipe especializada. Estamos prontos para te atender!"
     },
@@ -36,15 +33,6 @@ export function HeroSection() {
       subtitle: "Todos os nossos veículos passam por rigorosa inspeção técnica"
     }
   ];
-  
-  // Generate slides from featured vehicles if available
-  const slides: CarouselSlide[] = featuredVehicles && featuredVehicles.length > 0
-    ? featuredVehicles.map(vehicle => ({
-        imageUrl: vehicle.imageUrl,
-        title: `${vehicle.brand.name} ${vehicle.model}`,
-        subtitle: vehicle.description || `${vehicle.year} - ${vehicle.color}`
-      }))
-    : defaultSlides;
   
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
