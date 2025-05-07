@@ -24,6 +24,7 @@ interface Dealer {
   id: number;
   name: string;
   username: string;
+  email: string;
   startDate: string;
   points: number;
   sales: number;
@@ -108,11 +109,14 @@ export default function AdminDashboard() {
   
   // Estados para a gestão de vendedores
   const [isNewDealerDialogOpen, setIsNewDealerDialogOpen] = useState(false);
+  const [isEditDealerDialogOpen, setIsEditDealerDialogOpen] = useState(false);
   const [isDeleteAllDealersDialogOpen, setIsDeleteAllDealersDialogOpen] = useState(false);
   const [isMarkAsAsSoldDialogOpen, setIsMarkAsAsSoldDialogOpen] = useState(false);
   const [vehicleToMarkAsSold, setVehicleToMarkAsSold] = useState<Vehicle | null>(null);
   const [selectedDealerForSale, setSelectedDealerForSale] = useState<number | null>(null);
+  const [selectedDealer, setSelectedDealer] = useState<Dealer | null>(null);
   const [newDealerName, setNewDealerName] = useState("");
+  const [newDealerUsername, setNewDealerUsername] = useState("");
   const [newDealerEmail, setNewDealerEmail] = useState("");
   const [newDealerPassword, setNewDealerPassword] = useState("");
   
@@ -344,6 +348,7 @@ export default function AdminDashboard() {
       });
       setIsNewDealerDialogOpen(false);
       setNewDealerName("");
+      setNewDealerUsername("");
       setNewDealerEmail("");
       setNewDealerPassword("");
       queryClient.invalidateQueries({ queryKey: ['/api/dealers/ranking'] });
@@ -351,6 +356,42 @@ export default function AdminDashboard() {
     onError: (error) => {
       toast({
         title: "Erro ao adicionar vendedor",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Mutação para editar vendedor
+  const updateDealerMutation = useMutation({
+    mutationFn: async (updatedDealer: { id: number, name: string, username: string, email: string, password?: string }) => {
+      return await apiRequest(`/api/dealers/${updatedDealer.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: updatedDealer.name,
+          username: updatedDealer.username,
+          email: updatedDealer.email,
+          ...(updatedDealer.password ? { password: updatedDealer.password } : {})
+        }),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Vendedor atualizado",
+        description: "As credenciais do vendedor foram atualizadas com sucesso."
+      });
+      setIsEditDealerDialogOpen(false);
+      setSelectedDealer(null);
+      setNewDealerName("");
+      setNewDealerUsername("");
+      setNewDealerEmail("");
+      setNewDealerPassword("");
+      queryClient.invalidateQueries({ queryKey: ['/api/dealers/ranking'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao atualizar vendedor",
         description: `Ocorreu um erro: ${error}`,
         variant: "destructive"
       });
@@ -454,7 +495,7 @@ export default function AdminDashboard() {
   
   // Função para adicionar novo vendedor
   const handleAddDealer = () => {
-    if (!newDealerName || !newDealerEmail || !newDealerPassword) {
+    if (!newDealerName || !newDealerUsername || !newDealerEmail || !newDealerPassword) {
       toast({
         title: "Campos obrigatórios",
         description: "Preencha todos os campos para cadastrar um novo vendedor.",
@@ -463,13 +504,41 @@ export default function AdminDashboard() {
       return;
     }
     
-    const username = newDealerEmail.split('@')[0]; // Usar primeira parte do email como username
-    
     addDealerMutation.mutate({
       name: newDealerName,
-      username,
+      username: newDealerUsername,
       email: newDealerEmail,
       password: newDealerPassword
+    });
+  };
+  
+  // Função para iniciar edição de vendedor
+  const handleEditDealer = (dealer: Dealer) => {
+    setSelectedDealer(dealer);
+    setNewDealerName(dealer.name);
+    setNewDealerUsername(dealer.username);
+    setNewDealerEmail(dealer.email);
+    setNewDealerPassword("");
+    setIsEditDealerDialogOpen(true);
+  };
+  
+  // Função para salvar edição de vendedor
+  const handleSaveDealer = () => {
+    if (!selectedDealer || !newDealerName || !newDealerUsername || !newDealerEmail) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Preencha todos os campos obrigatórios para editar o vendedor.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    updateDealerMutation.mutate({
+      id: selectedDealer.id,
+      name: newDealerName,
+      username: newDealerUsername,
+      email: newDealerEmail,
+      ...(newDealerPassword ? { password: newDealerPassword } : {})
     });
   };
   
