@@ -452,6 +452,98 @@ export default function AdminDashboard() {
     }
   });
   
+  // Mutação para criar marca
+  const createBrandMutation = useMutation({
+    mutationFn: async (brandData: { name: string, logoUrl: string }) => {
+      return await apiRequest('/api/brands', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(brandData),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Marca adicionada",
+        description: "A nova marca foi adicionada com sucesso."
+      });
+      setIsBrandDialogOpen(false);
+      setSelectedBrand(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/brands'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao adicionar marca",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Mutação para atualizar marca
+  const updateBrandMutation = useMutation({
+    mutationFn: async (updatedBrand: { id: number, name: string, logoUrl: string }) => {
+      return await apiRequest(`/api/brands/${updatedBrand.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: updatedBrand.name,
+          logoUrl: updatedBrand.logoUrl
+        }),
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Marca atualizada",
+        description: "As informações da marca foram atualizadas com sucesso."
+      });
+      setIsBrandDialogOpen(false);
+      setSelectedBrand(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/brands'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao atualizar marca",
+        description: `Ocorreu um erro: ${error}`,
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Mutação para excluir marca
+  const deleteBrandMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/brands/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Marca excluída",
+        description: "A marca foi excluída com sucesso."
+      });
+      setIsDeleteBrandDialogOpen(false);
+      setSelectedBrand(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/brands'] });
+    },
+    onError: (error: any) => {
+      // Verificar se o erro é devido a veículos associados
+      if (error.response?.status === 409) {
+        toast({
+          title: "Não é possível excluir esta marca",
+          description: "Esta marca possui veículos associados. Remova ou altere a marca dos veículos primeiro.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Erro ao excluir marca",
+          description: `Ocorreu um erro: ${error}`,
+          variant: "destructive"
+        });
+      }
+    }
+  });
+  
 
 
   // Mutação para marcar veículo como vendido
