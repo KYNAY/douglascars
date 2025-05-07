@@ -96,6 +96,7 @@ interface Review {
   rating: number;
   comment: string;
   date: string;
+  createdAt?: string;
 }
 
 interface InstagramPost {
@@ -103,6 +104,7 @@ interface InstagramPost {
   imageUrl: string;
   likes: number;
   postUrl: string;
+  createdAt?: string;
 }
 
 export default function AdminDashboard() {
@@ -2851,7 +2853,7 @@ export default function AdminDashboard() {
                   ].map((opcional) => {
                     // Verificar se o opcional está presente na lista do veículo
                     const isChecked = selectedVehicle?.optionals 
-                      ? JSON.parse(selectedVehicle.optionals).includes(opcional) 
+                      ? (JSON.parse(selectedVehicle.optionals) as string[]).includes(opcional) 
                       : false;
                     
                     return (
@@ -2881,8 +2883,8 @@ export default function AdminDashboard() {
                     placeholder="Digite outros opcionais não listados acima, um por linha" 
                     className="min-h-[60px] text-sm"
                     defaultValue={selectedVehicle?.optionals 
-                      ? JSON.parse(selectedVehicle.optionals)
-                          .filter(opt => !["Air bag", "Ar condicionado", "Alarme", "Bancos de couro", "Blindado", 
+                      ? (JSON.parse(selectedVehicle.optionals) as string[])
+                          .filter((opt: string) => !["Air bag", "Ar condicionado", "Alarme", "Bancos de couro", "Blindado", 
                                            "Câmera de ré", "Computador de bordo", "Conexão USB", "Controle automático de velocidade", 
                                            "Interface bluetooth", "Navegador GPS", "Rodas de liga leve", "Sensor de ré", 
                                            "Som", "Teto solar", "Tração 4x4", "Trava elétrica", "Vidro elétrico", 
