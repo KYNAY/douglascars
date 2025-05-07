@@ -556,6 +556,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Vehicle Images routes
+
+  // Get images for a specific vehicle
+  app.get(`${apiPrefix}/vehicles/:vehicleId/images`, async (req, res) => {
+    try {
+      const { vehicleId } = req.params;
+
+      // Verify that the vehicle exists
+      const existingVehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(vehicleId))).limit(1);
+      if (!existingVehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+
+      // Get all images for this vehicle, ordered by the 'order' field
+      const images = await db.select()
+        .from(vehicleImages)
+        .where(eq(vehicleImages.vehicleId, Number(vehicleId)))
+        .orderBy(asc(vehicleImages.order));
+
+      return res.json(images);
+    } catch (error) {
+      console.error("Error fetching vehicle images:", error);
+      return res.status(500).json({ error: "Failed to fetch vehicle images" });
+    }
+  });
+
+  // Add a new image to a vehicle
+  app.post(`${apiPrefix}/vehicles/:vehicleId/images`, async (req, res) => {
+    try {
+      const { vehicleId } = req.params;
+      const { imageUrl, order = 0 } = req.body;
+
+      if (!imageUrl) {
+        return res.status(400).json({ error: "Image URL is required" });
+      }
+
+      // Verify that the vehicle exists
+      const existingVehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(vehicleId))).limit(1);
+      if (!existingVehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+
+      // Inserir a nova imagem
+      const [newImage] = await db.insert(vehicleImages)
+        .values({
+          vehicleId: Number(vehicleId),
+          imageUrl,
+          order
+        })
+        .returning();
+
+      return res.status(201).json(newImage);
+    } catch (error) {
+      console.error("Error adding vehicle image:", error);
+      return res.status(500).json({ error: "Failed to add vehicle image" });
+    }
+  });
+
+  // Update an image (order)
+  app.patch(`${apiPrefix}/vehicles/:vehicleId/images/:imageId`, async (req, res) => {
+    try {
+      const { vehicleId, imageId } = req.params;
+      const { order } = req.body;
+
+      if (order === undefined) {
+        return res.status(400).json({ error: "Order is required" });
+      }
+
+      // Verify that the vehicle exists
+      const existingVehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(vehicleId))).limit(1);
+      if (!existingVehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+
+      // Verify that the image exists and belongs to this vehicle
+      const existingImage = await db.select()
+        .from(vehicleImages)
+        .where(
+          and(
+            eq(vehicleImages.id, Number(imageId)),
+            eq(vehicleImages.vehicleId, Number(vehicleId))
+          )
+        )
+        .limit(1);
+
+      if (!existingImage.length) {
+        return res.status(404).json({ error: "Image not found or doesn't belong to this vehicle" });
+      }
+
+      // Update the image order
+      const [updatedImage] = await db.update(vehicleImages)
+        .set({ order })
+        .where(eq(vehicleImages.id, Number(imageId)))
+        .returning();
+
+      return res.json(updatedImage);
+    } catch (error) {
+      console.error("Error updating vehicle image:", error);
+      return res.status(500).json({ error: "Failed to update vehicle image" });
+    }
+  });
+
+  // Delete an image
+  app.delete(`${apiPrefix}/vehicles/:vehicleId/images/:imageId`, async (req, res) => {
+    try {
+      const { vehicleId, imageId } = req.params;
+
+      // Verify that the vehicle exists
+      const existingVehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(vehicleId))).limit(1);
+      if (!existingVehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+
+      // Verify that the image exists and belongs to this vehicle
+      const existingImage = await db.select()
+        .from(vehicleImages)
+        .where(
+          and(
+            eq(vehicleImages.id, Number(imageId)),
+            eq(vehicleImages.vehicleId, Number(vehicleId))
+          )
+        )
+        .limit(1);
+
+      if (!existingImage.length) {
+        return res.status(404).json({ error: "Image not found or doesn't belong to this vehicle" });
+      }
+
+      // Delete the image
+      await db.delete(vehicleImages)
+        .where(eq(vehicleImages.id, Number(imageId)));
+
+      return res.json({ success: true, message: "Vehicle image deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting vehicle image:", error);
+      return res.status(500).json({ error: "Failed to delete vehicle image" });
+    }
+  });
+
   // Dealer authentication
   app.post(`${apiPrefix}/auth/dealer/login`, async (req, res) => {
     try {
