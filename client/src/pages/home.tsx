@@ -146,8 +146,7 @@ export default function Home() {
           <div className="flex justify-center mt-12">
             <Button 
               asChild
-              variant="outline"
-              className="bg-white/10 hover:bg-white/15 px-8 py-3 rounded-lg text-white font-medium transition-all"
+              className="btn-gradient px-8 py-3 rounded-lg text-white font-medium transition-all"
             >
               <Link href="/estoque">
                 Veja todas as novidades
