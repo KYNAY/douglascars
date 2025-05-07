@@ -3308,10 +3308,19 @@ export default function AdminDashboard() {
                   if (selectedReview.id === 0) {
                     // Criar nova avaliação
                     const { id, ...reviewData } = selectedReview;
-                    createReviewMutation.mutate(reviewData);
+                    // Adicionar createdAt para atender ao contrato de tipos
+                    const reviewWithCreatedAt = {
+                      ...reviewData,
+                      createdAt: new Date().toISOString()
+                    };
+                    createReviewMutation.mutate(reviewWithCreatedAt as any);
                   } else {
                     // Atualizar avaliação existente
-                    updateReviewMutation.mutate(selectedReview);
+                    const reviewWithCreatedAt = {
+                      ...selectedReview,
+                      createdAt: selectedReview.createdAt || new Date().toISOString()
+                    };
+                    updateReviewMutation.mutate(reviewWithCreatedAt as any);
                   }
                 }
               }}
@@ -3456,10 +3465,19 @@ export default function AdminDashboard() {
                   if (selectedInstagramPost.id === 0) {
                     // Criar novo post
                     const { id, ...postData } = selectedInstagramPost;
-                    createInstagramPostMutation.mutate(postData);
+                    // Adicionar createdAt para atender ao contrato de tipos
+                    const postWithCreatedAt = {
+                      ...postData,
+                      createdAt: new Date().toISOString()
+                    };
+                    createInstagramPostMutation.mutate(postWithCreatedAt as any);
                   } else {
                     // Atualizar post existente
-                    updateInstagramPostMutation.mutate(selectedInstagramPost);
+                    const postWithCreatedAt = {
+                      ...selectedInstagramPost,
+                      createdAt: selectedInstagramPost.createdAt || new Date().toISOString()
+                    };
+                    updateInstagramPostMutation.mutate(postWithCreatedAt as any);
                   }
                 }
               }}
