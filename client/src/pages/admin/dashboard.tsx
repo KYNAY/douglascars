@@ -690,8 +690,11 @@ export default function AdminDashboard() {
   
   // Função para marcar veículo como vendido
   const handleMarkAsSold = (vehicle: Vehicle) => {
+    console.log("handleMarkAsSold chamado com veículo:", vehicle);
     setVehicleToMarkAsSold(vehicle);
+    console.log("Estado vehicleToMarkAsSold atualizado");
     setIsMarkAsAsSoldDialogOpen(true);
+    console.log("Dialog deve estar aberto agora, isMarkAsAsSoldDialogOpen =", true);
   };
   
   // Função para confirmar venda
