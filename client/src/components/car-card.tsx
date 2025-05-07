@@ -127,6 +127,12 @@ export function CarCard({ vehicle, featured = false }: CarCardProps) {
           asChild 
           variant="outline"
           className="mt-4 w-full text-center bg-white/10 hover:bg-white/15 py-3 rounded-lg text-white font-medium transition-all"
+          onClick={(e) => {
+            // Prevenir comportamento padrão para adicionar log
+            e.preventDefault();
+            console.log("Navegando para o detalhe do veículo:", vehicle.id);
+            window.location.href = `/estoque/${vehicle.id}`;
+          }}
         >
           <Link href={`/estoque/${vehicle.id}`}>
             Ver mais

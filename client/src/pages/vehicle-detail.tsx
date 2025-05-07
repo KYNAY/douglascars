@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRoute, Link } from "wouter";
+import { useRoute, Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { 
   FaArrowLeft, 
@@ -21,14 +21,34 @@ import { cn } from "@/lib/utils";
 
 export default function VehicleDetail() {
   const [match, params] = useRoute("/estoque/:id");
+  const [, setLocation] = useLocation();
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   
+  // Usar uma função de consulta explícita para maior controle
   const { data: vehicle, isLoading, error } = useQuery<Vehicle & { 
     brand: { name: string; logoUrl: string },
     additionalImages: VehicleImage[] 
   }>({
     queryKey: [`/api/vehicles/${params?.id}`],
-    enabled: !!params?.id
+    enabled: !!params?.id,
+    retry: 3,
+    refetchOnWindowFocus: false,
+    queryFn: async () => {
+      console.log("Fetching vehicle with ID:", params?.id);
+      if (!params?.id) throw new Error("ID do veículo não fornecido");
+      
+      try {
+        const response = await fetch(`/api/vehicles/${params.id}`);
+        if (!response.ok) {
+          console.error("API error:", response.status);
+          throw new Error(`Erro ao buscar veículo: ${response.status}`);
+        }
+        return await response.json();
+      } catch (err) {
+        console.error("Error fetching vehicle:", err);
+        throw err;
+      }
+    }
   });
   
   // Função para ir para a próxima imagem
