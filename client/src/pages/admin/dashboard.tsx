@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag, ShoppingCart, Calculator, DollarSign } from "lucide-react";
+import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag, ShoppingCart, Calculator, DollarSign, Star, Heart, Info } from "lucide-react";
 import { getInitial, formatPrice } from "@/lib/utils";
 import { VehicleImagesManager } from "@/components/admin/vehicle-images-manager";
 import { useToast } from "@/hooks/use-toast";
@@ -82,6 +82,22 @@ interface FinancingRequest {
   createdAt?: string;
 }
 
+interface Review {
+  id: number;
+  name: string;
+  avatarInitial: string;
+  rating: number;
+  comment: string;
+  date: string;
+}
+
+interface InstagramPost {
+  id: number;
+  imageUrl: string;
+  likes: number;
+  postUrl: string;
+}
+
 export default function AdminDashboard() {
   const [, navigate] = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -138,6 +154,16 @@ export default function AdminDashboard() {
   const [hasNewFinancings, setHasNewFinancings] = useState(false);
   const [lastCheckedEvaluationCount, setLastCheckedEvaluationCount] = useState(0);
   const [lastCheckedFinancingCount, setLastCheckedFinancingCount] = useState(0);
+  
+  // Estados para o gerenciamento de avaliações do Google
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
+  const [isDeleteReviewDialogOpen, setIsDeleteReviewDialogOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  
+  // Estados para o gerenciamento de posts do Instagram
+  const [isInstagramPostDialogOpen, setIsInstagramPostDialogOpen] = useState(false);
+  const [isDeleteInstagramPostDialogOpen, setIsDeleteInstagramPostDialogOpen] = useState(false);
+  const [selectedInstagramPost, setSelectedInstagramPost] = useState<InstagramPost | null>(null);
   
   // Mutação para atualizar veículo
   const updateVehicleMutation = useMutation({
@@ -744,6 +770,18 @@ export default function AdminDashboard() {
     enabled: isAuthenticated,
     // Refetch a cada 30 segundos para verificar novas solicitações
     refetchInterval: 30000
+  });
+  
+  // Buscar avaliações do Google
+  const { data: reviews, isLoading: isLoadingReviews } = useQuery<Review[]>({
+    queryKey: ['/api/reviews'],
+    enabled: isAuthenticated
+  });
+  
+  // Buscar posts do Instagram
+  const { data: instagramPosts, isLoading: isLoadingInstagramPosts } = useQuery<InstagramPost[]>({
+    queryKey: ['/api/instagram-posts'],
+    enabled: isAuthenticated
   });
   
   // Verificar novas solicitações
