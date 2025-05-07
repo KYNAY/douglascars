@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -17,13 +17,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { getInitial, formatPrice, formatMileage } from "@/lib/utils";
-import { LogOut, Car, DollarSign, Award, Clock, Image, ShoppingCart } from "lucide-react";
+import { LogOut, Car, DollarSign, Award, Clock, Image, ShoppingCart, Timer, AlertCircle, Lock, LockOpen, CheckCircle2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 type DealerData = {
   id: number;
@@ -51,9 +62,44 @@ type SaleData = {
   };
 };
 
+// Interface para veículos com dados de reserva
+interface Vehicle {
+  id: number;
+  brandId: number;
+  model: string;
+  year: string;
+  color: string;
+  price: string | number;
+  originalPrice: string | number | null;
+  mileage: number;
+  description: string | null;
+  featured: boolean;
+  sold: boolean;
+  reserved: boolean;
+  reservedBy: number | null;
+  reservationTime: string | null;
+  reservationExpiresAt: string | null;
+  imageUrl: string;
+  transmission?: string;
+  fuel?: string;
+  bodyType?: string;
+  vehicleType?: 'car' | 'motorcycle';
+  brand?: {
+    id: number;
+    name: string;
+    logoUrl: string;
+  };
+}
+
 export default function DealerDashboard() {
   const [currentDealer, setCurrentDealer] = useState<DealerData | null>(null);
   const [_, setLocation] = useLocation();
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [isReserveDialogOpen, setIsReserveDialogOpen] = useState(false);
+  const [isCancelReservationDialogOpen, setIsCancelReservationDialogOpen] = useState(false);
+  const [isMarkAsSoldDialogOpen, setIsMarkAsSoldDialogOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   // Carregar dados do vendedor do localStorage quando a página carrega
   useEffect(() => {
@@ -176,6 +222,163 @@ export default function DealerDashboard() {
     }
     
     return sixMonths;
+  };
+
+  // Mutação para reservar um veículo
+  const reserveMutation = useMutation({
+    mutationFn: async (vehicleId: number) => {
+      if (!currentDealer?.id) throw new Error("Vendedor não identificado");
+      
+      const response = await apiRequest(`/api/vehicles/${vehicleId}/reserve`, {
+        method: "POST",
+        body: JSON.stringify({ dealerId: currentDealer.id }),
+        headers: { "Content-Type": "application/json" }
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Erro ao reservar veículo");
+      }
+      
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Veículo reservado com sucesso",
+        description: "Você tem 24 horas para marcar como vendido antes que a reserva expire.",
+        variant: "default",
+      });
+      setIsReserveDialogOpen(false);
+      setSelectedVehicle(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/vehicles/available'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao reservar veículo",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // Mutação para cancelar uma reserva
+  const cancelReservationMutation = useMutation({
+    mutationFn: async (vehicleId: number) => {
+      if (!currentDealer?.id) throw new Error("Vendedor não identificado");
+      
+      const response = await apiRequest(`/api/vehicles/${vehicleId}/cancel-reservation`, {
+        method: "POST",
+        body: JSON.stringify({ dealerId: currentDealer.id }),
+        headers: { "Content-Type": "application/json" }
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Erro ao cancelar reserva");
+      }
+      
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Reserva cancelada com sucesso",
+        description: "O veículo está novamente disponível para outros vendedores.",
+        variant: "default",
+      });
+      setIsCancelReservationDialogOpen(false);
+      setSelectedVehicle(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/vehicles/available'] });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao cancelar reserva",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // Mutação para marcar veículo como vendido
+  const markAsSoldMutation = useMutation({
+    mutationFn: async (vehicleId: number) => {
+      if (!currentDealer?.id) throw new Error("Vendedor não identificado");
+      
+      const response = await apiRequest(`/api/vehicles/${vehicleId}/sold`, "PATCH", {
+        dealerId: currentDealer.id,
+        soldDate: new Date().toISOString()
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Erro ao marcar como vendido");
+      }
+      
+      return await response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Veículo marcado como vendido",
+        description: "Venda registrada com sucesso! Seus pontos foram atualizados.",
+        variant: "default",
+      });
+      setIsMarkAsSoldDialogOpen(false);
+      setSelectedVehicle(null);
+      queryClient.invalidateQueries({ queryKey: ['/api/vehicles/available'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/dealers/sales', currentDealer?.id] });
+      
+      // Atualizar o número de vendas e pontos do vendedor no localStorage
+      if (currentDealer) {
+        const updatedDealer = { 
+          ...currentDealer, 
+          sales: currentDealer.sales + 1,
+          points: currentDealer.points + 10 // Adicionando 10 pontos por venda
+        };
+        localStorage.setItem("dealer_data", JSON.stringify(updatedDealer));
+        setCurrentDealer(updatedDealer);
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao marcar veículo como vendido",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // Formatar tempo restante de reserva
+  const formatTimeRemaining = (expiresAt: string | null): string => {
+    if (!expiresAt) return "";
+    
+    const now = new Date();
+    const expiration = new Date(expiresAt);
+    const diffMs = expiration.getTime() - now.getTime();
+    
+    // Se já expirou
+    if (diffMs <= 0) return "Expirada";
+    
+    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    return `${diffHrs}h ${diffMins}m restantes`;
+  };
+
+  // Handler para abrir diálogo de reserva
+  const handleReserveClick = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setIsReserveDialogOpen(true);
+  };
+
+  // Handler para abrir diálogo de cancelamento de reserva
+  const handleCancelReservationClick = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setIsCancelReservationDialogOpen(true);
+  };
+
+  // Handler para abrir diálogo de marcar como vendido
+  const handleMarkAsSoldClick = (vehicle: Vehicle) => {
+    setSelectedVehicle(vehicle);
+    setIsMarkAsSoldDialogOpen(true);
   };
 
   const handleLogout = () => {
@@ -424,35 +627,87 @@ export default function DealerDashboard() {
                             </TableCell>
                             <TableCell>
                               <div className="flex flex-col gap-2">
-                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 mb-2">
-                                  Disponível
-                                </Badge>
-                                <div className="flex flex-wrap gap-1">
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    className="h-8 px-2 text-xs bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
-                                    title="Reservar por 24h"
-                                    onClick={() => {
-                                      // Implementação da reserva será adicionada
-                                      alert(`Veículo ${vehicle.model} reservado por 24h`);
-                                    }}
-                                  >
-                                    Reservar
-                                  </Button>
-                                  <Button 
-                                    variant="outline" 
-                                    size="sm" 
-                                    className="h-8 px-2 text-xs bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
-                                    title="Registrar venda deste veículo"
-                                    onClick={() => {
-                                      // Implementação da venda será adicionada
-                                      alert(`Venda do veículo ${vehicle.model} registrada`);
-                                    }}
-                                  >
-                                    Vender
-                                  </Button>
-                                </div>
+                                {/* Estado: não reservado */}
+                                {!vehicle.reserved && !vehicle.sold && (
+                                  <>
+                                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 mb-2">
+                                      Disponível
+                                    </Badge>
+                                    <div className="flex flex-wrap gap-1">
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="h-8 px-2 text-xs bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                                        title="Reservar por 24h"
+                                        onClick={() => handleReserveClick(vehicle as Vehicle)}
+                                      >
+                                        <Timer className="h-3 w-3 mr-1" /> Reservar
+                                      </Button>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="h-8 px-2 text-xs bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                                        title="Registrar venda deste veículo"
+                                        onClick={() => handleMarkAsSoldClick(vehicle as Vehicle)}
+                                      >
+                                        <CheckCircle2 className="h-3 w-3 mr-1" /> Vender
+                                      </Button>
+                                    </div>
+                                  </>
+                                )}
+                                
+                                {/* Estado: reservado por você */}
+                                {vehicle.reserved && vehicle.reservedBy === currentDealer.id && (
+                                  <>
+                                    <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 mb-1">
+                                      Reservado por você
+                                    </Badge>
+                                    <div className="text-xs flex items-center text-amber-700 mb-2">
+                                      <Timer className="h-3 w-3 mr-1" /> 
+                                      {formatTimeRemaining(vehicle.reservationExpiresAt)}
+                                    </div>
+                                    <div className="flex flex-wrap gap-1">
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="h-8 px-2 text-xs bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+                                        title="Cancelar sua reserva"
+                                        onClick={() => handleCancelReservationClick(vehicle as Vehicle)}
+                                      >
+                                        <LockOpen className="h-3 w-3 mr-1" /> Cancelar
+                                      </Button>
+                                      <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="h-8 px-2 text-xs bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                                        title="Registrar venda deste veículo"
+                                        onClick={() => handleMarkAsSoldClick(vehicle as Vehicle)}
+                                      >
+                                        <CheckCircle2 className="h-3 w-3 mr-1" /> Vender
+                                      </Button>
+                                    </div>
+                                  </>
+                                )}
+                                
+                                {/* Estado: reservado por outro vendedor */}
+                                {vehicle.reserved && vehicle.reservedBy !== currentDealer.id && (
+                                  <>
+                                    <Badge variant="outline" className="bg-slate-50 text-slate-700 border-slate-200 mb-1">
+                                      Reservado
+                                    </Badge>
+                                    <div className="text-xs flex items-center text-slate-700 mb-2">
+                                      <Lock className="h-3 w-3 mr-1" /> 
+                                      Outro vendedor
+                                    </div>
+                                  </>
+                                )}
+                                
+                                {/* Estado: vendido */}
+                                {vehicle.sold && (
+                                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                    Vendido
+                                  </Badge>
+                                )}
                               </div>
                             </TableCell>
                           </TableRow>
