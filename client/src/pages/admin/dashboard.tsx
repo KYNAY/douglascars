@@ -881,7 +881,7 @@ export default function AdminDashboard() {
                               <Button 
                                 variant="outline" 
                                 size="sm"
-                                className="h-8 px-2 py-1 bg-slate-50"
+                                className="h-8 px-2 py-1 bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100 hover:text-blue-700"
                                 onClick={() => {
                                   setSelectedVehicle(vehicle);
                                   setIsVehicleDialogOpen(true);
@@ -2203,7 +2203,7 @@ export default function AdminDashboard() {
       
       {/* Diálogo para adicionar/editar veículo */}
       <Dialog open={isVehicleDialogOpen} onOpenChange={setIsVehicleDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{selectedVehicle ? "Editar Veículo" : "Adicionar Veículo"}</DialogTitle>
             <DialogDescription>
@@ -2405,13 +2405,23 @@ export default function AdminDashboard() {
                 />
               </div>
               
-              <div className="flex items-center space-x-2 h-10 mt-8">
-                <Checkbox 
-                  id="featured" 
-                  name="featured"
-                  defaultChecked={selectedVehicle?.featured}
-                />
-                <Label htmlFor="featured">Destacar este veículo</Label>
+              <div className="flex items-center gap-4 h-10 mt-8">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="featured" 
+                    name="featured"
+                    defaultChecked={selectedVehicle?.featured}
+                  />
+                  <Label htmlFor="featured">Destacar este veículo</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="specialFeatured" 
+                    name="specialFeatured"
+                    defaultChecked={selectedVehicle?.specialFeatured}
+                  />
+                  <Label htmlFor="specialFeatured">Destaque Especial</Label>
+                </div>
               </div>
             </div>
             
