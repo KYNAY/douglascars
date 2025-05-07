@@ -533,25 +533,21 @@ export default function DealerDashboard() {
         </div>
       </header>
       
-      {/* Barra de contato com botões, visível apenas em mobile */}
+      {/* Barra do vendedor com botão de sair */}
       <div className="lg:hidden bg-slate-800 text-white py-2 px-4 border-b border-slate-700">
         <div className="flex items-center justify-between">
-          <a href="tel:(28)3027-7065" className="flex items-center text-primary">
-            <Phone className="mr-1 h-4 w-4" /> (28) 3027-7065
-          </a>
-          <div className="flex items-center space-x-4">
-            <a href="https://wa.me/5528999339129" className="flex items-center text-green-500">
-              <FaWhatsapp className="mr-1 h-4 w-4" /> Whatsapp
-            </a>
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              onClick={handleLogout} 
-              className="py-1 px-3 h-auto text-xs flex items-center gap-1 ml-1"
-            >
-              <LogOut className="h-3 w-3" /> Sair
-            </Button>
+          <div className="flex items-center">
+            <DollarSign className="h-4 w-4 text-primary mr-1" />
+            <span className="text-sm font-medium">Painel Vendedor: {currentDealer.name}</span>
           </div>
+          <Button 
+            variant="destructive" 
+            size="sm" 
+            onClick={handleLogout} 
+            className="py-1 px-4 h-8 text-sm flex items-center gap-1 rounded-lg"
+          >
+            <LogOut className="h-4 w-4 mr-1" /> Sair
+          </Button>
         </div>
       </div>
       
