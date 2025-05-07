@@ -64,8 +64,8 @@ CREATE TABLE vehicles (
   model VARCHAR(255) NOT NULL,
   year VARCHAR(50) NOT NULL,
   color VARCHAR(100) NOT NULL,
-  price DECIMAL(10,2) NOT NULL,
-  originalPrice DECIMAL(10,2) NULL,
+  price DECIMAL(15,2) NOT NULL,
+  originalPrice DECIMAL(15,2) NULL,
   mileage INT NOT NULL,
   transmission VARCHAR(50) NOT NULL,
   fuel VARCHAR(50) NOT NULL,
@@ -102,9 +102,9 @@ CREATE TABLE sales (
   id INT AUTO_INCREMENT PRIMARY KEY,
   vehicle_id INT,
   dealer_id INT,
-  sale_price DECIMAL(10,2) NOT NULL,
+  sale_price DECIMAL(15,2) NOT NULL,
   sale_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-  commission DECIMAL(10,2) NULL,
+  commission DECIMAL(15,2) NULL,
   payment_method VARCHAR(100) NULL,
   notes TEXT NULL,
   cancellation_date DATETIME NULL,
@@ -326,6 +326,7 @@ Após a migração, verifique se:
 | `boolean` | `TINYINT(1)` | Para valores true/false |
 | `timestamp` | `DATETIME` ou `TIMESTAMP` | Para datas e horas |
 | `date` | `DATE` | Para datas |
+| `decimal(p,s)` | `DECIMAL(p,s)` | Para valores decimais, onde o schema atual usa precisão 15 e escala 2 para valores monetários |
 
 ### 9.2. Definições de Tabela
 

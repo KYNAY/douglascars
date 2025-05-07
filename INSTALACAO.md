@@ -157,8 +157,8 @@ O sistema utiliza as seguintes tabelas:
 - `model` (VARCHAR(255), não nulo)
 - `year` (VARCHAR(50), não nulo)
 - `color` (VARCHAR(100), não nulo)
-- `price` (DECIMAL(10,2), não nulo)
-- `originalPrice` (DECIMAL(10,2), nulo)
+- `price` (DECIMAL(15,2), não nulo)
+- `originalPrice` (DECIMAL(15,2), nulo)
 - `mileage` (INT, não nulo)
 - `transmission` (VARCHAR(50), não nulo)
 - `fuel` (VARCHAR(50), não nulo)
@@ -190,9 +190,9 @@ O sistema utiliza as seguintes tabelas:
 - `id` (INT, auto-incremento, chave primária)
 - `vehicle_id` (INT, referência para vehicles.id)
 - `dealer_id` (INT, referência para dealers.id)
-- `sale_price` (DECIMAL(10,2), não nulo)
+- `sale_price` (DECIMAL(15,2), não nulo)
 - `sale_date` (TIMESTAMP, default: NOW())
-- `commission` (DECIMAL(10,2), nulo)
+- `commission` (DECIMAL(15,2), nulo)
 - `payment_method` (VARCHAR(100), nulo)
 - `notes` (TEXT, nulo)
 - `cancellation_date` (TIMESTAMP, nulo)
@@ -209,9 +209,11 @@ O sistema utiliza as seguintes tabelas:
 #### vehicle_images
 - `id` (INT, auto-incremento, chave primária)
 - `vehicle_id` (INT, referência para vehicles.id)
-- `image_url` (VARCHAR(255), não nulo)
-- `is_primary` (BOOLEAN, default: false)
+- `imageUrl` (VARCHAR(255), não nulo)
+- `order` (INT, default: 0)
 - `created_at` (TIMESTAMP, default: NOW())
+  
+Nota: O sistema suporta até 10 imagens por veículo, com a imagem principal armazenada em `vehicles.imageUrl` e imagens adicionais armazenadas na tabela `vehicle_images`.
 
 #### instagram_posts
 - `id` (INT, auto-incremento, chave primária)
