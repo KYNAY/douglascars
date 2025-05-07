@@ -747,25 +747,27 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap">
-          <TabsTrigger value="vehicles">Veículos</TabsTrigger>
-          <TabsTrigger value="requests" className="relative">
-            Solicitações
-            {(hasNewEvaluations || hasNewFinancings) && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-4 w-4 bg-primary items-center justify-center">
-                  <span className="text-[10px] font-bold text-white">!</span>
+        <div className="overflow-x-auto pb-2">
+          <TabsList className="flex flex-nowrap w-max">
+            <TabsTrigger value="vehicles" className="whitespace-nowrap">Veículos</TabsTrigger>
+            <TabsTrigger value="requests" className="relative whitespace-nowrap">
+              Solicitações
+              {(hasNewEvaluations || hasNewFinancings) && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-primary items-center justify-center">
+                    <span className="text-[10px] font-bold text-white">!</span>
+                  </span>
                 </span>
-              </span>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="ranking">Vendedores</TabsTrigger>
-          <TabsTrigger value="brands">Marcas</TabsTrigger>
-          <TabsTrigger value="featured">Destaques</TabsTrigger>
-          <TabsTrigger value="hero">Carousel</TabsTrigger>
-          <TabsTrigger value="settings">Configurações</TabsTrigger>
-        </TabsList>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="ranking" className="whitespace-nowrap">Vendedores</TabsTrigger>
+            <TabsTrigger value="brands" className="whitespace-nowrap">Marcas</TabsTrigger>
+            <TabsTrigger value="featured" className="whitespace-nowrap">Destaques</TabsTrigger>
+            <TabsTrigger value="hero" className="whitespace-nowrap">Carousel</TabsTrigger>
+            <TabsTrigger value="settings" className="whitespace-nowrap">Configurações</TabsTrigger>
+          </TabsList>
+        </div>
         
         <TabsContent value="vehicles" className="space-y-4">
           <Card>
@@ -790,9 +792,9 @@ export default function AdminDashboard() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Modelo</TableHead>
-                        <TableHead>Marca</TableHead>
-                        <TableHead>Ano</TableHead>
+                        <TableHead className="min-w-[100px]">Veículo</TableHead>
+                        <TableHead className="hidden md:table-cell">Marca</TableHead>
+                        <TableHead className="hidden sm:table-cell">Ano</TableHead>
                         <TableHead>Preço</TableHead>
                         <TableHead>Status</TableHead>
                         <TableHead className="text-right">Ações</TableHead>
@@ -801,9 +803,16 @@ export default function AdminDashboard() {
                     <TableBody>
                       {vehicles?.map((vehicle) => (
                         <TableRow key={vehicle.id}>
-                          <TableCell className="font-medium">{vehicle.model}</TableCell>
-                          <TableCell>{brands?.find(b => b.id === vehicle.brandId)?.name || "-"}</TableCell>
-                          <TableCell>{vehicle.year}</TableCell>
+                          <TableCell className="font-medium">
+                            <div>
+                              <div>{vehicle.model}</div>
+                              <div className="md:hidden text-xs text-muted-foreground">
+                                {brands?.find(b => b.id === vehicle.brandId)?.name || "-"} • {vehicle.year}
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">{brands?.find(b => b.id === vehicle.brandId)?.name || "-"}</TableCell>
+                          <TableCell className="hidden sm:table-cell">{vehicle.year}</TableCell>
                           <TableCell>{formatPrice(vehicle.price)}</TableCell>
                           <TableCell>
                             {vehicle.sold ? (
@@ -815,7 +824,7 @@ export default function AdminDashboard() {
                             )}
                           </TableCell>
                           <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
+                            <div className="flex justify-end gap-1">
                               <Button 
                                 variant="ghost" 
                                 size="icon"

@@ -192,13 +192,24 @@ export default function DealerDashboard() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="border-b">
-        <div className="container flex items-center justify-between h-16 px-4">
-          <div className="flex items-center gap-4">
-            <h1 className="text-lg font-semibold">Painel do Vendedor</h1>
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
+      <header className="border-b bg-white dark:bg-slate-800 sticky top-0 z-40 shadow-sm">
+        <div className="container flex flex-wrap sm:flex-nowrap items-center justify-between h-auto sm:h-16 py-3 px-4">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-between mb-2 sm:mb-0">
+            <div className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-primary" />
+              <h1 className="text-lg font-semibold">Painel do Vendedor</h1>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleLogout} 
+              className="flex items-center gap-1 sm:hidden"
+            >
+              <LogOut className="h-4 w-4" /> Sair
+            </Button>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 w-full sm:w-auto justify-between">
             <div className="flex items-center gap-2">
               <Avatar className="h-8 w-8">
                 <AvatarFallback>{getInitial(currentDealer.name)}</AvatarFallback>
@@ -208,8 +219,13 @@ export default function DealerDashboard() {
                 <p className="text-xs text-muted-foreground">Vendedor</p>
               </div>
             </div>
-            <Button variant="ghost" size="icon" onClick={handleLogout}>
-              <LogOut className="h-5 w-5" />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleLogout} 
+              className="hidden sm:flex items-center gap-1"
+            >
+              <LogOut className="h-4 w-4" /> Sair
             </Button>
           </div>
         </div>
@@ -244,12 +260,14 @@ export default function DealerDashboard() {
             
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Data de Início</CardTitle>
+                <CardTitle className="text-sm font-medium">Vendedor desde</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
                   <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
-                  <div className="text-2xl font-bold">{currentDealer.startDate}</div>
+                  <div className="text-2xl font-bold">
+                    {new Date(currentDealer.startDate).toLocaleDateString('pt-BR')}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -405,9 +423,37 @@ export default function DealerDashboard() {
                               )}
                             </TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                                Disponível
-                              </Badge>
+                              <div className="flex flex-col gap-2">
+                                <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 mb-2">
+                                  Disponível
+                                </Badge>
+                                <div className="flex flex-wrap gap-1">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="h-8 px-2 text-xs bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                                    title="Reservar por 24h"
+                                    onClick={() => {
+                                      // Implementação da reserva será adicionada
+                                      alert(`Veículo ${vehicle.model} reservado por 24h`);
+                                    }}
+                                  >
+                                    Reservar
+                                  </Button>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    className="h-8 px-2 text-xs bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                                    title="Registrar venda deste veículo"
+                                    onClick={() => {
+                                      // Implementação da venda será adicionada
+                                      alert(`Venda do veículo ${vehicle.model} registrada`);
+                                    }}
+                                  >
+                                    Vender
+                                  </Button>
+                                </div>
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))
