@@ -32,7 +32,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { getInitial, formatPrice, formatMileage } from "@/lib/utils";
-import { LogOut, Car, DollarSign, Award, Clock, Image, ShoppingCart, Timer, AlertCircle, Lock, LockOpen, CheckCircle2 } from "lucide-react";
+import { LogOut, Car, DollarSign, Award, Clock, Image, ShoppingCart, Timer, AlertCircle, Lock, LockOpen, CheckCircle2, Phone } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -499,18 +500,7 @@ export default function DealerDashboard() {
         </AlertDialogContent>
       </AlertDialog>
       
-      {/* Botão flutuante para sair em dispositivo móvel */}
-      <div className="fixed bottom-6 right-6 sm:hidden z-50">
-        <Button
-          variant="destructive"
-          size="icon"
-          onClick={handleLogout}
-          className="shadow-lg rounded-full h-20 w-20 p-0 shadow-black/40"
-          style={{ touchAction: 'manipulation' }}
-        >
-          <LogOut className="h-10 w-10" />
-        </Button>
-      </div>
+      {/* Removido botão flutuante */}
       
       <header className="border-b bg-gray-800 text-white sticky top-0 z-40 shadow-sm">
         <div className="container flex flex-wrap sm:flex-nowrap items-center justify-between h-auto sm:h-16 py-3 px-4">
@@ -519,17 +509,7 @@ export default function DealerDashboard() {
               <DollarSign className="h-5 w-5 text-primary" />
               <h1 className="text-lg font-semibold">Painel do Vendedor</h1>
             </div>
-            <div className="m-2">
-              <Button 
-                variant="destructive" 
-                size="sm" 
-                onClick={handleLogout} 
-                className="flex items-center gap-2 sm:hidden px-5 py-3 text-base font-bold uppercase z-50"
-                style={{ touchAction: 'manipulation', minWidth: '100px', minHeight: '42px' }}
-              >
-                <LogOut className="h-5 w-5" /> Sair
-              </Button>
-            </div>
+            {/* Botão de logout removido pois foi movido para a barra de contato */}
           </div>
           <div className="flex items-center gap-4 w-full sm:w-auto justify-between">
             <div className="flex items-center gap-2">
@@ -552,6 +532,28 @@ export default function DealerDashboard() {
           </div>
         </div>
       </header>
+      
+      {/* Barra de contato com botões, visível apenas em mobile */}
+      <div className="lg:hidden bg-slate-800 text-white py-2 px-4 border-b border-slate-700">
+        <div className="flex items-center justify-between">
+          <a href="tel:(28)3027-7065" className="flex items-center text-primary">
+            <Phone className="mr-1 h-4 w-4" /> (28) 3027-7065
+          </a>
+          <div className="flex items-center space-x-4">
+            <a href="https://wa.me/5528999339129" className="flex items-center text-green-500">
+              <FaWhatsapp className="mr-1 h-4 w-4" /> Whatsapp
+            </a>
+            <Button 
+              variant="destructive" 
+              size="sm" 
+              onClick={handleLogout} 
+              className="py-1 px-3 h-auto text-xs flex items-center gap-1 ml-1"
+            >
+              <LogOut className="h-3 w-3" /> Sair
+            </Button>
+          </div>
+        </div>
+      </div>
       
       <main className="flex-1 p-4 md:p-6">
         <div className="container">
