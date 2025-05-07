@@ -20,9 +20,14 @@ import { Vehicle, VehicleImage } from "@shared/schema";
 import { cn } from "@/lib/utils";
 
 export default function VehicleDetail() {
-  const [match, params] = useRoute("/estoque/:id");
+  // Checar ambas as rotas possíveis: /estoque/:id e /veiculos/:id
+  const [matchEstoque, paramsEstoque] = useRoute("/estoque/:id");
+  const [matchVeiculos, paramsVeiculos] = useRoute("/veiculos/:id");
   const [, setLocation] = useLocation();
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  
+  // Usar o parâmetro correto, dependendo de qual rota foi acessada
+  const params = matchEstoque ? paramsEstoque : paramsVeiculos;
   
   // Usar uma função de consulta explícita para maior controle
   const { data: vehicle, isLoading, error } = useQuery<Vehicle & { 
@@ -85,7 +90,7 @@ export default function VehicleDetail() {
     window.scrollTo(0, 0);
   }, []);
   
-  if (!match) {
+  if (!matchEstoque && !matchVeiculos) {
     return null;
   }
   
