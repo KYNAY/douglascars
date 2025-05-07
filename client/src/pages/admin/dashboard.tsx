@@ -955,6 +955,7 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="ranking" className="whitespace-nowrap">Vendedores</TabsTrigger>
             <TabsTrigger value="brands" className="whitespace-nowrap">Marcas</TabsTrigger>
+            <TabsTrigger value="integrations" className="whitespace-nowrap">Integrações</TabsTrigger>
             <TabsTrigger value="settings" className="whitespace-nowrap">Configurações</TabsTrigger>
           </TabsList>
         </div>
@@ -1753,6 +1754,237 @@ export default function AdminDashboard() {
         </TabsContent>
 
 
+        <TabsContent value="integrations" className="space-y-4">
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex flex-col space-y-1.5">
+                <CardTitle>Integrações</CardTitle>
+                <CardDescription>
+                  Gerencie avaliações do Google e posts do Instagram.
+                </CardDescription>
+              </div>
+              <Tabs value={integrationTab} onValueChange={(value) => setIntegrationTab(value as "reviews" | "instagram")} className="mt-4">
+                <TabsList className="grid w-full grid-cols-2 max-w-md">
+                  <TabsTrigger value="reviews" className="flex items-center gap-2">
+                    <Star className="h-4 w-4 text-yellow-500" /> Avaliações Google
+                  </TabsTrigger>
+                  <TabsTrigger value="instagram" className="flex items-center gap-2">
+                    <ImageIcon className="h-4 w-4 text-pink-500" /> Instagram
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="reviews" className="pt-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-medium">Avaliações do Google</h3>
+                      <Badge className="ml-2 bg-yellow-500/10 text-yellow-700 hover:bg-yellow-500/20 border-yellow-500/20">
+                        {reviews?.length || 0} avaliações
+                      </Badge>
+                    </div>
+                    <Button onClick={() => {
+                      setSelectedReview({
+                        id: 0,
+                        name: "",
+                        avatarInitial: "",
+                        rating: 5,
+                        comment: "",
+                        date: new Date().toISOString().split('T')[0],
+                      });
+                      setIsReviewDialogOpen(true);
+                    }} className="flex items-center gap-2">
+                      <Plus className="h-4 w-4" /> Adicionar Avaliação
+                    </Button>
+                  </div>
+                  
+                  {isLoadingReviews ? (
+                    <div className="py-10 flex justify-center">
+                      <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                    </div>
+                  ) : (
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                      {reviews && reviews.length > 0 ? reviews.map(review => (
+                        <Card key={review.id} className="overflow-hidden">
+                          <CardHeader className="pb-2">
+                            <div className="flex justify-between items-start">
+                              <div className="flex items-center gap-3">
+                                <Avatar>
+                                  <AvatarFallback className="bg-primary text-white">
+                                    {review.avatarInitial}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <div className="font-semibold">{review.name}</div>
+                                  <div className="flex items-center text-yellow-500">
+                                    {getRatingStars(review.rating).map((star, idx) => (
+                                      <span key={idx}>
+                                        {star === 'full' ? (
+                                          <Star className="h-4 w-4 fill-current" />
+                                        ) : star === 'half' ? (
+                                          <Star className="h-4 w-4 fill-current opacity-60" />
+                                        ) : (
+                                          <Star className="h-4 w-4 text-gray-300" />
+                                        )}
+                                      </span>
+                                    ))}
+                                    <span className="text-xs text-slate-500 ml-2">
+                                      {new Date(review.date).toLocaleDateString('pt-BR')}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex space-x-1">
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-blue-600"
+                                  onClick={() => {
+                                    setSelectedReview(review);
+                                    setIsReviewDialogOpen(true);
+                                  }}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-8 w-8 text-red-600"
+                                  onClick={() => {
+                                    setSelectedReview(review);
+                                    setIsDeleteReviewDialogOpen(true);
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-sm text-slate-600 line-clamp-4">
+                              "{review.comment}"
+                            </p>
+                          </CardContent>
+                        </Card>
+                      )) : (
+                        <div className="col-span-full py-6 text-center text-muted-foreground">
+                          <div className="flex flex-col items-center gap-2">
+                            <Star className="h-12 w-12 text-slate-300" />
+                            <h3 className="text-lg font-medium text-slate-900">Nenhuma avaliação</h3>
+                            <p className="text-sm text-slate-500 max-w-md">
+                              Adicione avaliações do Google para mostrar aos seus clientes.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="instagram" className="pt-6">
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-lg font-medium">Posts do Instagram</h3>
+                      <Badge className="ml-2 bg-pink-500/10 text-pink-700 hover:bg-pink-500/20 border-pink-500/20">
+                        {instagramPosts?.length || 0} posts
+                      </Badge>
+                    </div>
+                    <Button onClick={() => {
+                      setSelectedInstagramPost({
+                        id: 0,
+                        imageUrl: "",
+                        postUrl: "",
+                        likes: 0
+                      });
+                      setIsInstagramPostDialogOpen(true);
+                    }} className="flex items-center gap-2">
+                      <Plus className="h-4 w-4" /> Adicionar Post
+                    </Button>
+                  </div>
+                  
+                  {isLoadingInstagramPosts ? (
+                    <div className="py-10 flex justify-center">
+                      <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                    </div>
+                  ) : (
+                    <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                      {instagramPosts && instagramPosts.length > 0 ? instagramPosts.map(post => (
+                        <Card key={post.id} className="overflow-hidden">
+                          <div className="relative">
+                            <div className="aspect-square overflow-hidden">
+                              <img 
+                                src={post.imageUrl} 
+                                alt="Instagram post" 
+                                className="w-full h-full object-cover transform transition-transform hover:scale-105"
+                                onError={(e) => {
+                                  e.currentTarget.src = "https://placehold.co/600x600/eee/ccc?text=Imagem+Indisponível";
+                                }}
+                              />
+                            </div>
+                            <div className="absolute inset-0 flex items-end p-3 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity">
+                              <div className="flex justify-between w-full">
+                                <div className="flex items-center text-white">
+                                  <Heart className="h-4 w-4 mr-1 fill-white text-white" /> 
+                                  <span className="text-sm">{post.likes}</span>
+                                </div>
+                                <div className="flex space-x-1">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-8 w-8 bg-white/20 text-white hover:bg-white/40"
+                                    onClick={() => {
+                                      setSelectedInstagramPost(post);
+                                      setIsInstagramPostDialogOpen(true);
+                                    }}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon" 
+                                    className="h-8 w-8 bg-white/20 text-white hover:bg-red-600 hover:bg-white/40"
+                                    onClick={() => {
+                                      setSelectedInstagramPost(post);
+                                      setIsDeleteInstagramPostDialogOpen(true);
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <CardFooter className="p-3 border-t flex justify-between items-center">
+                            <div className="flex items-center text-sm text-pink-600">
+                              <Heart className="h-3.5 w-3.5 mr-1 fill-pink-500 text-pink-500" /> {post.likes}
+                            </div>
+                            <a 
+                              href={post.postUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-600 hover:underline truncate max-w-[150px]"
+                            >
+                              Ver no Instagram
+                            </a>
+                          </CardFooter>
+                        </Card>
+                      )) : (
+                        <div className="col-span-full py-6 text-center text-muted-foreground">
+                          <div className="flex flex-col items-center gap-2">
+                            <ImageIcon className="h-12 w-12 text-slate-300" />
+                            <h3 className="text-lg font-medium text-slate-900">Nenhum post</h3>
+                            <p className="text-sm text-slate-500 max-w-md">
+                              Adicione posts do Instagram para mostrar nas integrações da sua página.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </CardHeader>
+          </Card>
+        </TabsContent>
+        
         <TabsContent value="settings" className="space-y-4">
           <Card>
             <CardHeader>
