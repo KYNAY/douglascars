@@ -49,14 +49,7 @@ export default function Inventory() {
   
   // Query for brands
   const { data: brands } = useQuery<Brand[]>({
-    queryKey: ['/api/brands'],
-    queryFn: async () => {
-      const response = await fetch('/api/brands');
-      if (!response.ok) {
-        throw new Error('Erro ao buscar marcas');
-      }
-      return response.json();
-    }
+    queryKey: ['/api/brands']
   });
   
   // Build query parameters
@@ -80,14 +73,7 @@ export default function Inventory() {
   
   // Query for vehicles with filters
   const { data: vehicles, isLoading } = useQuery<Vehicle[]>({
-    queryKey: [`/api/vehicles?${buildQueryString()}`],
-    queryFn: async () => {
-      const response = await fetch(`/api/vehicles?${buildQueryString()}`);
-      if (!response.ok) {
-        throw new Error('Erro ao buscar veículos');
-      }
-      return response.json();
-    }
+    queryKey: [`/api/vehicles?${buildQueryString()}`]
   });
   
   // Sort vehicles based on selection

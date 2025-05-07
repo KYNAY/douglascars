@@ -28,14 +28,7 @@ export default function VehicleDetail() {
     additionalImages: VehicleImage[] 
   }>({
     queryKey: [`/api/vehicles/${params?.id}`],
-    enabled: !!params?.id,
-    queryFn: async () => {
-      const response = await fetch(`/api/vehicles/${params?.id}`);
-      if (!response.ok) {
-        throw new Error('Erro ao buscar veículo');
-      }
-      return response.json();
-    }
+    enabled: !!params?.id
   });
   
   // Função para ir para a próxima imagem
