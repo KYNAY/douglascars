@@ -1675,13 +1675,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required fields" });
       }
       
+      // Converter a data para um objeto Date se necessário
+      let formattedDate;
+      try {
+        // Tenta converter para Date
+        formattedDate = new Date(date);
+        if (isNaN(formattedDate.getTime())) {
+          throw new Error("Invalid date format");
+        }
+      } catch (err) {
+        console.error("Date conversion error:", err);
+        return res.status(400).json({ error: "Invalid date format" });
+      }
+      
       // Criar a avaliação no banco de dados
       const [newReview] = await db.insert(reviews).values({
         name,
         avatarInitial: avatarInitial || name.charAt(0).toUpperCase(),
         rating: Number(rating),
         comment,
-        date
+        date: formattedDate
       }).returning();
       
       return res.status(201).json(newReview);
