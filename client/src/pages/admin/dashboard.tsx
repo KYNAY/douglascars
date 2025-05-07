@@ -2814,19 +2814,70 @@ export default function AdminDashboard() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="optionals">Opcionais</Label>
-              <Textarea 
-                id="optionals" 
-                name="optionals" 
-                placeholder="Digite cada opcional em uma linha nova (Ex: Ar condicionado&#10;Direção hidráulica&#10;Vidros elétricos)" 
-                className="min-h-[100px]"
-                defaultValue={selectedVehicle?.optionals ? 
-                  JSON.parse(selectedVehicle.optionals).join('\n') : 
-                  ''}
-              />
-              <p className="text-xs text-gray-500">
-                Digite cada opcional em uma linha separada. Estes itens serão exibidos como lista na página de detalhes do veículo.
-              </p>
+              <Label htmlFor="optionals">Itens de série e opcionais do veículo</Label>
+              <div className="border rounded-md p-4 bg-background">
+                <p className="text-sm text-gray-600 mb-4">
+                  Selecione os itens de série e opcionais do veículo para atrair a atenção dos compradores
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-4">
+                  {[
+                    "Air bag", "Ar condicionado", "Alarme",
+                    "Bancos de couro", "Blindado", "Câmera de ré",
+                    "Computador de bordo", "Conexão USB", "Controle automático de velocidade",
+                    "Interface bluetooth", "Navegador GPS", "Rodas de liga leve",
+                    "Sensor de ré", "Som", "Teto solar",
+                    "Tração 4x4", "Trava elétrica", "Vidro elétrico",
+                    "Volante multifuncional", "Direção hidráulica", "Freios ABS",
+                    "Farol de xenon", "Central multimídia", "Piloto automático"
+                  ].map((opcional) => {
+                    // Verificar se o opcional está presente na lista do veículo
+                    const isChecked = selectedVehicle?.optionals 
+                      ? JSON.parse(selectedVehicle.optionals).includes(opcional) 
+                      : false;
+                    
+                    return (
+                      <div key={opcional} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`optional-${opcional.toLowerCase().replace(/\s/g, '-')}`} 
+                          name="selected_optionals" 
+                          value={opcional}
+                          defaultChecked={isChecked}
+                        />
+                        <Label 
+                          htmlFor={`optional-${opcional.toLowerCase().replace(/\s/g, '-')}`}
+                          className="text-sm font-normal cursor-pointer"
+                        >
+                          {opcional}
+                        </Label>
+                      </div>
+                    );
+                  })}
+                </div>
+                
+                <div className="space-y-2 pt-2 border-t">
+                  <Label htmlFor="custom_optionals" className="text-sm">Outros opcionais (um por linha)</Label>
+                  <Textarea 
+                    id="custom_optionals" 
+                    name="custom_optionals" 
+                    placeholder="Digite outros opcionais não listados acima, um por linha" 
+                    className="min-h-[60px] text-sm"
+                    defaultValue={selectedVehicle?.optionals 
+                      ? JSON.parse(selectedVehicle.optionals)
+                          .filter(opt => !["Air bag", "Ar condicionado", "Alarme", "Bancos de couro", "Blindado", 
+                                           "Câmera de ré", "Computador de bordo", "Conexão USB", "Controle automático de velocidade", 
+                                           "Interface bluetooth", "Navegador GPS", "Rodas de liga leve", "Sensor de ré", 
+                                           "Som", "Teto solar", "Tração 4x4", "Trava elétrica", "Vidro elétrico", 
+                                           "Volante multifuncional", "Direção hidráulica", "Freios ABS", 
+                                           "Farol de xenon", "Central multimídia", "Piloto automático"].includes(opt))
+                          .join('\n') 
+                      : ''
+                    }
+                  />
+                </div>
+                
+                <input type="hidden" name="optionals" id="optionals" />
+              </div>
             </div>
             
             {selectedVehicle && (
