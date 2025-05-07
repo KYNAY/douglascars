@@ -9,7 +9,7 @@ export function Footer() {
           <div>
             <Link href="/admin/login" className="inline-block">
               <img 
-                src="https://www.douglasautocar.com.br/sites/douglasautocar.com.br/img/logo.png" 
+                src="/assets/logo-white.png" 
                 alt="Douglas Auto Car" 
                 className="h-12 mb-6 hover:opacity-90 transition-opacity"
               />
