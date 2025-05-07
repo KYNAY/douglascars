@@ -399,10 +399,10 @@ export default function AdminDashboard() {
     }
   });
   
-  // Mutação para excluir vendedor
+  // Mutação para excluir vendedor e todas suas vendas, recalculando relatórios
   const deleteDealerMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/dealers/${id}`, {
+      return await apiRequest(`/api/dealers/${id}/complete`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -410,9 +410,12 @@ export default function AdminDashboard() {
     onSuccess: () => {
       toast({
         title: "Vendedor excluído",
-        description: "O vendedor foi excluído com sucesso."
+        description: "O vendedor e todas as suas vendas foram excluídos. Os relatórios foram recalculados."
       });
+      // Invalidar todas as consultas relacionadas
       queryClient.invalidateQueries({ queryKey: ['/api/dealers/ranking'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/sales'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/vehicles'] });
     },
     onError: (error) => {
       toast({
@@ -448,7 +451,7 @@ export default function AdminDashboard() {
     }
   });
   
-  // As mutações de veículo já estão definidas acima
+
 
   // Mutação para marcar veículo como vendido
   const markVehicleAsSoldMutation = useMutation({
@@ -555,6 +558,13 @@ export default function AdminDashboard() {
   // Função para excluir todos os vendedores
   const handleDeleteAllDealers = () => {
     deleteAllDealersMutation.mutate();
+  };
+  
+  // Função para excluir veículo
+  const handleDeleteVehicle = () => {
+    if (selectedVehicle) {
+      deleteVehicleMutation.mutate(selectedVehicle.id);
+    }
   };
   
   // Função para marcar veículo como vendido
@@ -2398,6 +2408,42 @@ export default function AdminDashboard() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Diálogo para confirmar exclusão de veículo */}
+      <AlertDialog open={isDeleteVehicleDialogOpen} onOpenChange={setIsDeleteVehicleDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Veículo</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este veículo? Esta ação não pode ser desfeita.
+              {selectedVehicle && (
+                <div className="mt-4 p-3 bg-gray-100 rounded-md flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-md overflow-hidden">
+                    <img 
+                      src={selectedVehicle.imageUrl} 
+                      alt={selectedVehicle.model} 
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <div className="font-medium">{brands?.find(b => b.id === selectedVehicle.brandId)?.name} {selectedVehicle.model}</div>
+                    <div className="text-sm text-muted-foreground">{selectedVehicle.year} • {formatPrice(selectedVehicle.price)}</div>
+                  </div>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteVehicle}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
