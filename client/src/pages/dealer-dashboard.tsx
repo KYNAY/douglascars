@@ -75,6 +75,7 @@ interface Vehicle {
   mileage: number;
   description: string | null;
   featured: boolean;
+  specialFeatured?: boolean;
   sold: boolean;
   reserved: boolean;
   reservedBy: number | null;
@@ -747,9 +748,17 @@ export default function DealerDashboard() {
                                 {/* Estado: não reservado */}
                                 {!vehicle.reserved && !vehicle.sold && (
                                   <>
-                                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 mb-2">
-                                      Disponível
-                                    </Badge>
+                                    {vehicle.specialFeatured ? (
+                                      <Badge variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white mb-2">
+                                        Destaque Especial
+                                      </Badge>
+                                    ) : vehicle.featured ? (
+                                      <Badge variant="default" className="mb-2">Destaque</Badge>
+                                    ) : (
+                                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 mb-2">
+                                        Disponível
+                                      </Badge>
+                                    )}
                                     <div className="flex flex-wrap gap-1">
                                       <Button 
                                         variant="outline" 
