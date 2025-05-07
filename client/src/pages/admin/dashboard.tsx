@@ -2759,23 +2759,32 @@ export default function AdminDashboard() {
               />
             </div>
             
-            {selectedVehicle ? (
-              <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md">
-                <h4 className="text-sm font-medium mb-2">Status</h4>
-                <div className="flex items-center gap-2">
-                  {selectedVehicle.sold ? (
-                    <Badge variant="destructive">Vendido</Badge>
-                  ) : selectedVehicle.specialFeatured ? (
-                    <Badge variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white">Destaque Especial</Badge>
-                  ) : selectedVehicle.featured ? (
-                    <Badge variant="default">Destaque</Badge>
-                  ) : (
-                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Disponível</Badge>
-                  )}
-                  {selectedVehicle.sold && <span className="text-sm text-muted-foreground">Não é possível editar veículos já vendidos</span>}
+            {selectedVehicle && (
+              <>
+                <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md mb-4">
+                  <h4 className="text-sm font-medium mb-2">Status</h4>
+                  <div className="flex items-center gap-2">
+                    {selectedVehicle.sold ? (
+                      <Badge variant="destructive">Vendido</Badge>
+                    ) : selectedVehicle.specialFeatured ? (
+                      <Badge variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white">Destaque Especial</Badge>
+                    ) : selectedVehicle.featured ? (
+                      <Badge variant="default">Destaque</Badge>
+                    ) : (
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Disponível</Badge>
+                    )}
+                    {selectedVehicle.sold && <span className="text-sm text-muted-foreground">Não é possível editar veículos já vendidos</span>}
+                  </div>
                 </div>
-              </div>
-            ) : null}
+                
+                {/* Gerenciador de imagens adicionais - só aparece quando está editando um veículo existente */}
+                {selectedVehicle.id > 0 && (
+                  <div className="border-t pt-6 mt-6">
+                    <VehicleImagesManager vehicleId={selectedVehicle.id} />
+                  </div>
+                )}
+              </>
+            )}
             
             <DialogFooter>
               <Button variant="outline" type="button" onClick={() => setIsVehicleDialogOpen(false)}>
