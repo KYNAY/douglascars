@@ -1,0 +1,67 @@
+        <TabsContent value="featured" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Veículos em Destaque</CardTitle>
+              <CardDescription>
+                Gerencie os veículos que aparecem em destaque na página inicial.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingVehicles ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                </div>
+              ) : (
+                <div className="rounded-md border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Modelo</TableHead>
+                        <TableHead>Marca</TableHead>
+                        <TableHead>Preço</TableHead>
+                        <TableHead>Em destaque</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {vehicles?.map((vehicle) => (
+                        <TableRow key={vehicle.id}>
+                          <TableCell className="font-medium">{vehicle.model}</TableCell>
+                          <TableCell>{brands?.find(b => b.id === vehicle.brandId)?.name || "-"}</TableCell>
+                          <TableCell>{formatPrice(vehicle.price)}</TableCell>
+                          <TableCell>
+                            <Checkbox
+                              checked={vehicle.featured}
+                              onCheckedChange={() => {
+                                // Implementar mudança de destaque
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => {
+                                // Implementar visualização
+                              }}
+                            >
+                              <Eye className="h-4 w-4 mr-1" /> Visualizar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {!vehicles || vehicles.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="h-24 text-center">
+                            Nenhum veículo cadastrado.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
