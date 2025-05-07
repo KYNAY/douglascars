@@ -90,6 +90,17 @@ export const instagramPosts = pgTable('instagram_posts', {
   createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
+// Hero Carousel Slides
+export const heroSlides = pgTable('hero_slides', {
+  id: serial('id').primaryKey(),
+  imageUrl: text('image_url').notNull(),
+  title: text('title').notNull(),
+  subtitle: text('subtitle').notNull(),
+  order: integer('order').default(0),
+  active: boolean('active').default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull()
+});
+
 // Solicitações de avaliação
 export const evaluationRequests = pgTable('evaluation_requests', {
   id: serial('id').primaryKey(),
@@ -193,6 +204,15 @@ export const instagramPostsInsertSchema = createInsertSchema(instagramPosts);
 export type InstagramPostInsert = z.infer<typeof instagramPostsInsertSchema>;
 export const instagramPostsSelectSchema = createSelectSchema(instagramPosts);
 export type InstagramPost = z.infer<typeof instagramPostsSelectSchema>;
+
+export const heroSlidesInsertSchema = createInsertSchema(heroSlides, {
+  imageUrl: (schema) => schema.url("A URL da imagem deve ser válida"),
+  title: (schema) => schema.min(3, "O título deve ter pelo menos 3 caracteres"),
+  subtitle: (schema) => schema.min(5, "O subtítulo deve ter pelo menos 5 caracteres")
+});
+export type HeroSlideInsert = z.infer<typeof heroSlidesInsertSchema>;
+export const heroSlidesSelectSchema = createSelectSchema(heroSlides);
+export type HeroSlide = z.infer<typeof heroSlidesSelectSchema>;
 
 export const evaluationRequestsInsertSchema = createInsertSchema(evaluationRequests, {
   name: (schema) => schema.min(2, "Nome deve ter pelo menos 2 caracteres"),

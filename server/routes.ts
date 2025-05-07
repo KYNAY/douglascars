@@ -3,7 +3,8 @@ import { createServer, type Server } from "http";
 import { db } from "@db";
 import { 
   brands, vehicles, dealers, sales, reviews, instagramPosts, vehicleImages,
-  evaluationRequests, financingRequests, evaluationStatusEnum, financingStatusEnum
+  evaluationRequests, financingRequests, evaluationStatusEnum, financingStatusEnum,
+  heroSlides, heroSlidesInsertSchema
 } from "@shared/schema";
 import { eq, and, not, desc, asc, like, or, gte, lte, count, sql } from "drizzle-orm";
 import { SQL } from "drizzle-orm";
