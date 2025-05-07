@@ -503,54 +503,62 @@ export default function DealerDashboard() {
       
       {/* Removido botão flutuante */}
       
-      <header className="border-b bg-gray-800 text-white sticky top-0 z-40 shadow-sm">
-        <div className="container flex flex-wrap sm:flex-nowrap items-center justify-between h-auto sm:h-16 py-3 px-4">
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-between mb-2 sm:mb-0">
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-primary" />
-              <h1 className="text-lg font-semibold">Painel do Vendedor</h1>
-            </div>
-            {/* Botão de logout removido pois foi movido para a barra de contato */}
-          </div>
-          <div className="flex items-center gap-4 w-full sm:w-auto justify-between">
-            <div className="flex items-center gap-2">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback>{getInitial(currentDealer.name)}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="text-sm font-medium">{currentDealer.name}</p>
-                <p className="text-xs text-muted-foreground">Vendedor</p>
+      {/* Barra de vendedor para desktop */}
+      <div className="hidden sm:block mb-6">
+        <Card className="shadow-md">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-12 w-12">
+                  <AvatarFallback className="bg-primary text-white">
+                    {getInitial(currentDealer.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <CardTitle>Bem-vindo, {currentDealer.name}</CardTitle>
+                  <CardDescription>Vendedor</CardDescription>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => setLocation("/")} className="flex items-center gap-2">
+                  <Car size={16} /> Home
+                </Button>
+                <Button variant="destructive" size="sm" onClick={handleLogout} className="flex items-center gap-2">
+                  <LogOut size={16} /> Sair
+                </Button>
               </div>
             </div>
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              onClick={handleLogout} 
-              className="flex items-center gap-1"
-            >
-              <LogOut className="h-4 w-4" /> Sair
-            </Button>
-          </div>
-        </div>
-      </header>
+          </CardHeader>
+        </Card>
+      </div>
       
-      {/* Barra do vendedor com botão de sair */}
-      <div className="lg:hidden bg-slate-800 text-white py-2 px-4 border-b border-slate-700">
+      {/* Barra do vendedor para mobile com botão de sair */}
+      <div className="sm:hidden bg-slate-800 text-white py-3 px-4 shadow-md fixed top-0 left-0 right-0 z-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <DollarSign className="h-4 w-4 text-primary mr-1" />
-            <span className="text-sm font-medium">Painel Vendedor: {currentDealer.name}</span>
+            <Avatar className="h-8 w-8 mr-2">
+              <AvatarFallback className="bg-primary text-white text-sm">
+                {getInitial(currentDealer.name)}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="text-sm font-medium">{currentDealer.name}</div>
+              <div className="text-xs text-slate-300">Vendedor</div>
+            </div>
           </div>
           <Button 
             variant="destructive" 
             size="sm" 
             onClick={handleLogout} 
-            className="py-1 px-4 h-8 text-sm flex items-center gap-1 rounded-lg"
+            className="py-1 px-4 h-8 text-xs flex items-center gap-1 rounded-lg"
           >
-            <LogOut className="h-4 w-4 mr-1" /> Sair
+            <LogOut className="h-3 w-3" /> Sair
           </Button>
         </div>
       </div>
+      
+      {/* Espaçador para compensar o header fixo no mobile */}
+      <div className="sm:hidden h-14"></div>
       
       <main className="flex-1 p-4 md:p-6">
         <div className="container">
