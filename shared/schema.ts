@@ -38,6 +38,11 @@ export const vehicles = pgTable('vehicles', {
   fuel: text('fuel').default('Flex'), // Diesel, Flex, Gasolina, Gasolina e Elétrico
   bodyType: text('body_type'), // Carroceria: Sedan, SUV, etc.
   vehicleType: text('vehicle_type').default('car'), // 'car' ou 'motorcycle'
+  doors: integer('doors'),
+  enginePower: text('engine_power'), // Potência do motor (ex: "1.0", "2.0", "3.0")
+  engineTorque: text('engine_torque'), // Torque do motor
+  warranty: text('warranty'), // Garantia do veículo
+  optionals: text('optionals'), // Lista de opcionais no formato JSON
   createdAt: timestamp('created_at').defaultNow().notNull()
 });
 
