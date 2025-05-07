@@ -448,6 +448,8 @@ export default function AdminDashboard() {
     }
   });
   
+  // As mutações de veículo já estão definidas acima
+
   // Mutação para marcar veículo como vendido
   const markVehicleAsSoldMutation = useMutation({
     mutationFn: async (data: { vehicleId: number, dealerId: number }) => {
@@ -2238,7 +2240,7 @@ export default function AdminDashboard() {
               });
             } else {
               // Adicionar novo veículo
-              addVehicleMutation.mutate(vehicleData);
+              createVehicleMutation.mutate(vehicleData);
             }
           }} className="space-y-6 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2442,7 +2444,7 @@ export default function AdminDashboard() {
               </Button>
               <Button 
                 type="submit"
-                disabled={selectedVehicle?.sold || (selectedVehicle ? updateVehicleMutation.isPending : addVehicleMutation.isPending)}
+                disabled={selectedVehicle?.sold || (selectedVehicle ? updateVehicleMutation.isPending : createVehicleMutation.isPending)}
               >
                 {selectedVehicle ? (
                   updateVehicleMutation.isPending ? "Salvando..." : "Salvar Alterações"
