@@ -23,9 +23,11 @@ export function Header() {
       <div className="container mx-auto px-4 py-2 flex flex-wrap items-center justify-between">
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
-            <h1 className="text-white font-poppins font-bold text-2xl ml-2">
-              Douglas <span className="text-primary">Auto Car</span>
-            </h1>
+            <img 
+              src="https://douglasautocar.com.br/sites/douglasautocar.com.br/img/logo.png" 
+              alt="Douglas Auto Car" 
+              className="h-12"
+            />
           </Link>
         </div>
         

@@ -8,9 +8,11 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           <div>
             <Link href="/admin/login" className="inline-block">
-              <h2 className="text-white font-poppins font-bold text-2xl mb-6 hover:opacity-90 transition-opacity cursor-pointer">
-                Douglas <span className="text-primary">Auto Car</span>
-              </h2>
+              <img 
+                src="https://douglasautocar.com.br/sites/douglasautocar.com.br/img/logo.png" 
+                alt="Douglas Auto Car" 
+                className="h-12 mb-6 hover:opacity-90 transition-opacity"
+              />
             </Link>
             <p className="text-gray-400 mb-6">
               Seu parceiro de confiança na compra e venda de veículos. Estamos no mercado há mais de 15 anos oferecendo os melhores negócios.

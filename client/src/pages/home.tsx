@@ -22,7 +22,12 @@ export default function Home() {
       <section className="py-8">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-6 flex items-center">
-            <span className="text-primary mr-2">★</span> Destaques Especiais
+            <img 
+              src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f525.gif" 
+              alt="Fire" 
+              className="w-7 h-7 mr-2"
+            /> 
+            Destaques Especiais
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
