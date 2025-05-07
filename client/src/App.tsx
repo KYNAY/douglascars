@@ -11,7 +11,7 @@ import About from "@/pages/about";
 import Avaliacao from "@/pages/avaliacao";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminLogin from "@/pages/admin/login";
-import DealerLogin from "@/pages/dealer-login";
+import DealerLogin from "@/pages/vendedor";
 import DealerDashboard from "@/pages/dealer-dashboard";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
