@@ -526,7 +526,7 @@ export default function DealerDashboard() {
               variant="destructive" 
               size="sm" 
               onClick={handleLogout} 
-              className="hidden sm:flex items-center gap-1"
+              className="flex items-center gap-1"
             >
               <LogOut className="h-4 w-4" /> Sair
             </Button>
