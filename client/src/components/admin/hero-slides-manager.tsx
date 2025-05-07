@@ -401,7 +401,7 @@ export function HeroSlidesManager() {
                         id={`active-${slide.id}`}
                         checked={slide.active ?? false}
                         onCheckedChange={() => toggleActiveStatus.mutate(slide)}
-                        size="sm"
+                        className="data-[state=checked]:bg-green-500"
                       />
                       <Label htmlFor={`active-${slide.id}`} className="text-xs">
                         {slide.active ? "Ativo" : "Inativo"}

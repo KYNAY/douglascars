@@ -431,12 +431,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create new dealer
   app.post(`${apiPrefix}/dealers`, async (req, res) => {
     try {
-      const dealerData = dealersInsertSchema.parse(req.body);
+      const dealerData = {
+        name: req.body.name,
+        username: req.body.username,
+        password: req.body.password,
+        startDate: new Date()
+      };
       
-      // Check if dealer with same email already exists
-      const existingDealer = await db.select().from(dealers).where(eq(dealers.email, dealerData.email)).limit(1);
+      // Verificar se o nome de usuário já existe
+      const existingDealer = await db.select().from(dealers).where(eq(dealers.username, dealerData.username)).limit(1);
       if (existingDealer.length > 0) {
-        return res.status(400).json({ error: "Dealer with this email already exists" });
+        return res.status(400).json({ error: "Vendedor com este nome de usuário já existe" });
       }
       
       const [newDealer] = await db.insert(dealers).values(dealerData).returning();
