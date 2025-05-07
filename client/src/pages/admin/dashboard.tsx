@@ -813,8 +813,6 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="ranking" className="whitespace-nowrap">Vendedores</TabsTrigger>
             <TabsTrigger value="brands" className="whitespace-nowrap">Marcas</TabsTrigger>
-            <TabsTrigger value="featured" className="whitespace-nowrap">Destaques</TabsTrigger>
-            <TabsTrigger value="hero" className="whitespace-nowrap">Carousel</TabsTrigger>
             <TabsTrigger value="settings" className="whitespace-nowrap">Configurações</TabsTrigger>
           </TabsList>
         </div>
@@ -2229,6 +2227,7 @@ export default function AdminDashboard() {
               description: formData.get('description') as string || null,
               imageUrl: formData.get('imageUrl') as string,
               featured: formData.get('featured') === 'on',
+              specialFeatured: formData.get('specialFeatured') === 'on',
               sold: false
             };
             

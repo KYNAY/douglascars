@@ -27,6 +27,7 @@ export const vehicles = pgTable('vehicles', {
   mileage: integer('mileage').notNull(), // in km
   description: text('description'),
   featured: boolean('featured').default(false),
+  specialFeatured: boolean('special_featured').default(false),
   sold: boolean('sold').default(false),
   reserved: boolean('reserved').default(false),
   reservedBy: integer('reserved_by'),
