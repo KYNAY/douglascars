@@ -11,6 +11,8 @@ import About from "@/pages/about";
 import Avaliacao from "@/pages/avaliacao";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminLogin from "@/pages/admin/login";
+import DealerLogin from "@/pages/dealer-login";
+import DealerDashboard from "@/pages/dealer-dashboard";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { FloatingButtons } from "@/components/floating-buttons";
@@ -27,6 +29,10 @@ function Router() {
       <Route path="/sobre" component={About} />
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/vendedor" component={DealerLogin} />
+      <Route path="/vendedor/dashboard" component={DealerDashboard} />
+      <Route path="/dealer-login" component={DealerLogin} />
+      <Route path="/dealer-dashboard" component={DealerDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

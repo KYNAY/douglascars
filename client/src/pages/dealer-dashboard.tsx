@@ -63,7 +63,7 @@ export default function DealerDashboard() {
     
     if (!isAuth || !dealerData) {
       // Redirecionar para a página de login se não estiver autenticado
-      setLocation("/dealer-login");
+      setLocation("/vendedor");
       return;
     }
     
@@ -73,7 +73,7 @@ export default function DealerDashboard() {
     } catch (error) {
       console.error("Error parsing dealer data:", error);
       // Se houver erro, redirecionar para login
-      setLocation("/dealer-login");
+      setLocation("/vendedor");
     }
     
     // Verificar se o token expirou (24 horas)
@@ -183,7 +183,7 @@ export default function DealerDashboard() {
     localStorage.removeItem("dealer_token");
     localStorage.removeItem("dealer_data");
     localStorage.removeItem("dealer_login_time");
-    setLocation("/dealer-login");
+    setLocation("/vendedor");
   };
 
   // Se não tiver dados do vendedor, mostrar carregando
