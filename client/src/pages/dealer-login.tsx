@@ -23,7 +23,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function DealerLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const [_, setLocation] = useLocation();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -57,7 +57,7 @@ export default function DealerLogin() {
         localStorage.setItem('dealer_login_time', new Date().toString());
         
         // Redirecionar para o dashboard do vendedor
-        navigate("/dealer-dashboard");
+        setLocation("/dealer-dashboard");
       } else {
         setLoginError(result.error || "Falha ao fazer login. Verifique suas credenciais.");
       }

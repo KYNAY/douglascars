@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -22,7 +22,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { getInitial, formatPrice, formatMileage } from "@/lib/utils";
-import { LogOut, Cars, DollarSign, Award, Clock, Image, ShoppingCart } from "lucide-react";
+import { LogOut, Car, DollarSign, Award, Clock, Image, ShoppingCart } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
 type DealerData = {
@@ -53,7 +53,7 @@ type SaleData = {
 
 export default function DealerDashboard() {
   const [currentDealer, setCurrentDealer] = useState<DealerData | null>(null);
-  const navigate = useNavigate();
+  const [_, setLocation] = useLocation();
 
   // Carregar dados do vendedor do localStorage quando a página carrega
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function DealerDashboard() {
     
     if (!isAuth || !dealerData) {
       // Redirecionar para a página de login se não estiver autenticado
-      navigate("/dealer-login");
+      setLocation("/dealer-login");
       return;
     }
     
@@ -73,7 +73,7 @@ export default function DealerDashboard() {
     } catch (error) {
       console.error("Error parsing dealer data:", error);
       // Se houver erro, redirecionar para login
-      navigate("/dealer-login");
+      setLocation("/dealer-login");
     }
     
     // Verificar se o token expirou (24 horas)
@@ -87,7 +87,7 @@ export default function DealerDashboard() {
         handleLogout();
       }
     }
-  }, [navigate]);
+  }, [setLocation]);
 
   // Buscar as vendas deste vendedor
   const { data: mySales } = useQuery({
@@ -176,7 +176,7 @@ export default function DealerDashboard() {
     localStorage.removeItem("dealer_token");
     localStorage.removeItem("dealer_data");
     localStorage.removeItem("dealer_login_time");
-    navigate("/dealer-login");
+    setLocation("/dealer-login");
   };
 
   // Se não tiver dados do vendedor, mostrar carregando
@@ -253,7 +253,7 @@ export default function DealerDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center">
-                  <Cars className="mr-2 h-4 w-4 text-muted-foreground" />
+                  <Car className="mr-2 h-4 w-4 text-muted-foreground" />
                   <div className="text-2xl font-bold">{availableVehicles?.length || 0}</div>
                 </div>
               </CardContent>
