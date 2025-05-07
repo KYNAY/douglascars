@@ -2449,7 +2449,7 @@ export default function AdminDashboard() {
                 {selectedVehicle ? (
                   updateVehicleMutation.isPending ? "Salvando..." : "Salvar Alterações"
                 ) : (
-                  addVehicleMutation.isPending ? "Adicionando..." : "Adicionar Veículo"
+                  createVehicleMutation.isPending ? "Adicionando..." : "Adicionar Veículo"
                 )}
               </Button>
             </DialogFooter>
