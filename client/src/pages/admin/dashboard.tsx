@@ -868,6 +868,8 @@ export default function AdminDashboard() {
                           <TableCell>
                             {vehicle.sold ? (
                               <Badge variant="destructive">Vendido</Badge>
+                            ) : vehicle.specialFeatured ? (
+                              <Badge variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white">Destaque Especial</Badge>
                             ) : vehicle.featured ? (
                               <Badge variant="default">Destaque</Badge>
                             ) : (
