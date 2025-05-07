@@ -444,6 +444,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dealer authentication
+  app.post(`${apiPrefix}/auth/dealer/login`, async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ error: "Usuário e senha são obrigatórios" });
+      }
+      
+      // Verificar se o vendedor existe
+      const dealer = await db.select()
+        .from(dealers)
+        .where(eq(dealers.username, username))
+        .limit(1);
+        
+      if (!dealer.length) {
+        return res.status(401).json({ error: "Usuário ou senha inválidos" });
+      }
+      
+      // Verificar senha (em uma aplicação real deve-se usar bcrypt para comparar)
+      if (dealer[0].password !== password) {
+        return res.status(401).json({ error: "Usuário ou senha inválidos" });
+      }
+      
+      // Remover a senha dos dados do vendedor antes de enviar
+      const { password: _, ...dealerWithoutPassword } = dealer[0];
+      
+      return res.json({
+        success: true,
+        dealer: dealerWithoutPassword,
+        token: `dealer_${dealerWithoutPassword.id}_${Date.now()}` // Em produção, use JWT adequado
+      });
+    } catch (error) {
+      console.error("Error authenticating dealer:", error);
+      return res.status(500).json({ error: "Falha na autenticação" });
+    }
+  });
+  
   // Dealer routes
   app.get(`${apiPrefix}/dealers/ranking`, async (req, res) => {
     try {
@@ -476,6 +514,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating dealer:", error);
       return res.status(500).json({ error: "Failed to create dealer" });
+    }
+  });
+  
+  // Get dealer sales
+  app.get(`${apiPrefix}/dealers/:id/sales`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verificar se o vendedor existe
+      const dealer = await db.select().from(dealers).where(eq(dealers.id, Number(id))).limit(1);
+      if (!dealer.length) {
+        return res.status(404).json({ error: "Vendedor não encontrado" });
+      }
+      
+      // Buscar as vendas deste vendedor com informações do veículo
+      const dealerSales = await db.query.sales.findMany({
+        where: eq(sales.dealerId, Number(id)),
+        with: {
+          vehicle: {
+            with: {
+              brand: true
+            }
+          }
+        },
+        orderBy: desc(sales.saleDate)
+      });
+      
+      return res.json(dealerSales);
+    } catch (error) {
+      console.error("Error fetching dealer sales:", error);
+      return res.status(500).json({ error: "Failed to fetch dealer sales" });
     }
   });
   
