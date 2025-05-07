@@ -2556,7 +2556,12 @@ export default function AdminDashboard() {
               enginePower: formData.get('enginePower') as string || null,
               engineTorque: formData.get('engineTorque') as string || null,
               warranty: formData.get('warranty') as string || null,
-              optionals: formData.get('optionals') as string || null,
+              optionals: formData.get('optionals') ? 
+                JSON.stringify((formData.get('optionals') as string)
+                  .split('\n')
+                  .map(item => item.trim())
+                  .filter(Boolean)) : 
+                null,
               sold: false
             };
             
@@ -2723,6 +2728,47 @@ export default function AdminDashboard() {
               </div>
               
               <div className="space-y-2">
+                <Label htmlFor="doors">Número de Portas</Label>
+                <Input 
+                  id="doors" 
+                  name="doors" 
+                  type="number"
+                  placeholder="Ex: 4" 
+                  defaultValue={selectedVehicle?.doors?.toString() || ''}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="enginePower">Potência do Motor</Label>
+                <Input 
+                  id="enginePower" 
+                  name="enginePower" 
+                  placeholder="Ex: 1.0 Turbo 116cv" 
+                  defaultValue={selectedVehicle?.enginePower || ''}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="engineTorque">Torque do Motor</Label>
+                <Input 
+                  id="engineTorque" 
+                  name="engineTorque" 
+                  placeholder="Ex: 16,8 kgfm" 
+                  defaultValue={selectedVehicle?.engineTorque || ''}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="warranty">Garantia</Label>
+                <Input 
+                  id="warranty" 
+                  name="warranty" 
+                  placeholder="Ex: 3 anos de fábrica" 
+                  defaultValue={selectedVehicle?.warranty || ''}
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="imageUrl">URL da Imagem Principal</Label>
                 <Input 
                   id="imageUrl" 
@@ -2765,6 +2811,22 @@ export default function AdminDashboard() {
                 className="min-h-[100px]"
                 defaultValue={selectedVehicle?.description || ''}
               />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="optionals">Opcionais</Label>
+              <Textarea 
+                id="optionals" 
+                name="optionals" 
+                placeholder="Digite cada opcional em uma linha nova (Ex: Ar condicionado&#10;Direção hidráulica&#10;Vidros elétricos)" 
+                className="min-h-[100px]"
+                defaultValue={selectedVehicle?.optionals ? 
+                  JSON.parse(selectedVehicle.optionals).join('\n') : 
+                  ''}
+              />
+              <p className="text-xs text-gray-500">
+                Digite cada opcional em uma linha separada. Estes itens serão exibidos como lista na página de detalhes do veículo.
+              </p>
             </div>
             
             {selectedVehicle && (
