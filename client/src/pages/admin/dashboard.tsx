@@ -2383,9 +2383,15 @@ export default function AdminDashboard() {
               <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md">
                 <h4 className="text-sm font-medium mb-2">Status</h4>
                 <div className="flex items-center gap-2">
-                  <Badge variant={selectedVehicle.sold ? "destructive" : (selectedVehicle.featured ? "default" : "outline")}>
-                    {selectedVehicle.sold ? "Vendido" : (selectedVehicle.featured ? "Destaque" : "Disponível")}
-                  </Badge>
+                  {selectedVehicle.sold ? (
+                    <Badge variant="destructive">Vendido</Badge>
+                  ) : selectedVehicle.specialFeatured ? (
+                    <Badge variant="secondary" className="bg-amber-500 hover:bg-amber-600 text-white">Destaque Especial</Badge>
+                  ) : selectedVehicle.featured ? (
+                    <Badge variant="default">Destaque</Badge>
+                  ) : (
+                    <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Disponível</Badge>
+                  )}
                   {selectedVehicle.sold && <span className="text-sm text-muted-foreground">Não é possível editar veículos já vendidos</span>}
                 </div>
               </div>

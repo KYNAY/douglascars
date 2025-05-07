@@ -9,8 +9,12 @@ import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
-  const { data: featuredVehicles, isLoading } = useQuery({
+  const { data: featuredVehicles = [], isLoading: isLoadingFeatured } = useQuery({
     queryKey: ['/api/vehicles?featured=true'],
+  });
+  
+  const { data: specialFeaturedVehicles = [], isLoading: isLoadingSpecial } = useQuery({
+    queryKey: ['/api/vehicles?specialFeatured=true'],
   });
   
   return (
@@ -18,7 +22,7 @@ export default function Home() {
       <HeroSection />
       <SearchSection />
       
-      {/* Destaques Especiais - Adicionado como solicitado */}
+      {/* Destaques Especiais - Seção dinâmica para veículos com especialFeatured=true */}
       <section className="py-8">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold mb-6 flex items-center">
@@ -31,79 +35,80 @@ export default function Home() {
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Toyota Hilux 2023 */}
-            <div className="glass-card rounded-xl overflow-hidden featured-card group transition-all duration-500 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]">
-              <div className="relative overflow-hidden h-64">
-                <img 
-                  src="https://i.pinimg.com/originals/f3/81/f9/f381f9c73492eb5ae0cd14926f174270.jpg" 
-                  alt="Toyota Hilux 2023" 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute top-0 left-0 bg-gradient-to-r from-primary/80 to-primary/30 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
-                  DESTAQUE
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="flex justify-between items-center mb-3">
-                  <div className="flex items-center">
-                    <img 
-                      src="https://static.vecteezy.com/system/resources/previews/022/100/658/original/toyota-logo-transparent-free-png.png" 
-                      alt="Toyota" 
-                      className="w-8 h-8 mr-2"
-                    />
-                    <span className="text-sm font-medium">Toyota Hilux SRX 2023</span>
+            {isLoadingSpecial ? (
+              // Loading skeletons para destaques especiais
+              Array(2).fill(0).map((_, index) => (
+                <div key={index} className="glass-card rounded-xl overflow-hidden animate-pulse">
+                  <div className="h-64 bg-white/10"></div>
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="h-8 w-40 bg-white/10 rounded"></div>
+                      <div className="h-8 w-24 bg-white/10 rounded"></div>
+                    </div>
+                    <div className="h-4 bg-white/10 rounded mb-3 w-full"></div>
+                    <div className="h-10 bg-white/10 rounded"></div>
                   </div>
-                  <span className="text-primary font-bold text-xl">R$ 290.900</span>
                 </div>
-                <div className="flex gap-3 text-sm text-gray-300 mb-3">
-                  <span>2023/2023</span>
-                  <span>•</span>
-                  <span>Diesel</span>
-                  <span>•</span>
-                  <span>12.000 km</span>
-                </div>
-                <Button asChild className="w-full bg-primary hover:bg-red-700">
-                  <Link href="/estoque">Ver detalhes</Link>
-                </Button>
-              </div>
-            </div>
-            
-            {/* Toyota SW4 2025 */}
-            <div className="glass-card rounded-xl overflow-hidden featured-card group transition-all duration-500 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]">
-              <div className="relative overflow-hidden h-64">
-                <img 
-                  src="https://www.toyota.com.br/wp-content/themes/toyota-2.0.0/frontend/static/images/swbg/sw4-2024.png" 
-                  alt="Toyota SW4 2025" 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute top-0 left-0 bg-gradient-to-r from-primary/80 to-primary/30 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
-                  LANÇAMENTO
-                </div>
-              </div>
-              <div className="p-4">
-                <div className="flex justify-between items-center mb-3">
-                  <div className="flex items-center">
+              ))
+            ) : specialFeaturedVehicles && specialFeaturedVehicles.length > 0 ? (
+              // Renderizar todos os veículos com specialFeatured=true
+              specialFeaturedVehicles.map((vehicle) => (
+                <div key={vehicle.id} className="glass-card rounded-xl overflow-hidden featured-card group transition-all duration-500 hover:shadow-[0_0_25px_rgba(255,255,255,0.1)]">
+                  <div className="relative overflow-hidden h-64">
                     <img 
-                      src="https://static.vecteezy.com/system/resources/previews/022/100/658/original/toyota-logo-transparent-free-png.png" 
-                      alt="Toyota" 
-                      className="w-8 h-8 mr-2"
+                      src={vehicle.imageUrl} 
+                      alt={`${vehicle.brand?.name} ${vehicle.model}`}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                    <span className="text-sm font-medium">Toyota SW4 Diamond 2025</span>
+                    <div className="absolute top-0 left-0 bg-gradient-to-r from-amber-600/90 to-amber-500/60 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
+                      DESTAQUE ESPECIAL
+                    </div>
                   </div>
-                  <span className="text-primary font-bold text-xl">R$ 410.000</span>
+                  <div className="p-4">
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="flex items-center">
+                        {vehicle.brand?.logoUrl && (
+                          <img 
+                            src={vehicle.brand.logoUrl} 
+                            alt={vehicle.brand.name} 
+                            className="w-8 h-8 mr-2"
+                          />
+                        )}
+                        <span className="text-sm font-medium">{vehicle.brand?.name} {vehicle.model}</span>
+                      </div>
+                      <span className="text-primary font-bold text-xl">
+                        {typeof vehicle.price === 'string'
+                          ? `R$ ${parseFloat(vehicle.price).toLocaleString('pt-BR')}`
+                          : `R$ ${vehicle.price.toLocaleString('pt-BR')}`}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-3 text-sm text-gray-300 mb-3">
+                      <span>{vehicle.year}</span>
+                      {vehicle.fuel && (
+                        <>
+                          <span>•</span>
+                          <span>{vehicle.fuel}</span>
+                        </>
+                      )}
+                      {vehicle.mileage !== undefined && (
+                        <>
+                          <span>•</span>
+                          <span>{vehicle.mileage.toLocaleString('pt-BR')} km</span>
+                        </>
+                      )}
+                    </div>
+                    <Button asChild className="w-full bg-primary hover:bg-red-700">
+                      <Link href={`/veiculos/${vehicle.id}`}>Ver detalhes</Link>
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-3 text-sm text-gray-300 mb-3">
-                  <span>2025/2025</span>
-                  <span>•</span>
-                  <span>Diesel</span>
-                  <span>•</span>
-                  <span>0 km</span>
-                </div>
-                <Button asChild className="w-full bg-primary hover:bg-red-700">
-                  <Link href="/estoque">Ver detalhes</Link>
-                </Button>
+              ))
+            ) : (
+              // Caso não haja veículos com specialFeatured=true
+              <div className="col-span-2 text-center py-8">
+                <p className="text-gray-400">Nenhum veículo em destaque especial no momento.</p>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
@@ -119,7 +124,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {isLoading ? (
+            {isLoadingFeatured ? (
               // Loading skeletons
               Array(3).fill(0).map((_, index) => (
                 <div key={index} className="glass-card rounded-xl overflow-hidden animate-pulse">

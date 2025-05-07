@@ -203,6 +203,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         brandId, 
         search, 
         featured,
+        specialFeatured,
         minPrice,
         maxPrice,
         transmission,
@@ -212,7 +213,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         vehicleType
       } = req.query;
       
-      let conditions: SQL[] = [not(eq(vehicles.sold, true))];
+      let conditions: SQL[] = [];
+
+      // Se não for especificado sold=true, filtrar apenas os não vendidos
+      if (req.query.sold !== 'true') {
+        conditions.push(not(eq(vehicles.sold, true)));
+      } else if (req.query.sold === 'true') {
+        conditions.push(eq(vehicles.sold, true));
+      }
       
       if (brandId && brandId !== 'all') {
         conditions.push(eq(vehicles.brandId, Number(brandId)));
@@ -230,6 +238,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (featured === 'true') {
         conditions.push(eq(vehicles.featured, true));
+      }
+
+      if (specialFeatured === 'true') {
+        conditions.push(eq(vehicles.specialFeatured, true));
       }
       
       // Filtro por tipo de veículo (carro ou moto)
