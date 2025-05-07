@@ -899,6 +899,17 @@ export default function AdminDashboard() {
                                   <ShoppingCart className="h-3.5 w-3.5 mr-1" /> <span className="text-xs">Vender</span>
                                 </Button>
                               )}
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                className="h-8 px-2 py-1 text-red-600 border-red-200 bg-red-50 hover:bg-red-100 hover:text-red-700"
+                                onClick={() => {
+                                  setSelectedVehicle(vehicle);
+                                  setIsDeleteVehicleDialogOpen(true);
+                                }}
+                              >
+                                <Trash2 className="h-3.5 w-3.5 mr-1" /> <span className="text-xs">Excluir</span>
+                              </Button>
                             </div>
                           </TableCell>
                         </TableRow>
