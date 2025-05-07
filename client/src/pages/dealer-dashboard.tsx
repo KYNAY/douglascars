@@ -510,9 +510,9 @@ export default function DealerDashboard() {
               variant="destructive" 
               size="sm" 
               onClick={handleLogout} 
-              className="flex items-center gap-1 sm:hidden"
+              className="flex items-center gap-1 sm:hidden px-3 py-2 text-base font-semibold"
             >
-              <LogOut className="h-4 w-4" /> Sair
+              <LogOut className="h-5 w-5 mr-1" /> SAIR
             </Button>
           </div>
           <div className="flex items-center gap-4 w-full sm:w-auto justify-between">
