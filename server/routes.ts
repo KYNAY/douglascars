@@ -260,12 +260,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .where(and(...conditions))
         .orderBy(desc(vehicles.createdAt));
       
-      // Fetch brand details for each vehicle
+      // Fetch brand details and primary image for each vehicle
       const vehiclesWithBrands = await Promise.all(
         result.map(async (vehicle) => {
           const brand = await db.select().from(brands).where(eq(brands.id, vehicle.brandId)).limit(1);
+          
+          // Se o veículo não tiver imagem principal, tentar buscar a primeira imagem adicional
+          let mainImage = vehicle.imageUrl;
+          if (!mainImage || mainImage.trim() === "") {
+            const images = await db.select()
+              .from(vehicleImages)
+              .where(eq(vehicleImages.vehicleId, vehicle.id))
+              .orderBy(asc(vehicleImages.order))
+              .limit(1);
+              
+            if (images.length > 0) {
+              mainImage = images[0].imageUrl;
+            }
+          }
+          
           return {
             ...vehicle,
+            imageUrl: mainImage,
             brand: brand[0] || null
           };
         })
@@ -296,8 +312,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .where(eq(vehicleImages.vehicleId, Number(id)))
         .orderBy(asc(vehicleImages.order));
       
+      // Verificar se a imagem principal existe
+      let mainImage = vehicle[0].imageUrl;
+      if (!mainImage || mainImage.trim() === "") {
+        if (images.length > 0) {
+          mainImage = images[0].imageUrl;
+          // Remover a primeira imagem da lista de imagens adicionais para evitar duplicação
+          images.shift();
+        }
+      }
+      
       return res.json({
         ...vehicle[0],
+        imageUrl: mainImage,
         brand: brand[0] || null,
         additionalImages: images || []
       });
