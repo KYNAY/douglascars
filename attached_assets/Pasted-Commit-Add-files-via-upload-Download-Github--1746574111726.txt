@@ -1,0 +1,118 @@
+Commit: Add files via upload
+
+. 
+##########################################
+### Download Github Archive Started...
+### Tue, 06 May 2025 23:27:44 GMT
+##########################################
+
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 350B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:18-alpine
+#2 DONE 0.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 2B done
+#3 DONE 0.0s
+
+#4 [internal] load build context
+#4 transferring context: 1.14MB 0.0s done
+#4 DONE 0.1s
+
+#5 [1/6] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+#5 resolve docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e 0.0s done
+#5 sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e 7.67kB / 7.67kB done
+#5 sha256:929b04d7c782f04f615cf785488fed452b6569f87c73ff666ad553a7554f0006 1.72kB / 1.72kB done
+#5 sha256:ee77c6cd7c1886ecc802ad6cedef3a8ec1ea27d1fb96162bf03dd3710839b8da 6.18kB / 6.18kB done
+#5 sha256:dd71dde834b5c203d162902e6b8994cb2309ae049a0eabc4efea161b2b5a3d0e 9.44MB / 40.01MB 0.1s
+#5 sha256:1e5a4c89cee5c0826c540ab06d4b6b491c96eda01837f430bd47f0d26702d6e3 1.26MB / 1.26MB 0.1s done
+#5 sha256:25ff2da83641908f65c3a74d80409d6b1b62ccfaab220b9ea70b80df5a2e0549 446B / 446B 0.1s done
+#5 sha256:dd71dde834b5c203d162902e6b8994cb2309ae049a0eabc4efea161b2b5a3d0e 30.41MB / 40.01MB 0.2s
+#5 sha256:dd71dde834b5c203d162902e6b8994cb2309ae049a0eabc4efea161b2b5a3d0e 40.01MB / 40.01MB 0.3s done
+#5 extracting sha256:dd71dde834b5c203d162902e6b8994cb2309ae049a0eabc4efea161b2b5a3d0e 0.1s
+#5 extracting sha256:dd71dde834b5c203d162902e6b8994cb2309ae049a0eabc4efea161b2b5a3d0e 1.6s done
+#5 extracting sha256:1e5a4c89cee5c0826c540ab06d4b6b491c96eda01837f430bd47f0d26702d6e3 0.1s done
+#5 extracting sha256:25ff2da83641908f65c3a74d80409d6b1b62ccfaab220b9ea70b80df5a2e0549 done
+#5 DONE 2.1s
+
+#6 [2/6] WORKDIR /app
+#6 DONE 0.1s
+
+#7 [3/6] COPY package*.json ./
+#7 DONE 0.0s
+
+#8 [4/6] RUN npm ci
+#8 5.829 npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+#8 5.870 npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+#8 22.26 
+#8 22.26 added 554 packages, and audited 555 packages in 22s
+#8 22.26 
+#8 22.26 61 packages are looking for funding
+#8 22.26   run `npm fund` for details
+#8 22.30 
+#8 22.30 5 moderate severity vulnerabilities
+#8 22.30 
+#8 22.30 To address issues that do not require attention, run:
+#8 22.30   npm audit fix
+#8 22.30 
+#8 22.30 To address all issues (including breaking changes), run:
+#8 22.30   npm audit fix --force
+#8 22.30 
+#8 22.30 Run `npm audit` for details.
+#8 22.30 npm notice
+#8 22.30 npm notice New major version of npm available! 10.8.2 -> 11.3.0
+#8 22.30 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.3.0
+#8 22.30 npm notice To update run: npm install -g npm@11.3.0
+#8 22.30 npm notice
+#8 DONE 22.5s
+
+#9 [5/6] COPY . .
+#9 DONE 0.0s
+
+#10 [6/6] RUN npm run build
+#10 0.263 
+#10 0.263 > rest-express@1.0.0 build
+#10 0.263 > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+#10 0.263 
+#10 0.521 vite v5.4.18 building for production...
+#10 0.601 ✓ 0 modules transformed.
+#10 0.607 x Build failed in 41ms
+#10 0.607 error during build:
+#10 0.607 Could not resolve entry module "client/index.html".
+#10 0.607     at getRollupError (file:///app/node_modules/rollup/dist/es/shared/parseAst.js:397:41)
+#10 0.607     at error (file:///app/node_modules/rollup/dist/es/shared/parseAst.js:393:42)
+#10 0.607     at ModuleLoader.loadEntryModule (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:21310:20)
+#10 0.607     at async Promise.all (index 0)
+#10 ERROR: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+------
+ > [6/6] RUN npm run build:
+0.263 
+0.521 vite v5.4.18 building for production...
+0.601 ✓ 0 modules transformed.
+0.607 x Build failed in 41ms
+0.607 error during build:
+0.607 Could not resolve entry module "client/index.html".
+0.607     at getRollupError (file:///app/node_modules/rollup/dist/es/shared/parseAst.js:397:41)
+0.607     at error (file:///app/node_modules/rollup/dist/es/shared/parseAst.js:393:42)
+0.607     at ModuleLoader.loadEntryModule (file:///app/node_modules/rollup/dist/es/shared/node-entry.js:21310:20)
+0.607     at async Promise.all (index 0)
+------
+Dockerfile:13
+--------------------
+  11 |     
+  12 |     # Construir o aplicativo
+  13 | >>> RUN npm run build
+  14 |     
+  15 |     # Configurar porta e iniciar o servidor
+--------------------
+ERROR: failed to solve: process "/bin/sh -c npm run build" did not complete successfully: exit code: 1
+##########################################
+### Error
+### Tue, 06 May 2025 23:28:11 GMT
+##########################################
+
+Command failed with exit code 1: docker buildx build --network host -f /etc/easypanel/projects/site/douglasautocar/code/Dockerfile -t easypanel/site/douglasautocar --label 'keep=true' --build-arg 'DATABASE_URL=postgresql://postgres:2ce58b948c900c6e087a@site-supabase.dcvkcf.easypanel.host:5432/postgres?search_path=douglasautocar' --build-arg 'VITE_FIREBASE_API_KEY=AIzaSyABQQ2uanZf8ypO2uZfhhx7iS8m-nKMJQA' --build-arg 'VITE_FIREBASE_PROJECT_ID=douglasautocar-f9413' --build-arg 'VITE_FIREBASE_APP_ID=1:491318298007:web:14e7679f807bb423d230d2' --build-arg 'NODE_ENV=production' --build-arg 'PORT=3000' --build-arg 'HOST=0.0.0.0' --build-arg 'GIT_SHA=5513688dbce20641cd738032b627a2a37b61e99c' /etc/easypanel/projects/site/douglasautocar/code/
