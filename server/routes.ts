@@ -454,10 +454,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Usuário e senha são obrigatórios" });
       }
       
-      // Verificar se o vendedor existe
+      // Verificar se o vendedor existe por username ou email
       const dealer = await db.select()
         .from(dealers)
-        .where(eq(dealers.username, username))
+        .where(
+          or(
+            eq(dealers.username, username),
+            eq(dealers.email, username)
+          )
+        )
         .limit(1);
         
       if (!dealer.length) {
@@ -518,44 +523,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Authenticate dealer (login)
-  app.post(`${apiPrefix}/auth/dealer/login`, async (req, res) => {
-    try {
-      const { username, password } = req.body;
-      
-      if (!username || !password) {
-        return res.status(400).json({ error: "Username and password are required" });
-      }
-      
-      // Buscar vendedor por nome de usuário
-      const dealer = await db.select().from(dealers).where(eq(dealers.username, username)).limit(1);
-      
-      if (!dealer.length) {
-        return res.status(401).json({ error: "Invalid credentials" });
-      }
-      
-      // Verificar se a senha está correta (em uma implementação real, usaria bcrypt)
-      if (dealer[0].password !== password) {
-        return res.status(401).json({ error: "Invalid credentials" });
-      }
-      
-      // Gerar um token simples (em uma implementação real, usaria JWT)
-      const token = crypto.randomBytes(64).toString('hex');
-      
-      // Remover a senha do objeto do vendedor antes de enviar
-      const { password: _, ...dealerWithoutPassword } = dealer[0];
-      
-      return res.json({ 
-        success: true, 
-        message: "Authentication successful",
-        token,
-        dealer: dealerWithoutPassword
-      });
-    } catch (error) {
-      console.error("Error authenticating dealer:", error);
-      return res.status(500).json({ error: "Failed to authenticate" });
-    }
-  });
+  // Endpoint de autenticação para o dealer (login) está definido acima, linha 449
   
   // Get dealer sales
   app.get(`${apiPrefix}/dealers/:id/sales`, async (req, res) => {

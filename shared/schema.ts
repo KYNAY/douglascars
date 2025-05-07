@@ -41,6 +41,7 @@ export const dealers = pgTable('dealers', {
   id: serial('id').primaryKey(),
   name: text('name').notNull(),
   username: text('username').notNull().unique(),
+  email: text('email'),
   password: text('password').notNull(),
   startDate: timestamp('start_date').notNull(),
   points: integer('points').default(0),

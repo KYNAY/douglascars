@@ -70,38 +70,42 @@ export default function DealerLogin() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-gray-900 to-black text-white">
       <Header />
       
-      <main className="flex-1 flex items-center justify-center p-4 bg-gray-50">
-        <Card className="w-full max-w-md">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Área do Vendedor</CardTitle>
-            <CardDescription className="text-center">
+      <main className="flex-1 flex items-center justify-center py-20 px-4">
+        <Card className="w-full max-w-md border border-gray-800 bg-gray-900/90 backdrop-blur-sm shadow-xl">
+          <CardHeader className="space-y-2 pb-6 pt-8">
+            <CardTitle className="text-2xl md:text-3xl font-bold text-center text-white">Área do Vendedor</CardTitle>
+            <CardDescription className="text-center text-gray-300">
               Entre com suas credenciais para acessar o painel de vendedor
             </CardDescription>
           </CardHeader>
           
-          <CardContent>
+          <CardContent className="px-6 md:px-8">
             {loginError && (
-              <Alert variant="destructive" className="mb-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{loginError}</AlertDescription>
+              <Alert variant="destructive" className="mb-6 bg-red-900/60 border border-red-500 text-white">
+                <AlertCircle className="h-4 w-4 text-red-400" />
+                <AlertDescription className="text-red-200">{loginError}</AlertDescription>
               </Alert>
             )}
             
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
                   name="username"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome de Usuário</FormLabel>
+                    <FormItem className="space-y-3">
+                      <FormLabel className="text-gray-200 text-sm font-medium">Nome de Usuário ou Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="Seu nome de usuário" {...field} />
+                        <Input 
+                          placeholder="Seu nome de usuário ou email" 
+                          className="bg-gray-800/70 border-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                          {...field} 
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-400" />
                     </FormItem>
                   )}
                 />
@@ -110,32 +114,39 @@ export default function DealerLogin() {
                   control={form.control}
                   name="password"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Senha</FormLabel>
+                    <FormItem className="space-y-3">
+                      <FormLabel className="text-gray-200 text-sm font-medium">Senha</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="Sua senha" {...field} />
+                        <Input 
+                          type="password" 
+                          placeholder="Sua senha" 
+                          className="bg-gray-800/70 border-gray-700 text-white placeholder:text-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                          {...field} 
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-400" />
                     </FormItem>
                   )}
                 />
                 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button 
+                  type="submit" 
+                  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium text-base transition-colors mt-4"
+                  disabled={isLoading}
+                >
                   {isLoading ? "Entrando..." : "Entrar"}
                 </Button>
               </form>
             </Form>
           </CardContent>
           
-          <CardFooter className="flex justify-center">
-            <p className="text-sm text-gray-500">
+          <CardFooter className="flex justify-center pb-8 pt-3">
+            <p className="text-sm text-gray-400">
               Em caso de problemas no acesso, contate o administrador.
             </p>
           </CardFooter>
         </Card>
       </main>
-      
-      <Footer />
     </div>
   );
 }
