@@ -499,19 +499,6 @@ export default function DealerDashboard() {
         </AlertDialogContent>
       </AlertDialog>
       
-      {/* Botão flutuante para sair em dispositivo móvel */}
-      <div className="fixed bottom-6 right-6 sm:hidden z-50">
-        <Button
-          variant="destructive"
-          size="icon"
-          onClick={handleLogout}
-          className="shadow-lg rounded-full h-20 w-20 p-0 shadow-black/40"
-          style={{ touchAction: 'manipulation' }}
-        >
-          <LogOut className="h-10 w-10" />
-        </Button>
-      </div>
-      
       <header className="border-b bg-gray-800 text-white sticky top-0 z-40 shadow-sm">
         <div className="container flex flex-wrap sm:flex-nowrap items-center justify-between h-auto sm:h-16 py-3 px-4">
           <div className="flex items-center gap-2 w-full sm:w-auto justify-between mb-2 sm:mb-0">
