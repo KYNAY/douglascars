@@ -26,6 +26,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/health", (_req, res) => {
     return res.json({ status: "ok" });
   });
+  
+  // Função para verificar se existem reservas expiradas e liberá-las
+  async function checkAndReleaseExpiredReservations() {
+    try {
+      const now = new Date();
+      // Buscar veículos com reservas expiradas
+      const expiredReservations = await db.select()
+        .from(vehicles)
+        .where(
+          and(
+            eq(vehicles.reserved, true),
+            not(eq(vehicles.reservationExpiresAt, null)),
+            lte(vehicles.reservationExpiresAt, now)
+          )
+        );
+      
+      if (expiredReservations.length > 0) {
+        // Liberar cada reserva expirada
+        for (const vehicle of expiredReservations) {
+          await db.update(vehicles)
+            .set({
+              reserved: false,
+              reservedBy: null,
+              reservationTime: null,
+              reservationExpiresAt: null
+            })
+            .where(eq(vehicles.id, vehicle.id));
+            
+          console.log(`Reserva do veículo ID ${vehicle.id} foi liberada automaticamente por expiração.`);
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao verificar reservas expiradas:", error);
+    }
+  }
+  
+  // Verificar reservas expiradas a cada 5 minutos
+  setInterval(checkAndReleaseExpiredReservations, 5 * 60 * 1000);
 
   // Brands routes
   app.get(`${apiPrefix}/brands`, async (req, res) => {

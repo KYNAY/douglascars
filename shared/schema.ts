@@ -28,6 +28,10 @@ export const vehicles = pgTable('vehicles', {
   description: text('description'),
   featured: boolean('featured').default(false),
   sold: boolean('sold').default(false),
+  reserved: boolean('reserved').default(false),
+  reservedBy: integer('reserved_by'),
+  reservationTime: timestamp('reservation_time'),
+  reservationExpiresAt: timestamp('reservation_expires_at'),
   imageUrl: text('image_url').notNull(),
   transmission: text('transmission').default('Manual'), // Automatizado, Automático, Manual
   fuel: text('fuel').default('Flex'), // Diesel, Flex, Gasolina, Gasolina e Elétrico
@@ -137,7 +141,12 @@ export const brandsRelations = relations(brands, ({ many }) => ({
 export const vehiclesRelations = relations(vehicles, ({ one, many }) => ({
   brand: one(brands, { fields: [vehicles.brandId], references: [brands.id] }),
   sales: many(sales),
-  images: many(vehicleImages)
+  images: many(vehicleImages),
+  reservedByDealer: one(dealers, {
+    fields: [vehicles.reservedBy],
+    references: [dealers.id],
+    relationName: 'vehicleReservation'
+  })
 }));
 
 export const vehicleImagesRelations = relations(vehicleImages, ({ one }) => ({
@@ -145,7 +154,10 @@ export const vehicleImagesRelations = relations(vehicleImages, ({ one }) => ({
 }));
 
 export const dealersRelations = relations(dealers, ({ many }) => ({
-  sales: many(sales)
+  sales: many(sales),
+  reservedVehicles: many(vehicles, {
+    relationName: 'vehicleReservation'
+  })
 }));
 
 export const salesRelations = relations(sales, ({ one }) => ({
