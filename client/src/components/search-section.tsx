@@ -144,9 +144,17 @@ export function SearchSection() {
   };
   
   return (
-    <section id="buscar" className="py-8">
-      <div className="container mx-auto px-4">
-        <div className="glass-card rounded-xl p-6">
+    <section id="buscar" className="py-8 relative">
+      <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1583267746897-2cf415887172?q=80&w=2070&auto=format&fit=crop"
+          alt="Veículos de qualidade" 
+          className="w-full h-full object-cover object-center opacity-20"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/90"></div>
+      </div>
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="glass-card rounded-xl p-6 bg-black/60 backdrop-blur-xl border border-white/10">
           <h2 className="text-2xl font-poppins font-semibold mb-6">Qual veículo você está buscando?</h2>
           
           <form onSubmit={handleSearch} className="flex flex-col gap-4">
