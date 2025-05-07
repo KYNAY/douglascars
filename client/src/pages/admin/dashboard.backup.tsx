@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag, ShoppingCart, Calculator, DollarSign } from "lucide-react";
 import { getInitial, formatPrice } from "@/lib/utils";
 import { VehicleImagesManager } from "@/components/admin/vehicle-images-manager";
+import { HeroSlidesManager } from "@/components/admin/hero-slides-manager";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
@@ -46,7 +47,6 @@ interface Vehicle {
   mileage: number;
   description: string | null;
   featured: boolean;
-  specialFeatured?: boolean;
   sold: boolean;
   imageUrl: string;
   transmission?: string;
@@ -1562,6 +1562,86 @@ export default function AdminDashboard() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="featured" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Veículos em Destaque</CardTitle>
+              <CardDescription>
+                Gerencie os veículos que aparecem em destaque na página inicial.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingVehicles ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                </div>
+              ) : (
+                <div className="rounded-md border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Modelo</TableHead>
+                        <TableHead>Marca</TableHead>
+                        <TableHead>Preço</TableHead>
+                        <TableHead>Em destaque</TableHead>
+                        <TableHead className="text-right">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {vehicles?.map((vehicle) => (
+                        <TableRow key={vehicle.id}>
+                          <TableCell className="font-medium">{vehicle.model}</TableCell>
+                          <TableCell>{brands?.find(b => b.id === vehicle.brandId)?.name || "-"}</TableCell>
+                          <TableCell>{formatPrice(vehicle.price)}</TableCell>
+                          <TableCell>
+                            <Checkbox
+                              checked={vehicle.featured}
+                              onCheckedChange={() => {
+                                // Implementar mudança de destaque
+                              }}
+                            />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => {
+                                // Implementar visualização
+                              }}
+                            >
+                              <Eye className="h-4 w-4 mr-1" /> Visualizar
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                      {!vehicles || vehicles.length === 0 && (
+                        <TableRow>
+                          <TableCell colSpan={5} className="h-24 text-center">
+                            Nenhum veículo cadastrado.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="hero" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gerenciar Carousel da Página Inicial</CardTitle>
+              <CardDescription>
+                Adicione, edite ou remova os slides do carousel exibido na página inicial.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HeroSlidesManager />
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         <TabsContent value="settings" className="space-y-4">
           <Card>
