@@ -506,14 +506,17 @@ export default function DealerDashboard() {
               <DollarSign className="h-5 w-5 text-primary" />
               <h1 className="text-lg font-semibold">Painel do Vendedor</h1>
             </div>
-            <Button 
-              variant="destructive" 
-              size="sm" 
-              onClick={handleLogout} 
-              className="flex items-center gap-1 sm:hidden px-3 py-2 text-base font-semibold"
-            >
-              <LogOut className="h-5 w-5 mr-1" /> SAIR
-            </Button>
+            <div className="m-2">
+              <Button 
+                variant="destructive" 
+                size="sm" 
+                onClick={handleLogout} 
+                className="flex items-center gap-2 sm:hidden px-5 py-3 text-base font-bold uppercase z-50"
+                style={{ touchAction: 'manipulation', minWidth: '100px', minHeight: '42px' }}
+              >
+                <LogOut className="h-5 w-5" /> Sair
+              </Button>
+            </div>
           </div>
           <div className="flex items-center gap-4 w-full sm:w-auto justify-between">
             <div className="flex items-center gap-2">
