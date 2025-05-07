@@ -24,7 +24,7 @@ export function Header() {
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
             <img 
-              src="/assets/logo-white.png" 
+              src="https://www.douglasautocar.com.br/sites/douglasautocar.com.br/img/logo.png" 
               alt="Douglas Auto Car" 
               className="h-12"
             />
