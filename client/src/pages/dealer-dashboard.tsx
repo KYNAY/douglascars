@@ -303,9 +303,13 @@ export default function DealerDashboard() {
     mutationFn: async (vehicleId: number) => {
       if (!currentDealer?.id) throw new Error("Vendedor não identificado");
       
-      const response = await apiRequest(`/api/vehicles/${vehicleId}/sold`, "PATCH", {
-        dealerId: currentDealer.id,
-        soldDate: new Date().toISOString()
+      const response = await apiRequest(`/api/vehicles/${vehicleId}/sold`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          dealerId: currentDealer.id,
+          soldDate: new Date().toISOString()
+        }),
+        headers: { "Content-Type": "application/json" }
       });
       
       if (!response.ok) {
@@ -396,6 +400,105 @@ export default function DealerDashboard() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
+      {/* Diálogo de Confirmação para Reserva */}
+      <AlertDialog open={isReserveDialogOpen} onOpenChange={setIsReserveDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar Reserva</AlertDialogTitle>
+            <AlertDialogDescription>
+              Deseja reservar o veículo {selectedVehicle?.brand?.name} {selectedVehicle?.model} {selectedVehicle?.year}? 
+              A reserva é válida por 24 horas e impede que outros vendedores reservem este veículo.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                if (selectedVehicle) {
+                  reserveMutation.mutate(selectedVehicle.id);
+                }
+              }}
+              disabled={reserveMutation.isPending}
+            >
+              {reserveMutation.isPending ? (
+                <>
+                  <Timer className="mr-2 h-4 w-4 animate-spin" />
+                  Reservando...
+                </>
+              ) : (
+                "Confirmar Reserva"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      {/* Diálogo de Confirmação para Cancelar Reserva */}
+      <AlertDialog open={isCancelReservationDialogOpen} onOpenChange={setIsCancelReservationDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancelar Reserva</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja cancelar a reserva do veículo {selectedVehicle?.brand?.name} {selectedVehicle?.model} {selectedVehicle?.year}?
+              Isso permitirá que outros vendedores possam reservá-lo.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Manter Reserva</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                if (selectedVehicle) {
+                  cancelReservationMutation.mutate(selectedVehicle.id);
+                }
+              }}
+              disabled={cancelReservationMutation.isPending}
+            >
+              {cancelReservationMutation.isPending ? (
+                <>
+                  <Timer className="mr-2 h-4 w-4 animate-spin" />
+                  Cancelando...
+                </>
+              ) : (
+                "Confirmar Cancelamento"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      {/* Diálogo de Confirmação para Marcar como Vendido */}
+      <AlertDialog open={isMarkAsSoldDialogOpen} onOpenChange={setIsMarkAsSoldDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Registrar Venda</AlertDialogTitle>
+            <AlertDialogDescription>
+              Confirmar a venda do veículo {selectedVehicle?.brand?.name} {selectedVehicle?.model} {selectedVehicle?.year} por {selectedVehicle ? formatPrice(selectedVehicle.price) : ''}?
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => {
+                if (selectedVehicle) {
+                  markAsSoldMutation.mutate(selectedVehicle.id);
+                }
+              }}
+              disabled={markAsSoldMutation.isPending}
+            >
+              {markAsSoldMutation.isPending ? (
+                <>
+                  <Timer className="mr-2 h-4 w-4 animate-spin" />
+                  Registrando...
+                </>
+              ) : (
+                "Confirmar Venda"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
       <header className="border-b bg-white dark:bg-slate-800 sticky top-0 z-40 shadow-sm">
         <div className="container flex flex-wrap sm:flex-nowrap items-center justify-between h-auto sm:h-16 py-3 px-4">
           <div className="flex items-center gap-2 w-full sm:w-auto justify-between mb-2 sm:mb-0">
