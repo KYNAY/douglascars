@@ -38,7 +38,7 @@ export function HeroSection() {
       subtitle: "Taxas exclusivas e aprovação rápida para você conquistar seu veículo"
     },
     {
-      imageUrl: "https://images.unsplash.com/photo-1617814076668-11183bc12271?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+      imageUrl: "https://images.unsplash.com/photo-1580274455191-1c62238fa333?q=80&w=2128&auto=format&fit=crop",
       title: "Qualidade garantida",
       subtitle: "Todos os nossos veículos passam por rigorosa inspeção técnica"
     }
