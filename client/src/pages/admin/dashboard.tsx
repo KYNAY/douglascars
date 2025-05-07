@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag, ShoppingCart } from "lucide-react";
 import { getInitial, formatPrice } from "@/lib/utils";
 import { VehicleImagesManager } from "@/components/admin/vehicle-images-manager";
+import { HeroSlidesManager } from "@/components/admin/hero-slides-manager";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
@@ -691,6 +692,7 @@ export default function AdminDashboard() {
           <TabsTrigger value="ranking">Vendedores</TabsTrigger>
           <TabsTrigger value="brands">Marcas</TabsTrigger>
           <TabsTrigger value="featured">Destaques</TabsTrigger>
+          <TabsTrigger value="hero">Carousel</TabsTrigger>
           <TabsTrigger value="settings">Configurações</TabsTrigger>
         </TabsList>
         
@@ -1151,6 +1153,20 @@ export default function AdminDashboard() {
                   </Table>
                 </div>
               )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="hero" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Gerenciar Carousel da Página Inicial</CardTitle>
+              <CardDescription>
+                Adicione, edite ou remova os slides do carousel exibido na página inicial.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HeroSlidesManager />
             </CardContent>
           </Card>
         </TabsContent>
