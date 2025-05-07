@@ -721,7 +721,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="container py-10">
-      <div className="mb-6">
+      {/* Barra de administrador para desktop */}
+      <div className="hidden sm:block mb-6">
         <Card className="shadow-md">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
@@ -747,6 +748,31 @@ export default function AdminDashboard() {
             </div>
           </CardHeader>
         </Card>
+      </div>
+
+      {/* Barra de administrador para mobile - simplificada com botão de sair */}
+      <div className="sm:hidden bg-slate-800 text-white py-3 px-4 mb-4 border-b border-slate-700 rounded-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <Avatar className="h-8 w-8 mr-2">
+              <AvatarFallback className="bg-primary text-white text-sm">
+                {adminEmail ? getInitial(adminEmail) : "A"}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="text-sm font-medium">Administrador</div>
+              <div className="text-xs text-slate-300">{adminEmail}</div>
+            </div>
+          </div>
+          <Button 
+            variant="destructive" 
+            size="sm" 
+            onClick={handleLogout} 
+            className="px-4 h-8 text-sm flex items-center gap-1 rounded-lg"
+          >
+            <LogOut className="h-4 w-4 mr-1" /> Sair
+          </Button>
+        </div>
       </div>
       
       <div className="flex justify-between items-center mb-6">
