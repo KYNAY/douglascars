@@ -1452,7 +1452,7 @@ export default function AdminDashboard() {
           
           {/* Dialog para adicionar novo vendedor */}
           <Dialog open={isNewDealerDialogOpen} onOpenChange={setIsNewDealerDialogOpen}>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
               <DialogHeader>
                 <DialogTitle>Cadastrar Novo Vendedor</DialogTitle>
                 <DialogDescription>
@@ -1520,7 +1520,7 @@ export default function AdminDashboard() {
           
           {/* Dialog para confirmar exclusão de todos os vendedores */}
           <Dialog open={isDeleteAllDealersDialogOpen} onOpenChange={setIsDeleteAllDealersDialogOpen}>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
               <DialogHeader>
                 <DialogTitle>Excluir Todos os Vendedores</DialogTitle>
                 <DialogDescription>
@@ -1545,7 +1545,7 @@ export default function AdminDashboard() {
           
           {/* Dialog para editar vendedor */}
           <Dialog open={isEditDealerDialogOpen} onOpenChange={setIsEditDealerDialogOpen}>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
               <DialogHeader>
                 <DialogTitle>Editar Vendedor</DialogTitle>
                 <DialogDescription>
@@ -1613,7 +1613,7 @@ export default function AdminDashboard() {
           
           {/* Dialog para marcar veículo como vendido */}
           <Dialog open={isMarkAsAsSoldDialogOpen} onOpenChange={setIsMarkAsAsSoldDialogOpen}>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
               <DialogHeader>
                 <DialogTitle>Registrar Venda</DialogTitle>
                 <DialogDescription>
@@ -2569,7 +2569,7 @@ export default function AdminDashboard() {
               setSelectedEvaluation(null);
             }
           }}>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
               <DialogHeader>
                 <DialogTitle>Detalhes da Avaliação</DialogTitle>
                 <DialogDescription>
@@ -2672,7 +2672,7 @@ export default function AdminDashboard() {
               setSelectedFinancing(null);
             }
           }}>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
               <DialogHeader>
                 <DialogTitle>Detalhes do Financiamento</DialogTitle>
                 <DialogDescription>
