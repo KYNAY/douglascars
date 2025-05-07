@@ -2552,6 +2552,11 @@ export default function AdminDashboard() {
               imageUrl: formData.get('imageUrl') as string,
               featured: formData.get('featured') === 'on',
               specialFeatured: formData.get('specialFeatured') === 'on',
+              doors: formData.get('doors') ? Number(formData.get('doors')) : null,
+              enginePower: formData.get('enginePower') as string || null,
+              engineTorque: formData.get('engineTorque') as string || null,
+              warranty: formData.get('warranty') as string || null,
+              optionals: formData.get('optionals') as string || null,
               sold: false
             };
             
