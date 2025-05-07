@@ -125,6 +125,15 @@ export default function AdminDashboard() {
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
   const [searchBrand, setSearchBrand] = useState("");
   
+  // Estados para a aba de integrações
+  const [integrationTab, setIntegrationTab] = useState<"reviews" | "instagram">("reviews");
+  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
+  const [isDeleteReviewDialogOpen, setIsDeleteReviewDialogOpen] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
+  const [isInstagramPostDialogOpen, setIsInstagramPostDialogOpen] = useState(false);
+  const [isDeleteInstagramPostDialogOpen, setIsDeleteInstagramPostDialogOpen] = useState(false);
+  const [selectedInstagramPost, setSelectedInstagramPost] = useState<InstagramPost | null>(null);
+  
   // Estados para a gestão de vendedores
   const [isNewDealerDialogOpen, setIsNewDealerDialogOpen] = useState(false);
   const [isEditDealerDialogOpen, setIsEditDealerDialogOpen] = useState(false);
@@ -155,15 +164,7 @@ export default function AdminDashboard() {
   const [lastCheckedEvaluationCount, setLastCheckedEvaluationCount] = useState(0);
   const [lastCheckedFinancingCount, setLastCheckedFinancingCount] = useState(0);
   
-  // Estados para o gerenciamento de avaliações do Google
-  const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
-  const [isDeleteReviewDialogOpen, setIsDeleteReviewDialogOpen] = useState(false);
-  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
-  
-  // Estados para o gerenciamento de posts do Instagram
-  const [isInstagramPostDialogOpen, setIsInstagramPostDialogOpen] = useState(false);
-  const [isDeleteInstagramPostDialogOpen, setIsDeleteInstagramPostDialogOpen] = useState(false);
-  const [selectedInstagramPost, setSelectedInstagramPost] = useState<InstagramPost | null>(null);
+
   
   // Mutação para atualizar veículo
   const updateVehicleMutation = useMutation({
@@ -2962,6 +2963,312 @@ export default function AdminDashboard() {
               disabled={deleteBrandMutation.isPending}
             >
               {deleteBrandMutation.isPending ? "Excluindo..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      {/* Diálogo para adicionar/editar avaliação */}
+      <Dialog open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedReview && selectedReview.id !== 0 ? "Editar Avaliação" : "Adicionar Nova Avaliação"}</DialogTitle>
+            <DialogDescription>
+              {selectedReview && selectedReview.id !== 0 
+                ? "Edite os detalhes da avaliação selecionada." 
+                : "Preencha as informações para adicionar uma nova avaliação."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="reviewName">Nome do Cliente</Label>
+              <Input 
+                id="reviewName" 
+                placeholder="Ex: João Silva"
+                value={selectedReview?.name || ""} 
+                onChange={(e) => setSelectedReview(prev => prev ? {...prev, name: e.target.value, avatarInitial: getInitial(e.target.value)} : null)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="reviewRating">Classificação (1-5 estrelas)</Label>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map(rating => (
+                  <Button
+                    key={rating}
+                    type="button"
+                    variant={selectedReview?.rating === rating ? "default" : "outline"}
+                    size="sm"
+                    className="w-10 h-10 p-0"
+                    onClick={() => setSelectedReview(prev => prev ? {...prev, rating} : null)}
+                  >
+                    {rating}
+                  </Button>
+                ))}
+              </div>
+              <div className="flex items-center text-yellow-500 mt-2">
+                {[...Array(5)].map((_, i) => (
+                  <span key={i}>
+                    {i < (selectedReview?.rating || 0) ? (
+                      <Star className="h-5 w-5 fill-current" />
+                    ) : (
+                      <Star className="h-5 w-5 text-gray-300" />
+                    )}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="reviewComment">Comentário</Label>
+              <Textarea 
+                id="reviewComment" 
+                placeholder="Digite o comentário do cliente aqui..."
+                value={selectedReview?.comment || ""} 
+                onChange={(e) => setSelectedReview(prev => prev ? {...prev, comment: e.target.value} : null)}
+                rows={4}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="reviewDate">Data</Label>
+              <Input 
+                id="reviewDate" 
+                type="date"
+                value={selectedReview?.date || ""} 
+                onChange={(e) => setSelectedReview(prev => prev ? {...prev, date: e.target.value} : null)}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsReviewDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={() => {
+                if (selectedReview) {
+                  if (!selectedReview.name || !selectedReview.comment || !selectedReview.date) {
+                    toast({
+                      title: "Campos incompletos",
+                      description: "Preencha todos os campos obrigatórios.",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
+                  
+                  if (selectedReview.id === 0) {
+                    // Criar nova avaliação
+                    const { id, ...reviewData } = selectedReview;
+                    createReviewMutation.mutate(reviewData);
+                  } else {
+                    // Atualizar avaliação existente
+                    updateReviewMutation.mutate(selectedReview);
+                  }
+                }
+              }}
+              disabled={!selectedReview || !selectedReview.name || !selectedReview.comment || !selectedReview.date || 
+                (selectedReview.id === 0 ? createReviewMutation.isPending : updateReviewMutation.isPending)}
+            >
+              {selectedReview?.id === 0 ? (
+                createReviewMutation.isPending ? "Salvando..." : "Salvar Avaliação"
+              ) : (
+                updateReviewMutation.isPending ? "Salvando..." : "Salvar Alterações"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Diálogo para confirmar exclusão de avaliação */}
+      <AlertDialog open={isDeleteReviewDialogOpen} onOpenChange={setIsDeleteReviewDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Avaliação</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta avaliação? Esta ação não pode ser desfeita.
+              {selectedReview && (
+                <div className="mt-4 p-3 bg-gray-100 rounded-md flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-lg shrink-0">
+                    {selectedReview.avatarInitial}
+                  </div>
+                  <div>
+                    <div className="font-medium">{selectedReview.name}</div>
+                    <div className="flex items-center text-yellow-500 mt-1">
+                      {[...Array(5)].map((_, i) => (
+                        <span key={i}>
+                          {i < selectedReview.rating ? (
+                            <Star className="h-4 w-4 fill-current" />
+                          ) : (
+                            <Star className="h-4 w-4 text-gray-300" />
+                          )}
+                        </span>
+                      ))}
+                      <span className="text-sm text-gray-500 ml-2">{selectedReview.date}</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                      {selectedReview.comment}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => selectedReview && deleteReviewMutation.mutate(selectedReview.id)}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              disabled={deleteReviewMutation.isPending}
+            >
+              {deleteReviewMutation.isPending ? "Excluindo..." : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      {/* Diálogo para adicionar/editar post do Instagram */}
+      <Dialog open={isInstagramPostDialogOpen} onOpenChange={setIsInstagramPostDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedInstagramPost && selectedInstagramPost.id !== 0 ? "Editar Post" : "Adicionar Novo Post"}</DialogTitle>
+            <DialogDescription>
+              {selectedInstagramPost && selectedInstagramPost.id !== 0 
+                ? "Edite os detalhes do post selecionado." 
+                : "Preencha as informações para adicionar um novo post do Instagram."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="postImageUrl">URL da Imagem</Label>
+              <Input 
+                id="postImageUrl" 
+                placeholder="https://exemplo.com/imagem.jpg"
+                value={selectedInstagramPost?.imageUrl || ""} 
+                onChange={(e) => setSelectedInstagramPost(prev => prev ? {...prev, imageUrl: e.target.value} : null)}
+              />
+            </div>
+            
+            {selectedInstagramPost?.imageUrl && (
+              <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-800 rounded-md flex justify-center">
+                <div className="w-40 h-40 overflow-hidden rounded-md">
+                  <img 
+                    src={selectedInstagramPost.imageUrl}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = "https://placehold.co/600x600/eee/ccc?text=Imagem+Indisponível";
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            
+            <div className="space-y-2">
+              <Label htmlFor="postUrl">Link do Post</Label>
+              <Input 
+                id="postUrl" 
+                placeholder="https://instagram.com/p/abc123"
+                value={selectedInstagramPost?.postUrl || ""} 
+                onChange={(e) => setSelectedInstagramPost(prev => prev ? {...prev, postUrl: e.target.value} : null)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="postLikes">Número de Curtidas</Label>
+              <Input 
+                id="postLikes" 
+                type="number"
+                min="0"
+                placeholder="0"
+                value={selectedInstagramPost?.likes || 0} 
+                onChange={(e) => setSelectedInstagramPost(prev => prev ? 
+                  {...prev, likes: parseInt(e.target.value) || 0} : null)}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsInstagramPostDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={() => {
+                if (selectedInstagramPost) {
+                  if (!selectedInstagramPost.imageUrl || !selectedInstagramPost.postUrl) {
+                    toast({
+                      title: "Campos incompletos",
+                      description: "Preencha todos os campos obrigatórios.",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
+                  
+                  if (selectedInstagramPost.id === 0) {
+                    // Criar novo post
+                    const { id, ...postData } = selectedInstagramPost;
+                    createInstagramPostMutation.mutate(postData);
+                  } else {
+                    // Atualizar post existente
+                    updateInstagramPostMutation.mutate(selectedInstagramPost);
+                  }
+                }
+              }}
+              disabled={!selectedInstagramPost || !selectedInstagramPost.imageUrl || !selectedInstagramPost.postUrl || 
+                (selectedInstagramPost.id === 0 ? 
+                  createInstagramPostMutation.isPending : updateInstagramPostMutation.isPending)}
+            >
+              {selectedInstagramPost?.id === 0 ? (
+                createInstagramPostMutation.isPending ? "Salvando..." : "Salvar Post"
+              ) : (
+                updateInstagramPostMutation.isPending ? "Salvando..." : "Salvar Alterações"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Diálogo para confirmar exclusão de post do Instagram */}
+      <AlertDialog open={isDeleteInstagramPostDialogOpen} onOpenChange={setIsDeleteInstagramPostDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Post do Instagram</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este post? Esta ação não pode ser desfeita.
+              {selectedInstagramPost && (
+                <div className="mt-4 p-3 bg-gray-100 rounded-md flex items-center gap-3">
+                  <div className="h-16 w-16 overflow-hidden rounded-md">
+                    <img 
+                      src={selectedInstagramPost.imageUrl} 
+                      alt="Instagram post" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = "https://placehold.co/600x600/eee/ccc?text=Imagem+Indisponível";
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Heart className="h-3.5 w-3.5 mr-1 fill-red-500 text-red-500" /> {selectedInstagramPost.likes} curtidas
+                    </div>
+                    <div className="text-sm text-blue-600 mt-1 truncate">
+                      {selectedInstagramPost.postUrl}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => selectedInstagramPost && deleteInstagramPostMutation.mutate(selectedInstagramPost.id)}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              disabled={deleteInstagramPostMutation.isPending}
+            >
+              {deleteInstagramPostMutation.isPending ? "Excluindo..." : "Excluir"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

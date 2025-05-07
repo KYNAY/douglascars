@@ -1652,6 +1652,190 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ error: "Failed to delete financing request" });
     }
   });
+  
+  // ====== Rotas para avaliações do Google ======
+  // Listar todas as avaliações
+  app.get(`${apiPrefix}/reviews`, async (req, res) => {
+    try {
+      const reviewsList = await db.select().from(reviews).orderBy(desc(reviews.id));
+      return res.json(reviewsList);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      return res.status(500).json({ error: "Failed to fetch reviews" });
+    }
+  });
+  
+  // Criar uma nova avaliação
+  app.post(`${apiPrefix}/reviews`, async (req, res) => {
+    try {
+      const { name, avatarInitial, rating, comment, date } = req.body;
+      
+      // Validação básica
+      if (!name || !rating || !comment || !date) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      // Criar a avaliação no banco de dados
+      const [newReview] = await db.insert(reviews).values({
+        name,
+        avatarInitial: avatarInitial || name.charAt(0).toUpperCase(),
+        rating: Number(rating),
+        comment,
+        date
+      }).returning();
+      
+      return res.status(201).json(newReview);
+    } catch (error) {
+      console.error("Error creating review:", error);
+      return res.status(500).json({ error: "Failed to create review" });
+    }
+  });
+  
+  // Atualizar uma avaliação
+  app.put(`${apiPrefix}/reviews/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, avatarInitial, rating, comment, date } = req.body;
+      
+      // Validação básica
+      if (!name || !rating || !comment || !date) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      // Verificar se a avaliação existe
+      const review = await db.select().from(reviews).where(eq(reviews.id, Number(id))).limit(1);
+      if (!review.length) {
+        return res.status(404).json({ error: "Review not found" });
+      }
+      
+      // Atualizar a avaliação
+      const [updatedReview] = await db.update(reviews)
+        .set({
+          name,
+          avatarInitial: avatarInitial || name.charAt(0).toUpperCase(),
+          rating: Number(rating),
+          comment,
+          date
+        })
+        .where(eq(reviews.id, Number(id)))
+        .returning();
+      
+      return res.json(updatedReview);
+    } catch (error) {
+      console.error("Error updating review:", error);
+      return res.status(500).json({ error: "Failed to update review" });
+    }
+  });
+  
+  // Excluir uma avaliação
+  app.delete(`${apiPrefix}/reviews/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verificar se a avaliação existe
+      const review = await db.select().from(reviews).where(eq(reviews.id, Number(id))).limit(1);
+      if (!review.length) {
+        return res.status(404).json({ error: "Review not found" });
+      }
+      
+      await db.delete(reviews).where(eq(reviews.id, Number(id)));
+      
+      return res.json({ success: true, message: "Review deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting review:", error);
+      return res.status(500).json({ error: "Failed to delete review" });
+    }
+  });
+  
+  // ====== Rotas para posts do Instagram ======
+  // Listar todos os posts
+  app.get(`${apiPrefix}/instagram-posts`, async (req, res) => {
+    try {
+      const postsList = await db.select().from(instagramPosts).orderBy(desc(instagramPosts.id));
+      return res.json(postsList);
+    } catch (error) {
+      console.error("Error fetching Instagram posts:", error);
+      return res.status(500).json({ error: "Failed to fetch Instagram posts" });
+    }
+  });
+  
+  // Criar um novo post
+  app.post(`${apiPrefix}/instagram-posts`, async (req, res) => {
+    try {
+      const { imageUrl, likes, postUrl } = req.body;
+      
+      // Validação básica
+      if (!imageUrl || !postUrl) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      // Criar o post no banco de dados
+      const [newPost] = await db.insert(instagramPosts).values({
+        imageUrl,
+        likes: Number(likes) || 0,
+        postUrl
+      }).returning();
+      
+      return res.status(201).json(newPost);
+    } catch (error) {
+      console.error("Error creating Instagram post:", error);
+      return res.status(500).json({ error: "Failed to create Instagram post" });
+    }
+  });
+  
+  // Atualizar um post
+  app.put(`${apiPrefix}/instagram-posts/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { imageUrl, likes, postUrl } = req.body;
+      
+      // Validação básica
+      if (!imageUrl || !postUrl) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      // Verificar se o post existe
+      const post = await db.select().from(instagramPosts).where(eq(instagramPosts.id, Number(id))).limit(1);
+      if (!post.length) {
+        return res.status(404).json({ error: "Instagram post not found" });
+      }
+      
+      // Atualizar o post
+      const [updatedPost] = await db.update(instagramPosts)
+        .set({
+          imageUrl,
+          likes: Number(likes) || 0,
+          postUrl
+        })
+        .where(eq(instagramPosts.id, Number(id)))
+        .returning();
+      
+      return res.json(updatedPost);
+    } catch (error) {
+      console.error("Error updating Instagram post:", error);
+      return res.status(500).json({ error: "Failed to update Instagram post" });
+    }
+  });
+  
+  // Excluir um post
+  app.delete(`${apiPrefix}/instagram-posts/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verificar se o post existe
+      const post = await db.select().from(instagramPosts).where(eq(instagramPosts.id, Number(id))).limit(1);
+      if (!post.length) {
+        return res.status(404).json({ error: "Instagram post not found" });
+      }
+      
+      await db.delete(instagramPosts).where(eq(instagramPosts.id, Number(id)));
+      
+      return res.json({ success: true, message: "Instagram post deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting Instagram post:", error);
+      return res.status(500).json({ error: "Failed to delete Instagram post" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
