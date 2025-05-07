@@ -8,6 +8,7 @@ import {
 } from "@shared/schema";
 import { eq, and, not, desc, asc, like, or, gte, lte, count, sql } from "drizzle-orm";
 import { SQL } from "drizzle-orm";
+import * as crypto from 'crypto';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const apiPrefix = "/api";
@@ -514,6 +515,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating dealer:", error);
       return res.status(500).json({ error: "Failed to create dealer" });
+    }
+  });
+  
+  // Authenticate dealer (login)
+  app.post(`${apiPrefix}/auth/dealer/login`, async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ error: "Username and password are required" });
+      }
+      
+      // Buscar vendedor por nome de usuário
+      const dealer = await db.select().from(dealers).where(eq(dealers.username, username)).limit(1);
+      
+      if (!dealer.length) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+      
+      // Verificar se a senha está correta (em uma implementação real, usaria bcrypt)
+      if (dealer[0].password !== password) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+      
+      // Gerar um token simples (em uma implementação real, usaria JWT)
+      const token = crypto.randomBytes(64).toString('hex');
+      
+      // Remover a senha do objeto do vendedor antes de enviar
+      const { password: _, ...dealerWithoutPassword } = dealer[0];
+      
+      return res.json({ 
+        success: true, 
+        message: "Authentication successful",
+        token,
+        dealer: dealerWithoutPassword
+      });
+    } catch (error) {
+      console.error("Error authenticating dealer:", error);
+      return res.status(500).json({ error: "Failed to authenticate" });
     }
   });
   

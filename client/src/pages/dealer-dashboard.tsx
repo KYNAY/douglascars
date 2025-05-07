@@ -126,16 +126,23 @@ export default function DealerDashboard() {
     }
   });
 
+  // Tipo para os dados do gráfico
+  type ChartDataType = {
+    monthIndex: number;
+    name: string;
+    amount: number;
+  };
+
   // Dados para o gráfico de vendas por mês
-  const getChartData = () => {
+  const getChartData = (): ChartDataType[] => {
     if (!mySales || !mySales.length) {
       return [
-        { name: 'Jan', amount: 0 },
-        { name: 'Fev', amount: 0 },
-        { name: 'Mar', amount: 0 },
-        { name: 'Abr', amount: 0 },
-        { name: 'Mai', amount: 0 },
-        { name: 'Jun', amount: 0 },
+        { monthIndex: 0, name: 'Jan', amount: 0 },
+        { monthIndex: 1, name: 'Fev', amount: 0 },
+        { monthIndex: 2, name: 'Mar', amount: 0 },
+        { monthIndex: 3, name: 'Abr', amount: 0 },
+        { monthIndex: 4, name: 'Mai', amount: 0 },
+        { monthIndex: 5, name: 'Jun', amount: 0 },
       ];
     }
 
@@ -145,7 +152,7 @@ export default function DealerDashboard() {
     const currentMonth = currentDate.getMonth();
     
     // Pegar os últimos 6 meses
-    const sixMonths = [];
+    const sixMonths: ChartDataType[] = [];
     for (let i = 5; i >= 0; i--) {
       const monthIndex = (currentMonth - i + 12) % 12;
       sixMonths.push({
