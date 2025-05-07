@@ -1637,18 +1637,35 @@ export default function AdminDashboard() {
                   Adicione, edite ou remova marcas de veículos.
                 </CardDescription>
               </div>
-              <Button className="flex items-center gap-2">
+              <Button 
+                className="flex items-center gap-2"
+                onClick={() => {
+                  setSelectedBrand({id: 0, name: "", logoUrl: ""});
+                  setIsBrandDialogOpen(true);
+                }}
+              >
                 <Plus size={16} /> Adicionar Marca
               </Button>
             </CardHeader>
             <CardContent>
+              <div className="mb-4">
+                <Input
+                  placeholder="Buscar marcas..."
+                  className="max-w-md"
+                  value={searchBrand}
+                  onChange={e => setSearchBrand(e.target.value)}
+                />
+              </div>
+              
               {isLoadingBrands ? (
                 <div className="flex justify-center py-8">
                   <Loader2 className="animate-spin h-8 w-8 text-primary" />
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {brands?.map((brand) => (
+                  {brands?.filter(brand => 
+                    brand.name.toLowerCase().includes(searchBrand.toLowerCase())
+                  ).map((brand) => (
                     <Card key={brand.id} className="overflow-hidden">
                       <div className="p-6 flex flex-col items-center text-center">
                         <div className="w-20 h-20 flex items-center justify-center mb-4">
@@ -1661,8 +1678,26 @@ export default function AdminDashboard() {
                         <h3 className="font-semibold">{brand.name}</h3>
                       </div>
                       <CardFooter className="flex justify-center gap-2 p-4 pt-0">
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => {
+                            setSelectedBrand(brand);
+                            setIsBrandDialogOpen(true);
+                          }}
+                        >
                           <Pencil className="h-4 w-4 mr-1" /> Editar
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          className="text-red-500"
+                          onClick={() => {
+                            setSelectedBrand(brand);
+                            setIsDeleteBrandDialogOpen(true);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-1" /> Excluir
                         </Button>
                       </CardFooter>
                     </Card>
@@ -1682,7 +1717,7 @@ export default function AdminDashboard() {
         <TabsContent value="settings" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Configurações</CardTitle>
+              <CardTitle>Configurações Gerais</CardTitle>
               <CardDescription>
                 Configurações gerais do sistema.
               </CardDescription>
@@ -1708,6 +1743,228 @@ export default function AdminDashboard() {
                       <Checkbox id="notification-sms" />
                       <Label htmlFor="notification-sms">Receber notificações por SMS</Label>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Card para gerenciamento de avaliações do Google */}
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <CardTitle>Avaliações do Google</CardTitle>
+                <CardDescription>
+                  Gerencie as avaliações do Google exibidas no site.
+                </CardDescription>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
+                  onClick={() => {
+                    setSelectedReview({id: 0, name: "", avatarInitial: "", rating: 5, comment: "", date: new Date().toISOString().split('T')[0]});
+                    setIsReviewDialogOpen(true);
+                  }}
+                >
+                  <Plus size={16} className="mr-2" /> Adicionar Manualmente
+                </Button>
+                <Button variant="outline" disabled>
+                  <ArrowDown size={16} className="mr-2" /> Sincronizar com Google
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoadingReviews ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    {reviews?.map(review => (
+                      <Card key={review.id} className="overflow-hidden">
+                        <CardContent className="p-4">
+                          <div className="flex items-start gap-3">
+                            <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold text-lg">
+                              {review.avatarInitial}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h4 className="font-medium">{review.name}</h4>
+                                  <div className="flex items-center text-yellow-500 mt-1">
+                                    {[...Array(5)].map((_, i) => (
+                                      <span key={i}>
+                                        {i < review.rating ? (
+                                          <Star className="h-4 w-4 fill-current" />
+                                        ) : (
+                                          <Star className="h-4 w-4 text-gray-300" />
+                                        )}
+                                      </span>
+                                    ))}
+                                    <span className="text-sm text-gray-500 ml-2">{review.date}</span>
+                                  </div>
+                                </div>
+                                <div className="flex gap-1">
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon"
+                                    className="h-8 w-8"
+                                    onClick={() => {
+                                      setSelectedReview(review);
+                                      setIsReviewDialogOpen(true);
+                                    }}
+                                  >
+                                    <Pencil className="h-4 w-4 text-blue-500" />
+                                  </Button>
+                                  <Button 
+                                    variant="ghost" 
+                                    size="icon"
+                                    className="h-8 w-8"
+                                    onClick={() => {
+                                      setSelectedReview(review);
+                                      setIsDeleteReviewDialogOpen(true);
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4 text-red-500" />
+                                  </Button>
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-600 mt-2 line-clamp-3">
+                                {review.comment}
+                              </p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                  
+                  {(!reviews || reviews.length === 0) && (
+                    <div className="text-center py-8 text-gray-500">
+                      Nenhuma avaliação cadastrada.
+                    </div>
+                  )}
+                </>
+              )}
+              
+              <div className="bg-blue-50 rounded-md p-4 mt-4">
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 text-blue-700 rounded-full p-2">
+                    <Info size={18} />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-blue-800">Integração com Google</h4>
+                    <p className="text-sm text-blue-700 mt-1">
+                      Para sincronizar automaticamente as avaliações do Google, será necessário configurar a autenticação com a API do Google. 
+                      Entre em contato com o suporte técnico para configurar esta integração.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {/* Card para gerenciamento de posts do Instagram */}
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <CardTitle>Posts do Instagram</CardTitle>
+                <CardDescription>
+                  Gerencie os posts do Instagram exibidos no site (@douglas.autocar).
+                </CardDescription>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  className="bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100"
+                  onClick={() => {
+                    setSelectedInstagramPost({id: 0, imageUrl: "", likes: 0, postUrl: ""});
+                    setIsInstagramPostDialogOpen(true);
+                  }}
+                >
+                  <Plus size={16} className="mr-2" /> Adicionar Manualmente
+                </Button>
+                <Button variant="outline" disabled>
+                  <ArrowDown size={16} className="mr-2" /> Sincronizar com Instagram
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoadingInstagramPosts ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
+                    {instagramPosts?.map(post => (
+                      <Card key={post.id} className="overflow-hidden">
+                        <div className="relative aspect-square">
+                          <img 
+                            src={post.imageUrl} 
+                            alt="Instagram post" 
+                            className="object-cover w-full h-full"
+                            onError={(e) => {
+                              e.currentTarget.src = "https://placehold.co/600x600/eee/ccc?text=Imagem+Indisponível";
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-60 transition-all flex items-center justify-center opacity-0 hover:opacity-100">
+                            <div className="flex gap-2">
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="h-8 w-8 text-white"
+                                onClick={() => {
+                                  setSelectedInstagramPost(post);
+                                  setIsInstagramPostDialogOpen(true);
+                                }}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon"
+                                className="h-8 w-8 text-white"
+                                onClick={() => {
+                                  setSelectedInstagramPost(post);
+                                  setIsDeleteInstagramPostDialogOpen(true);
+                                }}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-2 text-center">
+                          <div className="flex items-center justify-center text-sm">
+                            <Heart className="h-3.5 w-3.5 mr-1 fill-red-500 text-red-500" /> {post.likes}
+                          </div>
+                        </div>
+                      </Card>
+                    ))}
+                  </div>
+                  
+                  {(!instagramPosts || instagramPosts.length === 0) && (
+                    <div className="text-center py-8 text-gray-500">
+                      Nenhum post do Instagram cadastrado.
+                    </div>
+                  )}
+                </>
+              )}
+              
+              <div className="bg-blue-50 rounded-md p-4 mt-4">
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 text-blue-700 rounded-full p-2">
+                    <Info size={18} />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-blue-800">Integração com Instagram</h4>
+                    <p className="text-sm text-blue-700 mt-1">
+                      Para sincronizar automaticamente os posts do Instagram, será necessário um token de acesso da API do Instagram. 
+                      Este token precisa ser obtido através do Facebook Developer Portal e configurado nas variáveis de ambiente do sistema.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -2539,6 +2796,134 @@ export default function AdminDashboard() {
               className="bg-red-600 hover:bg-red-700 text-white"
             >
               Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      {/* Diálogo para adicionar/editar marca */}
+      <Dialog open={isBrandDialogOpen} onOpenChange={setIsBrandDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedBrand && selectedBrand.id !== 0 ? "Editar Marca" : "Adicionar Nova Marca"}</DialogTitle>
+            <DialogDescription>
+              {selectedBrand && selectedBrand.id !== 0 
+                ? "Edite os detalhes da marca selecionada." 
+                : "Preencha as informações para adicionar uma nova marca de veículo."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="brandName">Nome da Marca</Label>
+              <Input 
+                id="brandName" 
+                placeholder="Ex: Toyota, Volkswagen, etc."
+                value={selectedBrand?.name || ""} 
+                onChange={(e) => setSelectedBrand(prev => prev ? {...prev, name: e.target.value} : {id: 0, name: e.target.value, logoUrl: ""})}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="logoUrl">URL do Logo</Label>
+              <Input 
+                id="logoUrl" 
+                placeholder="https://exemplo.com/logo.png"
+                value={selectedBrand?.logoUrl || ""} 
+                onChange={(e) => setSelectedBrand(prev => prev ? {...prev, logoUrl: e.target.value} : {id: 0, name: "", logoUrl: e.target.value})}
+              />
+            </div>
+            
+            {selectedBrand?.logoUrl && (
+              <div className="mt-4 p-4 bg-slate-100 dark:bg-slate-800 rounded-md flex justify-center">
+                <div className="w-24 h-24 flex items-center justify-center">
+                  <img 
+                    src={selectedBrand.logoUrl}
+                    alt="Logo preview"
+                    className="max-h-full max-w-full object-contain"
+                    onError={(e) => {
+                      // Substitui a imagem com erro por um ícone de erro
+                      e.currentTarget.src = "https://cdn-icons-png.flaticon.com/512/1160/1160358.png";
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsBrandDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={() => {
+                if (selectedBrand) {
+                  if (!selectedBrand.name || !selectedBrand.logoUrl) {
+                    toast({
+                      title: "Campos incompletos",
+                      description: "Preencha todos os campos obrigatórios.",
+                      variant: "destructive"
+                    });
+                    return;
+                  }
+                  if (selectedBrand.id === 0) {
+                    // Criar nova marca
+                    createBrandMutation.mutate({
+                      name: selectedBrand.name,
+                      logoUrl: selectedBrand.logoUrl
+                    });
+                  } else {
+                    // Atualizar marca existente
+                    updateBrandMutation.mutate({
+                      id: selectedBrand.id,
+                      name: selectedBrand.name,
+                      logoUrl: selectedBrand.logoUrl
+                    });
+                  }
+                }
+              }}
+              disabled={!selectedBrand || !selectedBrand.name || !selectedBrand.logoUrl || 
+                (selectedBrand.id === 0 ? createBrandMutation.isPending : updateBrandMutation.isPending)}
+            >
+              {selectedBrand?.id === 0 ? (
+                createBrandMutation.isPending ? "Salvando..." : "Salvar Nova Marca"
+              ) : (
+                updateBrandMutation.isPending ? "Salvando..." : "Salvar Alterações"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Diálogo para confirmar exclusão de marca */}
+      <AlertDialog open={isDeleteBrandDialogOpen} onOpenChange={setIsDeleteBrandDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Marca</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta marca? Esta ação não pode ser desfeita.
+              {selectedBrand && (
+                <div className="mt-4 p-3 bg-gray-100 rounded-md flex items-center gap-3">
+                  <div className="h-12 w-12 flex items-center justify-center">
+                    <img 
+                      src={selectedBrand.logoUrl} 
+                      alt={selectedBrand.name} 
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                  <div className="font-medium">{selectedBrand.name}</div>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => selectedBrand && deleteBrandMutation.mutate(selectedBrand.id)}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              disabled={deleteBrandMutation.isPending}
+            >
+              {deleteBrandMutation.isPending ? "Excluindo..." : "Excluir"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
