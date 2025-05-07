@@ -860,37 +860,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // API para formulários de avaliação
-  app.post(`${apiPrefix}/evaluation-requests`, async (req, res) => {
-    try {
-      const { name, email, phone, vehicleInfo } = req.body;
-      
-      // Validar campos obrigatórios
-      if (!name || !email || !phone || !vehicleInfo) {
-        return res.status(400).json({ error: "Missing required fields" });
-      }
-      
-      // Aqui você salvaria os dados no banco em uma tabela específica
-      // Por enquanto, apenas simulamos um retorno de sucesso
-      
-      return res.status(201).json({
-        success: true,
-        message: "Evaluation request received successfully",
-        request: {
-          id: Date.now(),
-          name,
-          email,
-          phone,
-          vehicleInfo,
-          requestDate: new Date(),
-          status: 'pending'
-        }
-      });
-    } catch (error) {
-      console.error("Error submitting evaluation request:", error);
-      return res.status(500).json({ error: "Failed to submit evaluation request" });
-    }
-  });
+  // API para formulários de avaliação (redirecionado para a implementação principal em /evaluation-requests)
 
   // API para formulários de financiamento - redirecionado para a implementação principal
 
