@@ -399,7 +399,7 @@ export default function DealerDashboard() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-900">
+    <div className="flex min-h-screen flex-col bg-gray-900 text-white">
       {/* Diálogo de Confirmação para Reserva */}
       <AlertDialog open={isReserveDialogOpen} onOpenChange={setIsReserveDialogOpen}>
         <AlertDialogContent>
@@ -499,7 +499,7 @@ export default function DealerDashboard() {
         </AlertDialogContent>
       </AlertDialog>
       
-      <header className="border-b bg-white dark:bg-slate-800 sticky top-0 z-40 shadow-sm">
+      <header className="border-b bg-gray-800 text-white sticky top-0 z-40 shadow-sm">
         <div className="container flex flex-wrap sm:flex-nowrap items-center justify-between h-auto sm:h-16 py-3 px-4">
           <div className="flex items-center gap-2 w-full sm:w-auto justify-between mb-2 sm:mb-0">
             <div className="flex items-center gap-2">
@@ -507,7 +507,7 @@ export default function DealerDashboard() {
               <h1 className="text-lg font-semibold">Painel do Vendedor</h1>
             </div>
             <Button 
-              variant="outline" 
+              variant="destructive" 
               size="sm" 
               onClick={handleLogout} 
               className="flex items-center gap-1 sm:hidden"
@@ -526,7 +526,7 @@ export default function DealerDashboard() {
               </div>
             </div>
             <Button 
-              variant="outline" 
+              variant="destructive" 
               size="sm" 
               onClick={handleLogout} 
               className="hidden sm:flex items-center gap-1"

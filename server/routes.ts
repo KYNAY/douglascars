@@ -856,7 +856,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         vehicleId: Number(id),
         dealerId: dealerId,
         salePrice: salePrice,
-        saleDate: soldDate ? new Date(soldDate) : new Date()
+        saleDate: soldDate ? new Date(soldDate) : new Date(),
+        pointsAwarded: 10  // Adicionando os pontos concedidos
       }).returning();
       
       // Update dealer points and sales count
