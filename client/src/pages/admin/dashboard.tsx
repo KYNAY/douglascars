@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { useReviewMutations, useInstagramPostMutations } from "@/lib/mutations";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -15,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag, ShoppingCart, Calculator, DollarSign, Star, Heart, Info } from "lucide-react";
-import { getInitial, formatPrice } from "@/lib/utils";
+import { getInitial, formatPrice, getRatingStars } from "@/lib/utils";
 import { VehicleImagesManager } from "@/components/admin/vehicle-images-manager";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -784,6 +785,20 @@ export default function AdminDashboard() {
     queryKey: ['/api/instagram-posts'],
     enabled: isAuthenticated
   });
+  
+  // Obtendo as mutações de avaliações
+  const { createReviewMutation, updateReviewMutation, deleteReviewMutation } = useReviewMutations(
+    setIsReviewDialogOpen,
+    setSelectedReview,
+    setIsDeleteReviewDialogOpen
+  );
+  
+  // Obtendo as mutações de posts do Instagram
+  const { createInstagramPostMutation, updateInstagramPostMutation, deleteInstagramPostMutation } = useInstagramPostMutations(
+    setIsInstagramPostDialogOpen,
+    setSelectedInstagramPost,
+    setIsDeleteInstagramPostDialogOpen
+  );
   
   // Verificar novas solicitações
   useEffect(() => {
