@@ -51,8 +51,15 @@ export function CarCard({ vehicle, featured = false }: CarCardProps) {
         />
         
         {featured && (
-          <div className="absolute top-4 left-4 bg-primary text-white text-sm font-semibold px-3 py-1 rounded-full">
-            DESTAQUE
+          <div className="absolute top-4 left-4 flex items-center">
+            <img 
+              src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f525.gif" 
+              alt="Fire" 
+              className="w-7 h-7 mr-1"
+            />
+            <div className="bg-primary/80 backdrop-blur-sm text-white text-sm font-semibold px-3 py-1 rounded-full">
+              DESTAQUE ESPECIAL
+            </div>
           </div>
         )}
         
