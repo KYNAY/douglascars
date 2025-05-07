@@ -723,6 +723,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Delete dealer with all associated records (complete deletion)
+  app.delete(`${apiPrefix}/dealers/:id/complete`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const dealerId = Number(id);
+      
+      // Check if dealer exists
+      const existingDealer = await db.select().from(dealers).where(eq(dealers.id, dealerId)).limit(1);
+      if (!existingDealer.length) {
+        return res.status(404).json({ error: "Dealer not found" });
+      }
+      
+      // First, get all sales from this dealer
+      const dealerSales = await db.select().from(sales).where(eq(sales.dealerId, dealerId));
+      
+      // For each sale, update the vehicle to be available again
+      for (const sale of dealerSales) {
+        await db.update(vehicles)
+          .set({ 
+            sold: false,
+            featured: true // Highlight the vehicle again
+          })
+          .where(eq(vehicles.id, sale.vehicleId));
+      }
+      
+      // Delete all sales from this dealer
+      await db.delete(sales).where(eq(sales.dealerId, dealerId));
+      
+      // Finally, delete the dealer
+      await db.delete(dealers).where(eq(dealers.id, dealerId));
+      
+      return res.json({ 
+        success: true, 
+        message: "O vendedor e todas as suas vendas foram excluídos com sucesso. Os relatórios foram atualizados.",
+        salesRemoved: dealerSales.length
+      });
+    } catch (error) {
+      console.error("Error deleting dealer with all records:", error);
+      return res.status(500).json({ error: "Falha ao excluir o vendedor e seus registros associados" });
+    }
+  });
+  
   // Delete all dealers
   app.delete(`${apiPrefix}/dealers`, async (req, res) => {
     try {
