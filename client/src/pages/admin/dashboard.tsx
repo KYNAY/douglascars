@@ -55,6 +55,12 @@ interface Vehicle {
   fuel?: string;
   bodyType?: string;
   vehicleType?: 'car' | 'motorcycle';
+  doors?: number | null;
+  enginePower?: string | null;
+  engineTorque?: string | null;
+  warranty?: string | null;
+  optionals?: string | null;
+  createdAt?: string;
   brand?: Brand;
 }
 
@@ -2537,6 +2543,23 @@ export default function AdminDashboard() {
             e.preventDefault();
             const formData = new FormData(e.currentTarget);
             
+            // Processar os opcionais marcados nos checkboxes e os opcionais personalizados
+            const selectedOptionals = formData.getAll('selected_optionals') as string[];
+            
+            // Processar opcionais personalizados do textarea
+            const customOptionals = formData.get('custom_optionals') 
+              ? (formData.get('custom_optionals') as string)
+                  .split('\n')
+                  .map(item => item.trim())
+                  .filter(Boolean)
+              : [];
+            
+            // Combinar os opcionais selecionados com os personalizados
+            const allOptionals = [...selectedOptionals, ...customOptionals];
+            
+            // Atualizar o campo hidden de optionals para envio
+            const optionalsJSON = allOptionals.length > 0 ? JSON.stringify(allOptionals) : null;
+            
             const vehicleData = {
               model: formData.get('model') as string,
               brandId: Number(formData.get('brandId')),
@@ -2556,12 +2579,7 @@ export default function AdminDashboard() {
               enginePower: formData.get('enginePower') as string || null,
               engineTorque: formData.get('engineTorque') as string || null,
               warranty: formData.get('warranty') as string || null,
-              optionals: formData.get('optionals') ? 
-                JSON.stringify((formData.get('optionals') as string)
-                  .split('\n')
-                  .map(item => item.trim())
-                  .filter(Boolean)) : 
-                null,
+              optionals: optionalsJSON,
               sold: false
             };
             
