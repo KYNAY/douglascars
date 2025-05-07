@@ -714,34 +714,36 @@ export default function AdminDashboard() {
 
   return (
     <div className="container py-10">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Área Administrativa</h1>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => navigate("/")} className="flex items-center gap-2">
-            <Home size={16} /> Home
-          </Button>
-          <Button variant="destructive" size="sm" onClick={handleLogout} className="flex items-center gap-2">
-            <LogOut size={16} /> Sair
-          </Button>
-        </div>
-      </div>
-
       <div className="mb-6">
-        <Card>
+        <Card className="shadow-md">
           <CardHeader className="pb-3">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-12 w-12">
-                <AvatarFallback className="bg-primary text-white">
-                  {adminEmail ? getInitial(adminEmail) : "A"}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <CardTitle>Bem-vindo, Administrador</CardTitle>
-                <CardDescription>{adminEmail}</CardDescription>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-12 w-12">
+                  <AvatarFallback className="bg-primary text-white">
+                    {adminEmail ? getInitial(adminEmail) : "A"}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <CardTitle>Bem-vindo, Administrador</CardTitle>
+                  <CardDescription>{adminEmail}</CardDescription>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={() => navigate("/")} className="flex items-center gap-2">
+                  <Home size={16} /> Home
+                </Button>
+                <Button variant="destructive" size="sm" onClick={handleLogout} className="flex items-center gap-2">
+                  <LogOut size={16} /> Sair
+                </Button>
               </div>
             </div>
           </CardHeader>
         </Card>
+      </div>
+      
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Área Administrativa</h1>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
