@@ -39,7 +39,7 @@ export default function Home() {
                   alt="Toyota Hilux 2023" 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute top-0 left-0 bg-gradient-to-r from-blue-600 to-blue-400 text-white px-3 py-1 text-sm font-bold rounded-br-lg shadow-md">
+                <div className="absolute top-0 left-0 bg-gradient-to-r from-primary/80 to-primary/30 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
                   DESTAQUE
                 </div>
               </div>
@@ -62,7 +62,7 @@ export default function Home() {
                   <span>•</span>
                   <span>12.000 km</span>
                 </div>
-                <Button asChild className="w-full btn-gradient">
+                <Button asChild className="w-full bg-primary hover:bg-red-700">
                   <Link href="/estoque">Ver detalhes</Link>
                 </Button>
               </div>
@@ -76,7 +76,7 @@ export default function Home() {
                   alt="Toyota SW4 2025" 
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute top-0 left-0 bg-gradient-to-r from-blue-600 to-blue-400 text-white px-3 py-1 text-sm font-bold rounded-br-lg shadow-md">
+                <div className="absolute top-0 left-0 bg-gradient-to-r from-primary/80 to-primary/30 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
                   LANÇAMENTO
                 </div>
               </div>
@@ -99,7 +99,7 @@ export default function Home() {
                   <span>•</span>
                   <span>0 km</span>
                 </div>
-                <Button asChild className="w-full btn-gradient">
+                <Button asChild className="w-full bg-primary hover:bg-red-700">
                   <Link href="/estoque">Ver detalhes</Link>
                 </Button>
               </div>
@@ -146,7 +146,8 @@ export default function Home() {
           <div className="flex justify-center mt-12">
             <Button 
               asChild
-              className="btn-gradient px-8 py-3 rounded-lg text-white font-medium transition-all"
+              variant="outline"
+              className="bg-white/10 hover:bg-white/15 px-8 py-3 rounded-lg text-white font-medium transition-all"
             >
               <Link href="/estoque">
                 Veja todas as novidades
