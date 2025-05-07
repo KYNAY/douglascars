@@ -927,6 +927,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all sales with related data
+  app.get(`${apiPrefix}/sales`, async (req, res) => {
+    try {
+      const allSales = await db.query.sales.findMany({
+        with: {
+          vehicle: {
+            with: {
+              brand: true
+            }
+          },
+          dealer: true
+        },
+        orderBy: [desc(sales.saleDate)]
+      });
+      
+      return res.json(allSales);
+    } catch (error) {
+      console.error("Error fetching sales:", error);
+      return res.status(500).json({ error: "Failed to fetch sales data" });
+    }
+  });
+  
+  // Get sales for a specific dealer
+  app.get(`${apiPrefix}/dealers/:id/sales`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      const dealerSales = await db.query.sales.findMany({
+        where: eq(sales.dealerId, Number(id)),
+        with: {
+          vehicle: {
+            with: {
+              brand: true
+            }
+          },
+          dealer: true
+        },
+        orderBy: [desc(sales.saleDate)]
+      });
+      
+      return res.json(dealerSales);
+    } catch (error) {
+      console.error("Error fetching dealer sales:", error);
+      return res.status(500).json({ error: "Failed to fetch dealer sales data" });
+    }
+  });
+
   // Cancel a sale
   app.patch(`${apiPrefix}/sales/:id/cancel`, async (req, res) => {
     try {

@@ -600,19 +600,19 @@ export default function AdminDashboard() {
   });
   
   // Buscar dados de vendas
-  const { data: sales, isLoading: isLoadingSales } = useQuery({
+  const { data: sales = [], isLoading: isLoadingSales } = useQuery<any[]>({
     queryKey: ['/api/sales'],
     enabled: isAuthenticated
   });
   
   // Buscar dados dos veículos
-  const { data: vehicles, isLoading: isLoadingVehicles } = useQuery<Vehicle[]>({
+  const { data: vehicles = [], isLoading: isLoadingVehicles } = useQuery<Vehicle[]>({
     queryKey: ['/api/vehicles'],
     enabled: isAuthenticated
   });
   
   // Buscar dados das marcas
-  const { data: brands, isLoading: isLoadingBrands } = useQuery<Brand[]>({
+  const { data: brands = [], isLoading: isLoadingBrands } = useQuery<Brand[]>({
     queryKey: ['/api/brands'],
     enabled: isAuthenticated
   });
