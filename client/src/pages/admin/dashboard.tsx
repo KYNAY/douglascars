@@ -971,7 +971,6 @@ export default function AdminDashboard() {
             <TabsTrigger value="ranking" className="whitespace-nowrap">Vendedores</TabsTrigger>
             <TabsTrigger value="brands" className="whitespace-nowrap">Marcas</TabsTrigger>
             <TabsTrigger value="integrations" className="whitespace-nowrap">Integrações</TabsTrigger>
-            <TabsTrigger value="settings" className="whitespace-nowrap">Configurações</TabsTrigger>
           </TabsList>
         </div>
         
