@@ -98,7 +98,7 @@ export default function Home() {
                       )}
                     </div>
                     <Button asChild className="w-full bg-primary hover:bg-red-700">
-                      <Link href={`/veiculos/${vehicle.id}`}>Ver detalhes</Link>
+                      <Link href={`/estoque/${vehicle.id}`}>Ver detalhes</Link>
                     </Button>
                   </div>
                 </div>
