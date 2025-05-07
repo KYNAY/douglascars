@@ -927,16 +927,34 @@ export default function AdminDashboard() {
                               <Avatar className="h-7 w-7">
                                 <AvatarFallback>{getInitial(dealer.name)}</AvatarFallback>
                               </Avatar>
-                              {dealer.name}
+                              <div>
+                                <div>{dealer.name}</div>
+                                <div className="text-sm text-muted-foreground">{dealer.email}</div>
+                              </div>
                             </div>
                           </TableCell>
                           <TableCell>{dealer.sales}</TableCell>
                           <TableCell>{dealer.points}</TableCell>
                           <TableCell>{dealer.startDate}</TableCell>
                           <TableCell className="text-right">
-                            <Button variant="ghost" size="icon" onClick={() => handleDeleteDealer(dealer.id)}>
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
+                            <div className="flex justify-end gap-1">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                onClick={() => handleEditDealer(dealer)}
+                                title="Editar credenciais"
+                              >
+                                <Pencil className="h-4 w-4 text-blue-500" />
+                              </Button>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                onClick={() => handleDeleteDealer(dealer.id)}
+                                title="Excluir vendedor"
+                              >
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -972,6 +990,16 @@ export default function AdminDashboard() {
                     placeholder="Nome do vendedor"
                     value={newDealerName}
                     onChange={(e) => setNewDealerName(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="dealer-username">Nome de usuário</Label>
+                  <Input
+                    id="dealer-username"
+                    placeholder="Nome de usuário para login"
+                    value={newDealerUsername}
+                    onChange={(e) => setNewDealerUsername(e.target.value)}
                   />
                 </div>
                 
@@ -1032,6 +1060,74 @@ export default function AdminDashboard() {
                   disabled={deleteAllDealersMutation.isPending}
                 >
                   {deleteAllDealersMutation.isPending ? "Excluindo..." : "Sim, excluir todos"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
+          {/* Dialog para editar vendedor */}
+          <Dialog open={isEditDealerDialogOpen} onOpenChange={setIsEditDealerDialogOpen}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Editar Vendedor</DialogTitle>
+                <DialogDescription>
+                  Atualize as credenciais do vendedor para acesso ao sistema.
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-dealer-name">Nome</Label>
+                  <Input
+                    id="edit-dealer-name"
+                    placeholder="Nome do vendedor"
+                    value={newDealerName}
+                    onChange={(e) => setNewDealerName(e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="edit-dealer-username">Nome de usuário</Label>
+                  <Input
+                    id="edit-dealer-username"
+                    placeholder="Nome de usuário para login"
+                    value={newDealerUsername}
+                    onChange={(e) => setNewDealerUsername(e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="edit-dealer-email">Email</Label>
+                  <Input
+                    id="edit-dealer-email"
+                    placeholder="Email do vendedor"
+                    type="email"
+                    value={newDealerEmail}
+                    onChange={(e) => setNewDealerEmail(e.target.value)}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="edit-dealer-password">Nova Senha (deixe em branco para manter a atual)</Label>
+                  <Input
+                    id="edit-dealer-password"
+                    placeholder="Nova senha de acesso (opcional)"
+                    type="password"
+                    value={newDealerPassword}
+                    onChange={(e) => setNewDealerPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setIsEditDealerDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handleSaveDealer}
+                  disabled={!newDealerName || !newDealerUsername || !newDealerEmail || updateDealerMutation.isPending}
+                >
+                  {updateDealerMutation.isPending ? "Salvando..." : "Salvar"}
                 </Button>
               </DialogFooter>
             </DialogContent>
