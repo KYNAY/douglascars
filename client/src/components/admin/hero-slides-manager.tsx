@@ -40,7 +40,11 @@ export function HeroSlidesManager() {
   // Mutação para adicionar um novo slide
   const addSlideMutation = useMutation({
     mutationFn: async (newSlide: { imageUrl: string; title: string; subtitle: string; active: boolean }) => {
-      const res = await apiRequest("POST", "/api/hero-slides", newSlide);
+      const res = await apiRequest("/api/hero-slides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newSlide)
+      });
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Falha ao adicionar slide");
@@ -73,7 +77,11 @@ export function HeroSlidesManager() {
   // Mutação para editar um slide
   const editSlideMutation = useMutation({
     mutationFn: async (slide: HeroSlide) => {
-      const res = await apiRequest("PUT", `/api/hero-slides/${slide.id}`, slide);
+      const res = await apiRequest(`/api/hero-slides/${slide.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(slide)
+      });
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Falha ao atualizar slide");
@@ -100,7 +108,9 @@ export function HeroSlidesManager() {
   // Mutação para excluir um slide
   const deleteSlideMutation = useMutation({
     mutationFn: async (id: number) => {
-      const res = await apiRequest("DELETE", `/api/hero-slides/${id}`);
+      const res = await apiRequest(`/api/hero-slides/${id}`, {
+        method: "DELETE"
+      });
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Falha ao excluir slide");
@@ -141,8 +151,16 @@ export function HeroSlidesManager() {
       
       // Atualizar ambos os slides
       await Promise.all([
-        apiRequest("PUT", `/api/hero-slides/${slide.id}`, updatedCurrentSlide),
-        apiRequest("PUT", `/api/hero-slides/${previousSlide.id}`, updatedPreviousSlide)
+        apiRequest(`/api/hero-slides/${slide.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedCurrentSlide)
+        }),
+        apiRequest(`/api/hero-slides/${previousSlide.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedPreviousSlide)
+        })
       ]);
       
       return;
@@ -175,8 +193,16 @@ export function HeroSlidesManager() {
       
       // Atualizar ambos os slides
       await Promise.all([
-        apiRequest("PUT", `/api/hero-slides/${slide.id}`, updatedCurrentSlide),
-        apiRequest("PUT", `/api/hero-slides/${nextSlide.id}`, updatedNextSlide)
+        apiRequest(`/api/hero-slides/${slide.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedCurrentSlide)
+        }),
+        apiRequest(`/api/hero-slides/${nextSlide.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedNextSlide)
+        })
       ]);
       
       return;
@@ -197,7 +223,11 @@ export function HeroSlidesManager() {
   const toggleActiveStatus = useMutation({
     mutationFn: async (slide: HeroSlide) => {
       const updatedSlide = { ...slide, active: !slide.active };
-      const res = await apiRequest("PUT", `/api/hero-slides/${slide.id}`, updatedSlide);
+      const res = await apiRequest(`/api/hero-slides/${slide.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedSlide)
+      });
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Falha ao atualizar status do slide");
@@ -244,7 +274,7 @@ export function HeroSlidesManager() {
       imageUrl: slide.imageUrl,
       title: slide.title,
       subtitle: slide.subtitle,
-      active: slide.active
+      active: slide.active ?? true // Fornece um valor padrão caso active seja null
     });
     setIsEditDialogOpen(true);
   };
@@ -369,7 +399,7 @@ export function HeroSlidesManager() {
                     <div className="flex items-center space-x-1">
                       <Switch
                         id={`active-${slide.id}`}
-                        checked={slide.active}
+                        checked={slide.active ?? false}
                         onCheckedChange={() => toggleActiveStatus.mutate(slide)}
                         size="sm"
                       />
