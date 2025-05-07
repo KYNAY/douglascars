@@ -547,6 +547,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ error: "Vehicle not found" });
       }
 
+      // Primeiro excluir todas as imagens associadas ao veículo
+      await db.delete(vehicleImages).where(eq(vehicleImages.vehicleId, Number(id)));
+      
+      // Agora podemos excluir o veículo com segurança
       await db.delete(vehicles).where(eq(vehicles.id, Number(id)));
 
       return res.json({ success: true, message: "Vehicle deleted successfully" });
