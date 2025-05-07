@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { FaHeart, FaWhatsapp } from "react-icons/fa";
-import { formatPrice, formatMileage } from "@/lib/utils";
+import { formatPrice, formatMileage, truncateText } from "@/lib/utils";
 
 interface Brand {
   id: number;
@@ -85,8 +85,10 @@ export function CarCard({ vehicle, featured = false }: CarCardProps) {
           <h3 className="font-poppins font-semibold">{brandName} {vehicle.model}</h3>
         </div>
         
-        <p className="text-gray-300 mb-4">
-          {vehicle.description || `${brandName} ${vehicle.model} - ${vehicle.color} - ${vehicle.year}`}
+        <p className="text-gray-300 mb-4 min-h-[3em] max-h-[3em] overflow-hidden">
+          {vehicle.description 
+            ? truncateText(vehicle.description, 80)
+            : `${brandName} ${vehicle.model} - ${vehicle.color} - ${vehicle.year}`}
         </p>
         
         <div className="flex justify-between mb-4">

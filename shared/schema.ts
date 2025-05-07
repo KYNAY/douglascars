@@ -22,8 +22,8 @@ export const vehicles = pgTable('vehicles', {
   model: text('model').notNull(),
   year: text('year').notNull(), // Format: "2023/2024"
   color: text('color').notNull(),
-  price: decimal('price', { precision: 10, scale: 2 }).notNull(),
-  originalPrice: decimal('original_price', { precision: 10, scale: 2 }),
+  price: decimal('price', { precision: 15, scale: 2 }).notNull(),
+  originalPrice: decimal('original_price', { precision: 15, scale: 2 }),
   mileage: integer('mileage').notNull(), // in km
   description: text('description'),
   featured: boolean('featured').default(false),
