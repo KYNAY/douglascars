@@ -433,6 +433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Garantir que campos booleanos estejam corretos
       const featured = vehicleData.featured === true;
+      const specialFeatured = vehicleData.specialFeatured === true;
       const sold = vehicleData.sold === true;
 
       const [updatedVehicle] = await db.update(vehicles)
@@ -446,6 +447,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           mileage,
           description: vehicleData.description || null,
           featured,
+          specialFeatured,
           sold,
           imageUrl: vehicleData.imageUrl || "",
           transmission: vehicleData.transmission || null,
@@ -453,6 +455,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
           bodyType: vehicleData.bodyType || null,
           vehicleType: vehicleData.vehicleType || "car"
         })
+        .where(eq(vehicles.id, Number(id)))
+        .returning();
+
+      return res.json(updatedVehicle);
+    } catch (error) {
+      console.error("Error updating vehicle:", error);
+      return res.status(500).json({ error: "Failed to update vehicle" });
+    }
+  });
+
+  // Atualizar parcialmente veículo (PATCH)
+  app.patch(`${apiPrefix}/vehicles/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updateData = req.body;
+      
+      // Verificar se o veículo existe
+      const existingVehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(id))).limit(1);
+      if (!existingVehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+
+      // Preparar os dados para atualização
+      const dataToUpdate: any = {};
+      
+      // Campos booleanos
+      if ('featured' in updateData) dataToUpdate.featured = updateData.featured === true;
+      if ('specialFeatured' in updateData) dataToUpdate.specialFeatured = updateData.specialFeatured === true;
+      if ('sold' in updateData) dataToUpdate.sold = updateData.sold === true;
+      
+      // Atualizar apenas os campos fornecidos
+      const [updatedVehicle] = await db.update(vehicles)
+        .set(dataToUpdate)
         .where(eq(vehicles.id, Number(id)))
         .returning();
 
