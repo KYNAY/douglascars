@@ -123,8 +123,7 @@ export function CarCard({ vehicle, featured = false }: CarCardProps) {
         
         <Button 
           asChild 
-          variant="outline"
-          className="mt-4 w-full text-center bg-white/10 hover:bg-white/15 py-3 rounded-lg text-white font-medium transition-all"
+          className="mt-4 w-full text-center btn-gradient py-3 rounded-lg text-white font-medium transition-all"
         >
           <Link href={`/estoque/${vehicle.id}`}>
             Ver mais
