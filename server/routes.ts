@@ -479,6 +479,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Update dealer credentials
+  app.patch(`${apiPrefix}/dealers/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, username, email, password } = req.body;
+      
+      // Verificar se o vendedor existe
+      const existingDealer = await db.select().from(dealers).where(eq(dealers.id, Number(id))).limit(1);
+      if (!existingDealer.length) {
+        return res.status(404).json({ error: "Vendedor não encontrado" });
+      }
+      
+      // Verificar se o nome de usuário já existe (se estiver sendo alterado)
+      if (username && username !== existingDealer[0].username) {
+        const dealerWithUsername = await db.select()
+          .from(dealers)
+          .where(and(
+            eq(dealers.username, username),
+            not(eq(dealers.id, Number(id)))
+          ))
+          .limit(1);
+          
+        if (dealerWithUsername.length > 0) {
+          return res.status(400).json({ error: "Já existe outro vendedor com este nome de usuário" });
+        }
+      }
+      
+      // Criar objeto com os campos para atualizar
+      const updateData: any = {};
+      
+      if (name) updateData.name = name;
+      if (username) updateData.username = username;
+      if (email) updateData.email = email;
+      if (password) updateData.password = password;
+      
+      // Atualizar vendedor
+      const [updatedDealer] = await db.update(dealers)
+        .set(updateData)
+        .where(eq(dealers.id, Number(id)))
+        .returning();
+      
+      return res.json(updatedDealer);
+    } catch (error) {
+      console.error("Error updating dealer:", error);
+      return res.status(500).json({ error: "Failed to update dealer" });
+    }
+  });
+  
   // Delete dealer
   app.delete(`${apiPrefix}/dealers/:id`, async (req, res) => {
     try {
