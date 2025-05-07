@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag, ShoppingCart } from "lucide-react";
+import { Loader2, Trophy, ArrowDown, ArrowUp, Home, LogOut, Plus, Pencil, Trash2, Car, ImageIcon, Calendar, Filter, Eye, Search, FileText, CreditCard, Settings, Tag, ShoppingCart, Calculator, DollarSign } from "lucide-react";
 import { getInitial, formatPrice } from "@/lib/utils";
 import { VehicleImagesManager } from "@/components/admin/vehicle-images-manager";
 import { HeroSlidesManager } from "@/components/admin/hero-slides-manager";
@@ -87,6 +87,7 @@ export default function AdminDashboard() {
   const [adminEmail, setAdminEmail] = useState("");
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("vehicles");
+  const [salesDataTimeRange, setSalesDataTimeRange] = useState("all_time");
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" }>({
     key: "points",
     direction: "desc"
@@ -598,6 +599,12 @@ export default function AdminDashboard() {
     enabled: isAuthenticated // Só buscar se estiver autenticado
   });
   
+  // Buscar dados de vendas
+  const { data: sales, isLoading: isLoadingSales } = useQuery({
+    queryKey: ['/api/sales'],
+    enabled: isAuthenticated
+  });
+  
   // Buscar dados dos veículos
   const { data: vehicles, isLoading: isLoadingVehicles } = useQuery<Vehicle[]>({
     queryKey: ['/api/vehicles'],
@@ -750,6 +757,8 @@ export default function AdminDashboard() {
         <div className="overflow-x-auto pb-2">
           <TabsList className="flex flex-nowrap w-max">
             <TabsTrigger value="vehicles" className="whitespace-nowrap">Veículos</TabsTrigger>
+            <TabsTrigger value="sold_vehicles" className="whitespace-nowrap">Veículos Vendidos</TabsTrigger>
+            <TabsTrigger value="reports" className="whitespace-nowrap">Relatórios</TabsTrigger>
             <TabsTrigger value="requests" className="relative whitespace-nowrap">
               Solicitações
               {(hasNewEvaluations || hasNewFinancings) && (
@@ -871,6 +880,249 @@ export default function AdminDashboard() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="sold_vehicles" className="space-y-4">
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <CardTitle>Veículos Vendidos</CardTitle>
+                <CardDescription>
+                  Histórico de vendas com detalhes dos vendedores.
+                </CardDescription>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {isLoadingSales ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="animate-spin h-8 w-8 text-primary" />
+                </div>
+              ) : (
+                <div className="rounded-md border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="min-w-[100px]">Veículo</TableHead>
+                        <TableHead>Vendedor</TableHead>
+                        <TableHead>Data</TableHead>
+                        <TableHead>Valor</TableHead>
+                        <TableHead>Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {sales && sales.length > 0 ? (
+                        sales.map((sale: any) => (
+                          <TableRow key={sale.id}>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                {sale.vehicle?.imageUrl && (
+                                  <div className="h-10 w-10 rounded-md overflow-hidden">
+                                    <img
+                                      src={sale.vehicle.imageUrl}
+                                      alt={sale.vehicle?.model || 'Veículo'}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  </div>
+                                )}
+                                <div>
+                                  <div className="font-medium">{sale.vehicle?.brand?.name} {sale.vehicle?.model}</div>
+                                  <div className="text-xs text-muted-foreground">{sale.vehicle?.year}</div>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <Avatar className="h-7 w-7">
+                                  <AvatarFallback>{getInitial(sale.dealer?.name || 'V')}</AvatarFallback>
+                                </Avatar>
+                                <span>{sale.dealer?.name}</span>
+                              </div>
+                            </TableCell>
+                            <TableCell>{new Date(sale.saleDate).toLocaleDateString('pt-BR')}</TableCell>
+                            <TableCell>{formatPrice(sale.salePrice)}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                Concluída
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center py-4">
+                            Não há vendas registradas no sistema.
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="reports" className="space-y-4">
+          <Card>
+            <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+              <div>
+                <CardTitle>Relatórios de Desempenho</CardTitle>
+                <CardDescription>
+                  Análise de vendas, faturamento e desempenho.
+                </CardDescription>
+              </div>
+              <Select
+                value={salesDataTimeRange}
+                onValueChange={(value) => setSalesDataTimeRange(value)}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Período de análise" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="last_30_days">Últimos 30 dias</SelectItem>
+                  <SelectItem value="last_90_days">Últimos 90 dias</SelectItem>
+                  <SelectItem value="current_year">Ano atual</SelectItem>
+                  <SelectItem value="all_time">Todo o período</SelectItem>
+                </SelectContent>
+              </Select>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-6">
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">Veículos Vendidos</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center">
+                      <ShoppingCart className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <div className="text-2xl font-bold">{sales?.length || 0}</div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">Faturamento Total</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center">
+                      <DollarSign className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <div className="text-2xl font-bold">
+                        {formatPrice(
+                          sales?.reduce((total: number, sale: any) => total + parseFloat(sale.salePrice), 0) || 0
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium">Ticket Médio</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center">
+                      <Calculator className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <div className="text-2xl font-bold">
+                        {sales && sales.length > 0
+                          ? formatPrice(
+                              sales.reduce((total: number, sale: any) => total + parseFloat(sale.salePrice), 0) / sales.length
+                            )
+                          : formatPrice(0)}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Marcas Mais Vendidas</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {sales && sales.length > 0 ? (
+                      <div className="space-y-4">
+                        {(() => {
+                          // Calcular marcas mais vendidas
+                          const brandSales: Record<string, number> = {};
+                          sales.forEach((sale: any) => {
+                            const brandName = sale.vehicle?.brand?.name || 'Desconhecida';
+                            brandSales[brandName] = (brandSales[brandName] || 0) + 1;
+                          });
+                          
+                          // Ordenar por quantidade
+                          const sortedBrands = Object.entries(brandSales)
+                            .sort(([, countA], [, countB]) => countB - countA)
+                            .slice(0, 5);
+                          
+                          return sortedBrands.map(([brand, count], index) => (
+                            <div key={brand} className="flex items-center">
+                              <div className="w-12 text-center font-bold">
+                                {index + 1}º
+                              </div>
+                              <div className="flex-1">
+                                <div className="text-sm font-medium">{brand}</div>
+                                <div className="w-full bg-muted rounded-full h-2.5">
+                                  <div 
+                                    className="bg-primary h-2.5 rounded-full" 
+                                    style={{ width: `${(count / sortedBrands[0][1]) * 100}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                              <div className="w-12 text-right font-medium">
+                                {count}
+                              </div>
+                            </div>
+                          ));
+                        })()}
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-muted-foreground">
+                        Sem dados de vendas para exibir
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Vendedores Destaque</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {sortedDealers && sortedDealers.length > 0 ? (
+                      <div className="space-y-4">
+                        {sortedDealers.slice(0, 5).map((dealer, index) => (
+                          <div key={dealer.id} className="flex items-center">
+                            <div className="w-12 text-center">
+                              {index === 0 && <Trophy className="h-5 w-5 text-yellow-500 mx-auto" />}
+                              {index === 1 && <Trophy className="h-5 w-5 text-gray-400 mx-auto" />}
+                              {index === 2 && <Trophy className="h-5 w-5 text-amber-600 mx-auto" />}
+                              {index > 2 && <div className="font-bold">{index + 1}º</div>}
+                            </div>
+                            <div className="flex-1 flex items-center gap-2">
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback>{getInitial(dealer.name)}</AvatarFallback>
+                              </Avatar>
+                              <div className="text-sm font-medium">{dealer.name}</div>
+                            </div>
+                            <div className="flex flex-col items-end">
+                              <div className="font-medium">{dealer.sales} vendas</div>
+                              <div className="text-xs text-muted-foreground">{dealer.points} pts</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="py-8 text-center text-muted-foreground">
+                        Sem dados de vendedores para exibir
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
         <TabsContent value="ranking" className="space-y-4">
           <Card>
             <CardHeader className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
