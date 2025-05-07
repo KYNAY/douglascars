@@ -826,7 +826,10 @@ export default function AdminDashboard() {
                   Adicione, edite ou remova veículos do inventário.
                 </CardDescription>
               </div>
-              <Button className="flex items-center gap-2">
+              <Button className="flex items-center gap-2" onClick={() => {
+                  setSelectedVehicle(null);
+                  setIsVehicleDialogOpen(true);
+                }}>
                 <Plus size={16} /> Adicionar Veículo
               </Button>
             </CardHeader>
@@ -878,10 +881,8 @@ export default function AdminDashboard() {
                                 size="sm"
                                 className="h-8 px-2 py-1 bg-slate-50"
                                 onClick={() => {
-                                  toast({
-                                    title: "Editar veículo",
-                                    description: "Funcionalidade de edição a ser implementada",
-                                  });
+                                  setSelectedVehicle(vehicle);
+                                  setIsVehicleDialogOpen(true);
                                 }}
                               >
                                 <Pencil className="h-3.5 w-3.5 mr-1" /> <span className="text-xs">Editar</span>
@@ -2197,6 +2198,262 @@ export default function AdminDashboard() {
 
         {/* Abas restantes... */}
       </Tabs>
+      
+      {/* Diálogo para adicionar/editar veículo */}
+      <Dialog open={isVehicleDialogOpen} onOpenChange={setIsVehicleDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{selectedVehicle ? "Editar Veículo" : "Adicionar Veículo"}</DialogTitle>
+            <DialogDescription>
+              {selectedVehicle ? "Atualize as informações do veículo no inventário." : "Preencha os detalhes para adicionar um novo veículo ao inventário."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form ref={vehicleFormRef} onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            
+            const vehicleData = {
+              model: formData.get('model') as string,
+              brandId: Number(formData.get('brandId')),
+              year: formData.get('year') as string,
+              color: formData.get('color') as string,
+              price: formData.get('price') as string,
+              originalPrice: formData.get('originalPrice') as string || null,
+              mileage: Number(formData.get('mileage')),
+              transmission: formData.get('transmission') as string,
+              fuel: formData.get('fuel') as string,
+              bodyType: formData.get('bodyType') as string,
+              description: formData.get('description') as string || null,
+              imageUrl: formData.get('imageUrl') as string,
+              featured: formData.get('featured') === 'on',
+              sold: false
+            };
+            
+            if (selectedVehicle) {
+              // Editar veículo existente
+              updateVehicleMutation.mutate({
+                ...selectedVehicle,
+                ...vehicleData
+              });
+            } else {
+              // Adicionar novo veículo
+              addVehicleMutation.mutate(vehicleData);
+            }
+          }} className="space-y-6 mt-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="model">Modelo</Label>
+                <Input 
+                  id="model" 
+                  name="model" 
+                  placeholder="Ex: Corolla XEI" 
+                  defaultValue={selectedVehicle?.model}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="brandId">Marca</Label>
+                <Select 
+                  name="brandId" 
+                  defaultValue={selectedVehicle?.brandId?.toString()}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a marca" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {brands?.map((brand) => (
+                      <SelectItem key={brand.id} value={brand.id.toString()}>
+                        {brand.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="year">Ano</Label>
+                <Input 
+                  id="year" 
+                  name="year" 
+                  placeholder="Ex: 2020/2021" 
+                  defaultValue={selectedVehicle?.year}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="color">Cor</Label>
+                <Input 
+                  id="color" 
+                  name="color" 
+                  placeholder="Ex: Prata Metálico" 
+                  defaultValue={selectedVehicle?.color}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="price">Preço (R$)</Label>
+                <Input 
+                  id="price" 
+                  name="price" 
+                  type="text"
+                  placeholder="Ex: 87900" 
+                  defaultValue={selectedVehicle?.price.toString()}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="originalPrice">Preço Original (opcional)</Label>
+                <Input 
+                  id="originalPrice" 
+                  name="originalPrice" 
+                  type="text"
+                  placeholder="Ex: 92900" 
+                  defaultValue={selectedVehicle?.originalPrice?.toString() || ''}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="mileage">Quilometragem</Label>
+                <Input 
+                  id="mileage" 
+                  name="mileage" 
+                  type="number"
+                  placeholder="Ex: 45000" 
+                  defaultValue={selectedVehicle?.mileage?.toString()}
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="transmission">Transmissão</Label>
+                <Select 
+                  name="transmission" 
+                  defaultValue={selectedVehicle?.transmission || "Automático"}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Automático">Automático</SelectItem>
+                    <SelectItem value="Manual">Manual</SelectItem>
+                    <SelectItem value="CVT">CVT</SelectItem>
+                    <SelectItem value="Automatizado">Automatizado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="fuel">Combustível</Label>
+                <Select 
+                  name="fuel" 
+                  defaultValue={selectedVehicle?.fuel || "Flex"}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Flex">Flex</SelectItem>
+                    <SelectItem value="Gasolina">Gasolina</SelectItem>
+                    <SelectItem value="Etanol">Etanol</SelectItem>
+                    <SelectItem value="Diesel">Diesel</SelectItem>
+                    <SelectItem value="Híbrido">Híbrido</SelectItem>
+                    <SelectItem value="Elétrico">Elétrico</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="bodyType">Tipo de Carroceria</Label>
+                <Select 
+                  name="bodyType" 
+                  defaultValue={selectedVehicle?.bodyType || "Sedan"}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione o tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Sedan">Sedan</SelectItem>
+                    <SelectItem value="Hatch">Hatch</SelectItem>
+                    <SelectItem value="SUV">SUV</SelectItem>
+                    <SelectItem value="Picape">Picape</SelectItem>
+                    <SelectItem value="Minivan">Minivan</SelectItem>
+                    <SelectItem value="Coupé">Coupé</SelectItem>
+                    <SelectItem value="Conversível">Conversível</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="imageUrl">URL da Imagem</Label>
+                <Input 
+                  id="imageUrl" 
+                  name="imageUrl" 
+                  placeholder="https://exemplo.com/imagem.jpg" 
+                  defaultValue={selectedVehicle?.imageUrl}
+                  required
+                />
+              </div>
+              
+              <div className="flex items-center space-x-2 h-10 mt-8">
+                <Checkbox 
+                  id="featured" 
+                  name="featured"
+                  defaultChecked={selectedVehicle?.featured}
+                />
+                <Label htmlFor="featured">Destacar este veículo</Label>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="description">Descrição</Label>
+              <Textarea 
+                id="description" 
+                name="description" 
+                placeholder="Detalhes adicionais sobre o veículo..." 
+                className="min-h-[100px]"
+                defaultValue={selectedVehicle?.description || ''}
+              />
+            </div>
+            
+            {selectedVehicle ? (
+              <div className="bg-slate-100 dark:bg-slate-800 p-4 rounded-md">
+                <h4 className="text-sm font-medium mb-2">Status</h4>
+                <div className="flex items-center gap-2">
+                  <Badge variant={selectedVehicle.sold ? "destructive" : (selectedVehicle.featured ? "default" : "outline")}>
+                    {selectedVehicle.sold ? "Vendido" : (selectedVehicle.featured ? "Destaque" : "Disponível")}
+                  </Badge>
+                  {selectedVehicle.sold && <span className="text-sm text-muted-foreground">Não é possível editar veículos já vendidos</span>}
+                </div>
+              </div>
+            ) : null}
+            
+            <DialogFooter>
+              <Button variant="outline" type="button" onClick={() => setIsVehicleDialogOpen(false)}>
+                Cancelar
+              </Button>
+              <Button 
+                type="submit"
+                disabled={selectedVehicle?.sold || (selectedVehicle ? updateVehicleMutation.isPending : addVehicleMutation.isPending)}
+              >
+                {selectedVehicle ? (
+                  updateVehicleMutation.isPending ? "Salvando..." : "Salvar Alterações"
+                ) : (
+                  addVehicleMutation.isPending ? "Adicionando..." : "Adicionar Veículo"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
