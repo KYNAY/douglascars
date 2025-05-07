@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { FaSearch, FaWhatsapp, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
-import { Vehicle } from "@shared/schema";
+import { HeroSlide } from "@shared/schema";
 
 type CarouselSlide = {
   imageUrl: string;
@@ -14,8 +14,18 @@ type CarouselSlide = {
 export function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  // Slides fixos com a Ferrari em destaque como primeiro slide
-  const slides: CarouselSlide[] = [
+  // Buscar os slides do carousel do banco de dados
+  const { data: heroSlidesData, isLoading, isError } = useQuery({
+    queryKey: ['/api/hero-slides'],
+    queryFn: async () => {
+      const res = await fetch('/api/hero-slides');
+      if (!res.ok) throw new Error('Failed to fetch hero slides');
+      return res.json() as Promise<HeroSlide[]>;
+    }
+  });
+  
+  // Slides padrão com a Ferrari em destaque como primeiro slide (caso não existam slides no banco)
+  const defaultSlides: CarouselSlide[] = [
     {
       // Slide fixo com Ferrari vermelha
       imageUrl: "https://images.unsplash.com/photo-1592198084033-aade902d1aae?q=80&w=1470&auto=format&fit=crop",
@@ -33,6 +43,11 @@ export function HeroSection() {
       subtitle: "Todos os nossos veículos passam por rigorosa inspeção técnica"
     }
   ];
+  
+  // Usar os slides do banco de dados se estiverem disponíveis, ou os padrão se não
+  const slides = (heroSlidesData && heroSlidesData.length > 0) 
+    ? heroSlidesData.filter(slide => slide.active) 
+    : defaultSlides;
   
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));

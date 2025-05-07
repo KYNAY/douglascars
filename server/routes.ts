@@ -653,6 +653,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ error: "Failed to fetch Instagram posts" });
     }
   });
+  
+  // Hero Carousel Slides Routes
+  app.get(`${apiPrefix}/hero-slides`, async (req, res) => {
+    try {
+      const slides = await db.select().from(heroSlides).orderBy(asc(heroSlides.order));
+      return res.json(slides);
+    } catch (error) {
+      console.error("Error fetching hero slides:", error);
+      return res.status(500).json({ error: "Failed to fetch hero slides" });
+    }
+  });
+  
+  app.post(`${apiPrefix}/hero-slides`, async (req, res) => {
+    try {
+      const slideData = heroSlidesInsertSchema.parse(req.body);
+      
+      // Obter a maior ordem atual e adicionar 1
+      const maxOrderResult = await db.select({ maxOrder: sql`MAX(${heroSlides.order})` }).from(heroSlides);
+      const order = (maxOrderResult[0]?.maxOrder || 0) + 1;
+      
+      const [newSlide] = await db.insert(heroSlides).values({
+        ...slideData,
+        order
+      }).returning();
+      
+      return res.status(201).json(newSlide);
+    } catch (error) {
+      console.error("Error creating hero slide:", error);
+      return res.status(500).json({ error: "Failed to create hero slide" });
+    }
+  });
+  
+  app.put(`${apiPrefix}/hero-slides/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const slideData = req.body;
+      
+      // Validar dados
+      if (!slideData.imageUrl || !slideData.title || !slideData.subtitle) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+      
+      // Verificar se o slide existe
+      const existingSlide = await db.select().from(heroSlides).where(eq(heroSlides.id, Number(id))).limit(1);
+      if (!existingSlide.length) {
+        return res.status(404).json({ error: "Slide not found" });
+      }
+      
+      const [updatedSlide] = await db.update(heroSlides)
+        .set({ 
+          imageUrl: slideData.imageUrl,
+          title: slideData.title,
+          subtitle: slideData.subtitle,
+          order: slideData.order !== undefined ? Number(slideData.order) : existingSlide[0].order,
+          active: slideData.active !== undefined ? Boolean(slideData.active) : existingSlide[0].active
+        })
+        .where(eq(heroSlides.id, Number(id)))
+        .returning();
+      
+      return res.json(updatedSlide);
+    } catch (error) {
+      console.error("Error updating hero slide:", error);
+      return res.status(500).json({ error: "Failed to update hero slide" });
+    }
+  });
+  
+  app.delete(`${apiPrefix}/hero-slides/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      
+      // Verificar se o slide existe
+      const existingSlide = await db.select().from(heroSlides).where(eq(heroSlides.id, Number(id))).limit(1);
+      if (!existingSlide.length) {
+        return res.status(404).json({ error: "Slide not found" });
+      }
+      
+      await db.delete(heroSlides).where(eq(heroSlides.id, Number(id)));
+      
+      // Reorganizar as ordens dos slides restantes
+      const remainingSlides = await db.select().from(heroSlides).orderBy(asc(heroSlides.order));
+      for (let i = 0; i < remainingSlides.length; i++) {
+        await db.update(heroSlides)
+          .set({ order: i + 1 })
+          .where(eq(heroSlides.id, remainingSlides[i].id));
+      }
+      
+      return res.json({ success: true, message: "Slide deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting hero slide:", error);
+      return res.status(500).json({ error: "Failed to delete hero slide" });
+    }
+  });
 
   // API para destaques especiais
   app.get(`${apiPrefix}/featured-vehicles`, async (req, res) => {
