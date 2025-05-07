@@ -2780,7 +2780,7 @@ export default function AdminDashboard() {
       
       {/* Diálogo para adicionar/editar veículo */}
       <Dialog open={isVehicleDialogOpen} onOpenChange={setIsVehicleDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
           <DialogHeader>
             <DialogTitle>{selectedVehicle ? "Editar Veículo" : "Adicionar Veículo"}</DialogTitle>
             <DialogDescription>
