@@ -3089,7 +3089,7 @@ export default function AdminDashboard() {
       
       {/* Diálogo para adicionar/editar marca */}
       <Dialog open={isBrandDialogOpen} onOpenChange={setIsBrandDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
           <DialogHeader>
             <DialogTitle>{selectedBrand && selectedBrand.id !== 0 ? "Editar Marca" : "Adicionar Nova Marca"}</DialogTitle>
             <DialogDescription>
@@ -3217,7 +3217,7 @@ export default function AdminDashboard() {
       
       {/* Diálogo para adicionar/editar avaliação */}
       <Dialog open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
           <DialogHeader>
             <DialogTitle>{selectedReview && selectedReview.id !== 0 ? "Editar Avaliação" : "Adicionar Nova Avaliação"}</DialogTitle>
             <DialogDescription>
@@ -3386,7 +3386,7 @@ export default function AdminDashboard() {
       
       {/* Diálogo para adicionar/editar post do Instagram */}
       <Dialog open={isInstagramPostDialogOpen} onOpenChange={setIsInstagramPostDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
           <DialogHeader>
             <DialogTitle>{selectedInstagramPost && selectedInstagramPost.id !== 0 ? "Editar Post" : "Adicionar Novo Post"}</DialogTitle>
             <DialogDescription>
