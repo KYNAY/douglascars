@@ -687,6 +687,122 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Reserve vehicle for 24 hours
+  app.post(`${apiPrefix}/vehicles/:id/reserve`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { dealerId } = req.body;
+      
+      if (!dealerId) {
+        return res.status(400).json({ error: "Dealer ID is required" });
+      }
+      
+      // Check if vehicle exists
+      const vehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(id))).limit(1);
+      
+      if (!vehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+      
+      if (vehicle[0].sold) {
+        return res.status(400).json({ error: "Vehicle is already sold" });
+      }
+      
+      if (vehicle[0].reserved) {
+        // Check if already reserved by this dealer
+        if (vehicle[0].reservedBy === Number(dealerId)) {
+          return res.status(400).json({ 
+            error: "You have already reserved this vehicle",
+            expiresAt: vehicle[0].reservationExpiresAt
+          });
+        }
+        
+        return res.status(400).json({ 
+          error: "Vehicle is already reserved by another dealer",
+          expiresAt: vehicle[0].reservationExpiresAt
+        });
+      }
+      
+      // Check if dealer exists
+      const dealer = await db.select().from(dealers).where(eq(dealers.id, Number(dealerId))).limit(1);
+      
+      if (!dealer.length) {
+        return res.status(404).json({ error: "Dealer not found" });
+      }
+      
+      // Create timestamps for reservation (now and expiration in 24h)
+      const now = new Date();
+      const expiresAt = new Date(now);
+      expiresAt.setHours(expiresAt.getHours() + 24);
+      
+      // Reserve the vehicle
+      const [updatedVehicle] = await db.update(vehicles)
+        .set({
+          reserved: true,
+          reservedBy: Number(dealerId),
+          reservationTime: now,
+          reservationExpiresAt: expiresAt
+        })
+        .where(eq(vehicles.id, Number(id)))
+        .returning();
+      
+      return res.json({
+        ...updatedVehicle,
+        message: "Vehicle reserved successfully for 24 hours",
+        expiresAt
+      });
+    } catch (error) {
+      console.error("Error reserving vehicle:", error);
+      return res.status(500).json({ error: "Failed to reserve vehicle" });
+    }
+  });
+  
+  // Cancel vehicle reservation
+  app.post(`${apiPrefix}/vehicles/:id/cancel-reservation`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { dealerId } = req.body;
+      
+      if (!dealerId) {
+        return res.status(400).json({ error: "Dealer ID is required" });
+      }
+      
+      // Check if vehicle exists
+      const vehicle = await db.select().from(vehicles).where(eq(vehicles.id, Number(id))).limit(1);
+      
+      if (!vehicle.length) {
+        return res.status(404).json({ error: "Vehicle not found" });
+      }
+      
+      if (!vehicle[0].reserved) {
+        return res.status(400).json({ error: "Vehicle is not reserved" });
+      }
+      
+      if (vehicle[0].reservedBy !== Number(dealerId)) {
+        return res.status(403).json({ error: "You are not authorized to cancel this reservation" });
+      }
+      
+      // Cancel the reservation
+      const [updatedVehicle] = await db.update(vehicles)
+        .set({
+          reserved: false,
+          reservedBy: null,
+          reservationTime: null,
+          reservationExpiresAt: null
+        })
+        .where(eq(vehicles.id, Number(id)))
+        .returning();
+      
+      return res.json({
+        ...updatedVehicle,
+        message: "Reservation cancelled successfully"
+      });
+    } catch (error) {
+      console.error("Error cancelling reservation:", error);
+      return res.status(500).json({ error: "Failed to cancel reservation" });
+    }
+  });
+
   // Mark vehicle as sold and assign to dealer
   app.patch(`${apiPrefix}/vehicles/:id/sold`, async (req, res) => {
     try {
@@ -706,15 +822,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Vehicle is already sold" });
       }
       
+      // Verificar se o veículo está reservado para outro vendedor
+      if (vehicle[0].reserved && vehicle[0].reservedBy !== Number(dealerId)) {
+        return res.status(403).json({ 
+          error: "Vehicle is reserved by another dealer",
+          expiresAt: vehicle[0].reservationExpiresAt
+        });
+      }
+      
       // Check if dealer exists
       const dealer = await db.select().from(dealers).where(eq(dealers.id, dealerId)).limit(1);
       if (!dealer.length) {
         return res.status(404).json({ error: "Dealer not found" });
       }
       
-      // Update vehicle as sold
+      // Update vehicle as sold and clear reservation data
       await db.update(vehicles)
-        .set({ sold: true })
+        .set({ 
+          sold: true,
+          reserved: false,
+          reservedBy: null,
+          reservationTime: null,
+          reservationExpiresAt: null
+        })
         .where(eq(vehicles.id, Number(id)));
       
       // Record the sale
