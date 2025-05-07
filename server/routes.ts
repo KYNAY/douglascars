@@ -420,8 +420,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         brandId,
         year: vehicleData.year,
         color: vehicleData.color || "",
-        price: vehicleData.price.toString(),
-        originalPrice: vehicleData.originalPrice ? vehicleData.originalPrice.toString() : null,
+        price: price.toString(),
+        originalPrice: originalPrice ? originalPrice.toString() : null,
         mileage,
         description: vehicleData.description || null,
         featured,
@@ -454,7 +454,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Converter para valores numéricos apropriados
       const brandId = Number(vehicleData.brandId);
-      const mileage = vehicleData.mileage ? Number(vehicleData.mileage) : 0;
+      const mileage = vehicleData.mileage ? Number(vehicleData.mileage.toString().replace(/\./g, '').replace(',', '.')) : 0;
+      
+      // Processar valores monetários do formato brasileiro para o formato numérico do banco
+      let price = vehicleData.price;
+      if (typeof price === 'string') {
+        // Remover pontos de milhar e substituir vírgula por ponto para casas decimais
+        price = price.replace(/\./g, '').replace(',', '.');
+      }
+      
+      let originalPrice = vehicleData.originalPrice;
+      if (originalPrice && typeof originalPrice === 'string') {
+        // Remover pontos de milhar e substituir vírgula por ponto para casas decimais
+        originalPrice = originalPrice.replace(/\./g, '').replace(',', '.');
+      }
 
       // Garantir que campos booleanos estejam corretos
       const featured = vehicleData.featured === true;
@@ -467,8 +480,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           brandId,
           year: vehicleData.year,
           color: vehicleData.color || "",
-          price: vehicleData.price.toString(),
-          originalPrice: vehicleData.originalPrice ? vehicleData.originalPrice.toString() : null,
+          price: price.toString(),
+          originalPrice: originalPrice ? originalPrice.toString() : null,
           mileage,
           description: vehicleData.description || null,
           featured,

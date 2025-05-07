@@ -2715,7 +2715,7 @@ export default function AdminDashboard() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="imageUrl">URL da Imagem</Label>
+                <Label htmlFor="imageUrl">URL da Imagem Principal</Label>
                 <Input 
                   id="imageUrl" 
                   name="imageUrl" 
@@ -2723,6 +2723,9 @@ export default function AdminDashboard() {
                   defaultValue={selectedVehicle?.imageUrl}
                   required
                 />
+                <p className="text-xs text-gray-500">
+                  Esta será a imagem principal do veículo. Após salvar, você poderá adicionar até 10 imagens adicionais.
+                </p>
               </div>
               
               <div className="flex items-center gap-4 h-10 mt-8">
