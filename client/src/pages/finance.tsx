@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,9 +16,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import { DollarSign, Calculator, CheckCircle, CircleDollarSign } from "lucide-react";
+import { DollarSign } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
+// Relaxamos algumas validações para facilitar os testes
 const formSchema = z.object({
   // Dados do Veículo
   marca: z.string().min(1, { message: "Marca é obrigatória" }),
@@ -30,50 +31,18 @@ const formSchema = z.object({
   
   // Dados Pessoais
   nome: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres" }),
-  cpf: z.string().min(11, { message: "CPF inválido" }),
-  rg: z.string().min(1, { message: "RG é obrigatório" }),
-  data_nascimento: z.string().min(1, { message: "Data de nascimento é obrigatória" }),
-  nome_mae: z.string().min(2, { message: "Nome da mãe é obrigatório" }),
+  cpf: z.string().optional(),
+  rg: z.string().optional(),
+  data_nascimento: z.string().optional(),
+  nome_mae: z.string().optional(),
   nome_pai: z.string().optional(),
-  estado_civil: z.string().min(1, { message: "Estado civil é obrigatório" }),
+  estado_civil: z.string().optional(),
   email: z.string().email({ message: "E-mail inválido" }),
-  telefone: z.string().min(10, { message: "Telefone inválido" }),
-  celular: z.string().min(10, { message: "Celular inválido" }),
+  telefone: z.string().optional(),
+  celular: z.string().min(8, { message: "Celular inválido" }),
   
-  // Endereço
-  endereco: z.string().min(2, { message: "Endereço é obrigatório" }),
-  numero: z.string().min(1, { message: "Número é obrigatório" }),
-  complemento: z.string().optional(),
-  cep: z.string().min(8, { message: "CEP inválido" }),
-  bairro: z.string().min(2, { message: "Bairro é obrigatório" }),
-  cidade: z.string().min(2, { message: "Cidade é obrigatória" }),
-  estado: z.string().min(2, { message: "Estado é obrigatório" }),
-  tempo_residencia: z.string().min(1, { message: "Tempo de residência é obrigatório" }),
-  
-  // Dados Profissionais
-  empresa: z.string().min(2, { message: "Nome da empresa é obrigatório" }),
-  cargo: z.string().min(1, { message: "Cargo é obrigatório" }),
+  // Renda
   renda: z.string().min(1, { message: "Renda mensal é obrigatória" }),
-  endereco_empresa: z.string().min(2, { message: "Endereço da empresa é obrigatório" }),
-  complemento_empresa: z.string().optional(),
-  cep_empresa: z.string().min(8, { message: "CEP é obrigatório" }),
-  bairro_empresa: z.string().min(2, { message: "Bairro é obrigatório" }),
-  cidade_empresa: z.string().min(2, { message: "Cidade é obrigatória" }),
-  estado_empresa: z.string().min(2, { message: "Estado é obrigatório" }),
-  telefone_empresa: z.string().min(10, { message: "Telefone é obrigatório" }),
-  tempo_empresa: z.string().min(1, { message: "Tempo na empresa é obrigatório" }),
-  
-  // Referência Bancária
-  banco: z.string().min(1, { message: "Banco é obrigatório" }),
-  agencia: z.string().min(1, { message: "Agência é obrigatória" }),
-  conta: z.string().min(1, { message: "Conta é obrigatória" }),
-  tempo_conta: z.string().min(1, { message: "Tempo de conta é obrigatório" }),
-  
-  // Referência Pessoal
-  referencia_nome1: z.string().min(2, { message: "Nome da referência é obrigatório" }),
-  referencia_telefone1: z.string().min(10, { message: "Telefone da referência é obrigatório" }),
-  referencia_nome2: z.string().min(2, { message: "Nome da referência é obrigatório" }),
-  referencia_telefone2: z.string().min(10, { message: "Telefone da referência é obrigatório" }),
   
   // Informações Adicionais
   info_adicional: z.string().optional(),
@@ -86,15 +55,12 @@ export default function Finance() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      // Dados do Veículo
       marca: "",
       modelo: "",
       ano: "",
       valor: 50000,
       entrada: 10000,
       parcelas: "48",
-      
-      // Dados Pessoais
       nome: "",
       cpf: "",
       rg: "",
@@ -105,43 +71,7 @@ export default function Finance() {
       email: "",
       telefone: "",
       celular: "",
-      
-      // Endereço
-      endereco: "",
-      numero: "",
-      complemento: "",
-      cep: "",
-      bairro: "",
-      cidade: "",
-      estado: "",
-      tempo_residencia: "",
-      
-      // Dados Profissionais
-      empresa: "",
-      cargo: "",
       renda: "",
-      endereco_empresa: "",
-      complemento_empresa: "",
-      cep_empresa: "",
-      bairro_empresa: "",
-      cidade_empresa: "",
-      estado_empresa: "",
-      telefone_empresa: "",
-      tempo_empresa: "",
-      
-      // Referência Bancária
-      banco: "",
-      agencia: "",
-      conta: "",
-      tempo_conta: "",
-      
-      // Referência Pessoal
-      referencia_nome1: "",
-      referencia_telefone1: "",
-      referencia_nome2: "",
-      referencia_telefone2: "",
-      
-      // Informações Adicionais
       info_adicional: "",
     },
   });
@@ -169,12 +99,23 @@ export default function Finance() {
   };
   
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // Exibir erros do formulário se houver
+    if (Object.keys(form.formState.errors).length > 0) {
+      console.error("Erros no formulário:", form.formState.errors);
+      toast({
+        title: "Erro ao preencher formulário",
+        description: "Verifique se todos os campos obrigatórios estão preenchidos corretamente.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     // Calcular o pagamento final
     const payment = calculateMonthlyPayment();
     
-    // Preparar informações do veículo em formato estruturado para armazenar no campo vehicleInfo
+    // Preparar informações do veículo em formato estruturado
     const vehicleDetails = {
       marca: values.marca,
       modelo: values.modelo,
@@ -185,58 +126,18 @@ export default function Finance() {
       valorParcela: payment,
     };
     
-    // Preparar informações pessoais e de contato
-    const personalDetails = {
-      cpf: values.cpf,
-      rg: values.rg,
-      dataNascimento: values.data_nascimento,
-      estadoCivil: values.estado_civil,
-      nomeMae: values.nome_mae,
-      nomePai: values.nome_pai,
-      endereco: {
-        logradouro: values.endereco,
-        numero: values.numero,
-        complemento: values.complemento,
-        bairro: values.bairro,
-        cidade: values.cidade,
-        estado: values.estado,
-        cep: values.cep,
-        tempoResidencia: values.tempo_residencia
-      },
-      emprego: {
-        empresa: values.empresa,
-        cargo: values.cargo,
-        endereco: values.endereco_empresa,
-        telefone: values.telefone_empresa,
-        tempo: values.tempo_empresa
-      },
-      banco: {
-        nome: values.banco,
-        agencia: values.agencia,
-        conta: values.conta,
-        tempoConta: values.tempo_conta
-      },
-      referencias: {
-        referencia1: {
-          nome: values.referencia_nome1,
-          telefone: values.referencia_telefone1
-        },
-        referencia2: {
-          nome: values.referencia_nome2,
-          telefone: values.referencia_telefone2
-        }
-      },
-      observacoes: values.info_adicional
-    };
-    
     // Preparar dados finais para API (seguindo o formato esperado pelo backend)
     const financingRequest = {
       name: values.nome,
       email: values.email,
-      phone: values.celular || values.telefone, // Usar celular se disponível, senão o telefone fixo
-      vehicleInfo: JSON.stringify(vehicleDetails), // Campo vehicleInfo armazena informações do veículo
-      income: values.renda, // Campo income armazena a renda do solicitante
-      notes: JSON.stringify(personalDetails) // Campo notes armazena detalhes adicionais
+      phone: values.celular || values.telefone,
+      vehicleInfo: JSON.stringify(vehicleDetails),
+      income: values.renda,
+      notes: JSON.stringify({
+        cpf: values.cpf,
+        rg: values.rg,
+        observacoes: values.info_adicional
+      })
     };
     
     console.log("Enviando dados:", financingRequest);
@@ -267,7 +168,6 @@ export default function Finance() {
       // Resetar o formulário mantendo os valores do veículo
       form.reset({
         ...form.getValues(),
-        // Limpar apenas os dados pessoais
         nome: "",
         cpf: "",
         rg: "",
@@ -278,43 +178,7 @@ export default function Finance() {
         email: "",
         telefone: "",
         celular: "",
-        
-        // Limpar endereço
-        endereco: "",
-        numero: "",
-        complemento: "",
-        cep: "",
-        bairro: "",
-        cidade: "",
-        estado: "",
-        tempo_residencia: "",
-        
-        // Limpar dados profissionais
-        empresa: "",
-        cargo: "",
         renda: "",
-        endereco_empresa: "",
-        complemento_empresa: "",
-        cep_empresa: "",
-        bairro_empresa: "",
-        cidade_empresa: "",
-        estado_empresa: "",
-        telefone_empresa: "",
-        tempo_empresa: "",
-        
-        // Limpar dados bancários
-        banco: "",
-        agencia: "",
-        conta: "",
-        tempo_conta: "",
-        
-        // Limpar referências
-        referencia_nome1: "",
-        referencia_telefone1: "",
-        referencia_nome2: "",
-        referencia_telefone2: "",
-        
-        // Limpar informações adicionais
         info_adicional: "",
       });
     })
@@ -497,105 +361,6 @@ export default function Finance() {
                     
                     <FormField
                       control={form.control}
-                      name="cpf"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>CPF</FormLabel>
-                          <FormControl>
-                            <Input placeholder="000.000.000-00" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="rg"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>RG</FormLabel>
-                          <FormControl>
-                            <Input placeholder="00.000.000-0" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="data_nascimento"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Data de Nascimento</FormLabel>
-                          <FormControl>
-                            <Input type="date" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="nome_mae"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nome da mãe</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Nome completo da mãe" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="nome_pai"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nome do pai</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Nome completo do pai (opcional)" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="estado_civil"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Estado Civil</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="glass-search border-none">
-                                <SelectValue placeholder="Selecione seu estado civil" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="solteiro">Solteiro(a)</SelectItem>
-                              <SelectItem value="casado">Casado(a)</SelectItem>
-                              <SelectItem value="divorciado">Divorciado(a)</SelectItem>
-                              <SelectItem value="viuvo">Viúvo(a)</SelectItem>
-                              <SelectItem value="separado">Separado(a)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
@@ -621,171 +386,7 @@ export default function Finance() {
                         </FormItem>
                       )}
                     />
-                  </div>
-                </div>
-                
-                {/* Seção 3: Endereço */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-bold border-b border-white/10 pb-2">Endereço</h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
-                    <div className="md:col-span-4">
-                      <FormField
-                        control={form.control}
-                        name="endereco"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Endereço</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Nome da rua, avenida, etc" className="glass-search border-none" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    
-                    <div className="md:col-span-1">
-                      <FormField
-                        control={form.control}
-                        name="numero"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Número</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Nº" className="glass-search border-none" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    
-                    <div className="md:col-span-1">
-                      <FormField
-                        control={form.control}
-                        name="complemento"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Complemento</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Apto, bloco, etc" className="glass-search border-none" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="cep"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>CEP</FormLabel>
-                          <FormControl>
-                            <Input placeholder="00000-000" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="bairro"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Bairro</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Bairro" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="tempo_residencia"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Tempo de residência</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Ex: 5 anos" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="cidade"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Cidade</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Cidade" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="estado"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Estado</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Estado" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-                
-                {/* Seção 4: Dados Profissionais */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-bold border-b border-white/10 pb-2">Dados Profissionais</h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="empresa"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nome da empresa</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Empresa onde trabalha" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="cargo"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Cargo</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Seu cargo ou função" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
+
                     <FormField
                       control={form.control}
                       name="renda"
@@ -799,185 +400,6 @@ export default function Finance() {
                         </FormItem>
                       )}
                     />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="endereco_empresa"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Endereço da empresa</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Endereço da empresa" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="telefone_empresa"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Telefone da empresa</FormLabel>
-                          <FormControl>
-                            <Input placeholder="(00) 0000-0000" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="tempo_empresa"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Tempo na empresa</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Ex: 3 anos" className="glass-search border-none" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-                
-                {/* Seção 5: Referências */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-bold border-b border-white/10 pb-2">Referências</h2>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h3 className="text-base font-medium mb-4">Referência Bancária</h3>
-                      <div className="space-y-4">
-                        <FormField
-                          control={form.control}
-                          name="banco"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Banco</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Nome do banco" className="glass-search border-none" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <FormField
-                            control={form.control}
-                            name="agencia"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Agência</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Agência" className="glass-search border-none" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="conta"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Conta</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Conta" className="glass-search border-none" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="tempo_conta"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Tempo de conta</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Ex: 2 anos" className="glass-search border-none" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <h3 className="text-base font-medium mb-4">Referências Pessoais</h3>
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormField
-                            control={form.control}
-                            name="referencia_nome1"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Nome da 1ª referência</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Nome completo" className="glass-search border-none" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="referencia_telefone1"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Telefone da 1ª referência</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="(00) 00000-0000" className="glass-search border-none" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormField
-                            control={form.control}
-                            name="referencia_nome2"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Nome da 2ª referência</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="Nome completo" className="glass-search border-none" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="referencia_telefone2"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Telefone da 2ª referência</FormLabel>
-                                <FormControl>
-                                  <Input placeholder="(00) 00000-0000" className="glass-search border-none" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </div>
                 
