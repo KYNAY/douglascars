@@ -17,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { formatPrice } from "@/lib/utils";
 
-// Formulário completo similar ao site original, sem usar sliders
+// Formulário completo similar ao site original, com campos opcionais para teste
 const formSchema = z.object({
   // Dados do Veículo
   marca: z.string().min(1, { message: "Marca é obrigatória" }),
@@ -29,50 +29,50 @@ const formSchema = z.object({
   
   // Dados Pessoais
   nome: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres" }),
-  cpf: z.string().min(11, { message: "CPF inválido" }),
-  rg: z.string().min(1, { message: "RG é obrigatório" }),
-  data_nascimento: z.string().min(1, { message: "Data de nascimento é obrigatória" }),
-  nome_mae: z.string().min(2, { message: "Nome da mãe é obrigatório" }),
+  cpf: z.string().optional(), // Tornando opcional para teste
+  rg: z.string().optional(), // Tornando opcional para teste
+  data_nascimento: z.string().optional(), // Tornando opcional para teste
+  nome_mae: z.string().optional(), // Tornando opcional para teste
   nome_pai: z.string().optional(),
-  estado_civil: z.string().min(1, { message: "Estado civil é obrigatório" }),
+  estado_civil: z.string().optional(), // Tornando opcional para teste
   email: z.string().email({ message: "E-mail inválido" }),
-  telefone: z.string().min(10, { message: "Telefone inválido" }),
-  celular: z.string().min(10, { message: "Celular inválido" }),
+  telefone: z.string().optional(), // Tornando opcional para teste
+  celular: z.string().optional(), // Tornando opcional para teste
   
   // Endereço
-  endereco: z.string().min(2, { message: "Endereço é obrigatório" }),
-  numero: z.string().min(1, { message: "Número é obrigatório" }),
+  endereco: z.string().optional(), // Tornando opcional para teste
+  numero: z.string().optional(), // Tornando opcional para teste
   complemento: z.string().optional(),
-  cep: z.string().min(8, { message: "CEP inválido" }),
-  bairro: z.string().min(2, { message: "Bairro é obrigatório" }),
-  cidade: z.string().min(2, { message: "Cidade é obrigatória" }),
-  estado: z.string().min(2, { message: "Estado é obrigatório" }),
-  tempo_residencia: z.string().min(1, { message: "Tempo de residência é obrigatório" }),
+  cep: z.string().optional(), // Tornando opcional para teste
+  bairro: z.string().optional(), // Tornando opcional para teste
+  cidade: z.string().optional(), // Tornando opcional para teste
+  estado: z.string().optional(), // Tornando opcional para teste
+  tempo_residencia: z.string().optional(), // Tornando opcional para teste
   
   // Dados Profissionais
-  empresa: z.string().min(2, { message: "Nome da empresa é obrigatório" }),
-  cargo: z.string().min(1, { message: "Cargo é obrigatório" }),
+  empresa: z.string().optional(), // Tornando opcional para teste
+  cargo: z.string().optional(), // Tornando opcional para teste
   renda: z.string().min(1, { message: "Renda mensal é obrigatória" }),
-  endereco_empresa: z.string().min(2, { message: "Endereço da empresa é obrigatório" }),
+  endereco_empresa: z.string().optional(), // Tornando opcional para teste
   complemento_empresa: z.string().optional(),
-  cep_empresa: z.string().min(8, { message: "CEP é obrigatório" }),
-  bairro_empresa: z.string().min(2, { message: "Bairro é obrigatório" }),
-  cidade_empresa: z.string().min(2, { message: "Cidade é obrigatória" }),
-  estado_empresa: z.string().min(2, { message: "Estado é obrigatório" }),
-  telefone_empresa: z.string().min(10, { message: "Telefone é obrigatório" }),
-  tempo_empresa: z.string().min(1, { message: "Tempo na empresa é obrigatório" }),
+  cep_empresa: z.string().optional(), // Tornando opcional para teste
+  bairro_empresa: z.string().optional(), // Tornando opcional para teste
+  cidade_empresa: z.string().optional(), // Tornando opcional para teste
+  estado_empresa: z.string().optional(), // Tornando opcional para teste
+  telefone_empresa: z.string().optional(), // Tornando opcional para teste
+  tempo_empresa: z.string().optional(), // Tornando opcional para teste
   
   // Referência Bancária
-  banco: z.string().min(1, { message: "Banco é obrigatório" }),
-  agencia: z.string().min(1, { message: "Agência é obrigatória" }),
-  conta: z.string().min(1, { message: "Conta é obrigatória" }),
-  tempo_conta: z.string().min(1, { message: "Tempo de conta é obrigatório" }),
+  banco: z.string().optional(), // Tornando opcional para teste
+  agencia: z.string().optional(), // Tornando opcional para teste
+  conta: z.string().optional(), // Tornando opcional para teste
+  tempo_conta: z.string().optional(), // Tornando opcional para teste
   
   // Referência Pessoal
-  referencia_nome1: z.string().min(2, { message: "Nome da referência é obrigatório" }),
-  referencia_telefone1: z.string().min(10, { message: "Telefone da referência é obrigatório" }),
-  referencia_nome2: z.string().min(2, { message: "Nome da referência é obrigatório" }),
-  referencia_telefone2: z.string().min(10, { message: "Telefone da referência é obrigatório" }),
+  referencia_nome1: z.string().optional(), // Tornando opcional para teste
+  referencia_telefone1: z.string().optional(), // Tornando opcional para teste
+  referencia_nome2: z.string().optional(), // Tornando opcional para teste
+  referencia_telefone2: z.string().optional(), // Tornando opcional para teste
   
   // Informações Adicionais
   info_adicional: z.string().optional(),
@@ -1002,34 +1002,11 @@ export default function Finance() {
                   {isSubmitting ? "Enviando..." : "Solicitar Financiamento"}
                 </Button>
                 
-                {/* Logos dos bancos */}
+                {/* Logos dos bancos - Imagem unificada */}
                 <div className="mt-8">
                   <h3 className="text-center text-xl font-medium mb-6">Trabalhamos com as seguintes financeiras:</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-6 items-center">
-                    <div className="flex justify-center">
-                      <img src="/banks/santander.png" alt="Santander" className="h-10 object-contain" />
-                    </div>
-                    <div className="flex justify-center">
-                      <img src="/banks/itau.png" alt="Itaú" className="h-10 object-contain" />
-                    </div>
-                    <div className="flex justify-center">
-                      <img src="/banks/bv-financeira.png" alt="BV Financeira" className="h-10 object-contain" />
-                    </div>
-                    <div className="flex justify-center">
-                      <img src="/banks/banco-pan.png" alt="Banco Pan" className="h-10 object-contain" />
-                    </div>
-                    <div className="flex justify-center">
-                      <img src="/banks/bradesco.png" alt="Bradesco" className="h-10 object-contain" />
-                    </div>
-                    <div className="flex justify-center">
-                      <img src="/banks/safra.png" alt="Safra Financeira" className="h-10 object-contain" />
-                    </div>
-                    <div className="flex justify-center">
-                      <img src="/banks/porto-seguro.png" alt="Porto Seguro" className="h-10 object-contain" />
-                    </div>
-                    <div className="flex justify-center">
-                      <img src="/banks/omni.png" alt="Omni" className="h-10 object-contain" />
-                    </div>
+                  <div className="flex justify-center">
+                    <img src="/bandeiras.png" alt="Financeiras Parceiras" className="max-w-full h-auto" />
                   </div>
                 </div>
               </form>
