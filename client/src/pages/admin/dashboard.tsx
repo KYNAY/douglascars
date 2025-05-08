@@ -2436,43 +2436,43 @@ export default function AdminDashboard() {
               {selectedFinancing && (
                 <div className="space-y-5">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-medium">Nome do Cliente</h3>
-                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">{selectedFinancing.name}</p>
+                    <div>
+                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Nome do Cliente</h3>
+                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">{selectedFinancing.name}</p>
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-medium">Data da Solicitação</h3>
-                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">
+                    <div>
+                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Data da Solicitação</h3>
+                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">
                         {new Date(selectedFinancing.requestDate).toLocaleString('pt-BR')}
                       </p>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-medium">Email</h3>
-                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">{selectedFinancing.email}</p>
+                    <div>
+                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Email</h3>
+                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">{selectedFinancing.email}</p>
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-medium">Telefone</h3>
-                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">{selectedFinancing.phone}</p>
+                    <div>
+                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Telefone</h3>
+                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">{selectedFinancing.phone}</p>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-medium">Renda Declarada</h3>
-                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">R$ {selectedFinancing.income}</p>
+                    <div>
+                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Renda Declarada</h3>
+                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">R$ {selectedFinancing.income}</p>
                     </div>
-                    <div className="space-y-1">
-                      <h3 className="text-sm font-medium">Status da Solicitação</h3>
+                    <div>
+                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Status da Solicitação</h3>
                       <Select 
                         defaultValue={selectedFinancing.status}
                         onValueChange={(value) => {
                           setSelectedFinancing(prev => prev ? {...prev, status: value as any} : null);
                         }}
                       >
-                        <SelectTrigger className="w-full bg-white dark:bg-slate-950">
+                        <SelectTrigger className="w-full bg-blue-100 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800">
                           <SelectValue placeholder="Selecione o status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -2485,46 +2485,46 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-medium">Detalhes do Financiamento</h3>
+                  <div>
+                    <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">Detalhes do Financiamento</h3>
                     {(() => {
                       try {
                         const vehicleData = JSON.parse(selectedFinancing.vehicleInfo);
                         return (
-                          <div className="bg-slate-100 dark:bg-slate-800 rounded-md p-4 space-y-4">
+                          <div className="bg-blue-100 dark:bg-blue-900/40 rounded-md p-4 space-y-4">
                             <div className="grid grid-cols-3 gap-4">
-                              <div className="border-r border-slate-200 dark:border-slate-700 pr-4">
-                                <h4 className="text-xs text-slate-500">Veículo</h4>
+                              <div className="border-r border-blue-200 dark:border-blue-800 pr-4">
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Veículo</h4>
                                 <div className="mt-1 space-y-3">
                                   <div>
-                                    <label className="block text-xs text-slate-400">Marca:</label>
-                                    <p className="font-medium">{vehicleData.marca}</p>
+                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Marca:</label>
+                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.marca}</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs text-slate-400">Modelo:</label>
-                                    <p className="font-medium">{vehicleData.modelo}</p>
+                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Modelo:</label>
+                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.modelo}</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs text-slate-400">Ano:</label>
-                                    <p className="font-medium">{vehicleData.ano}</p>
+                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Ano:</label>
+                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.ano}</p>
                                   </div>
                                 </div>
                               </div>
                               
-                              <div className="border-r border-slate-200 dark:border-slate-700 pr-4">
-                                <h4 className="text-xs text-slate-500">Valores</h4>
+                              <div className="border-r border-blue-200 dark:border-blue-800 pr-4">
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Valores</h4>
                                 <div className="mt-1 space-y-3">
                                   <div>
-                                    <label className="block text-xs text-slate-400">Valor do veículo:</label>
-                                    <p className="font-medium">{vehicleData.valor}</p>
+                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Valor do veículo:</label>
+                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.valor}</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs text-slate-400">Entrada:</label>
-                                    <p className="font-medium">{vehicleData.entrada}</p>
+                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Entrada:</label>
+                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.entrada}</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs text-slate-400">Valor financiado:</label>
-                                    <p className="font-medium">
+                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Valor financiado:</label>
+                                    <p className="font-semibold text-blue-900 dark:text-blue-50">
                                       {vehicleData.valorFinanciado || "Não informado"}
                                     </p>
                                   </div>
@@ -2532,15 +2532,15 @@ export default function AdminDashboard() {
                               </div>
                               
                               <div>
-                                <h4 className="text-xs text-slate-500">Parcelamento</h4>
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Parcelamento</h4>
                                 <div className="mt-1 space-y-3">
                                   <div>
-                                    <label className="block text-xs text-slate-400">Parcelas:</label>
-                                    <p className="font-medium">{vehicleData.parcelas}x</p>
+                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Parcelas:</label>
+                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.parcelas}x</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs text-slate-400">Valor da parcela:</label>
-                                    <p className="font-medium">
+                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Valor da parcela:</label>
+                                    <p className="font-semibold text-blue-900 dark:text-blue-50">
                                       {vehicleData.valorParcela ? `R$ ${vehicleData.valorParcela}` : "Não informado"}
                                     </p>
                                   </div>
@@ -2548,40 +2548,186 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                             
-                            {vehicleData.cpf && (
-                              <div className="border-t border-slate-200 dark:border-slate-700 pt-3 mt-3">
-                                <h4 className="text-xs text-slate-500">Dados Complementares</h4>
+                            {(vehicleData.cpf || vehicleData.rg || vehicleData.dataNascimento || vehicleData.estadoCivil) && (
+                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Pessoais</h4>
                                 <div className="mt-2 grid grid-cols-2 gap-4">
-                                  <div>
-                                    <label className="block text-xs text-slate-400">CPF:</label>
-                                    <p className="font-medium">{vehicleData.cpf}</p>
-                                  </div>
-                                  <div>
-                                    <label className="block text-xs text-slate-400">RG:</label>
-                                    <p className="font-medium">{vehicleData.rg || "Não informado"}</p>
-                                  </div>
+                                  {vehicleData.cpf && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">CPF:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.cpf}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.rg && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">RG:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.rg}</p>
+                                    </div>
+                                  )}
                                   {vehicleData.dataNascimento && (
                                     <div>
-                                      <label className="block text-xs text-slate-400">Data de Nascimento:</label>
-                                      <p className="font-medium">{vehicleData.dataNascimento}</p>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Data de Nascimento:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.dataNascimento}</p>
                                     </div>
                                   )}
                                   {vehicleData.estadoCivil && (
                                     <div>
-                                      <label className="block text-xs text-slate-400">Estado Civil:</label>
-                                      <p className="font-medium">{vehicleData.estadoCivil}</p>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Estado Civil:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.estadoCivil}</p>
                                     </div>
                                   )}
                                 </div>
                               </div>
                             )}
+                            
+                            {/* Dados de Endereço */}
+                            {(vehicleData.endereco || vehicleData.bairro || vehicleData.cidade || vehicleData.estado) && (
+                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Endereço</h4>
+                                <div className="mt-2 grid grid-cols-2 gap-4">
+                                  {vehicleData.endereco && (
+                                    <div className="col-span-2">
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Endereço:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.endereco}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.bairro && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Bairro:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.bairro}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.cidade && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Cidade:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.cidade}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.estado && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Estado:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.estado}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.cep && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">CEP:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.cep}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Dados Bancários */}
+                            {(vehicleData.banco || vehicleData.agencia || vehicleData.conta) && (
+                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Bancários</h4>
+                                <div className="mt-2 grid grid-cols-3 gap-4">
+                                  {vehicleData.banco && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Banco:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.banco}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.agencia && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Agência:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.agencia}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.conta && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Conta:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.conta}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Dados Profissionais */}
+                            {(vehicleData.profissao || vehicleData.empresa || vehicleData.cargo) && (
+                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Profissionais</h4>
+                                <div className="mt-2 grid grid-cols-3 gap-4">
+                                  {vehicleData.profissao && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Profissão:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.profissao}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.empresa && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Empresa:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.empresa}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.cargo && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Cargo:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.cargo}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.tempoEmprego && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Tempo de Emprego:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.tempoEmprego}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Garantias e Referências */}
+                            {(vehicleData.garantias || vehicleData.referencias) && (
+                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Garantias e Referências</h4>
+                                <div className="mt-2 grid grid-cols-1 gap-4">
+                                  {vehicleData.garantias && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Garantias:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.garantias}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.referencias && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Referências:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.referencias}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Exibe qualquer outro dado extra que possa estar no JSON */}
+                            <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
+                              <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Adicionais</h4>
+                              <div className="mt-2 grid grid-cols-2 gap-4">
+                                {Object.entries(vehicleData)
+                                  .filter(([key]) => !['marca', 'modelo', 'ano', 'valor', 'entrada', 'valorFinanciado', 
+                                    'parcelas', 'valorParcela', 'cpf', 'rg', 'dataNascimento', 'estadoCivil',
+                                    'endereco', 'bairro', 'cidade', 'estado', 'cep', 
+                                    'banco', 'agencia', 'conta',
+                                    'profissao', 'empresa', 'cargo', 'tempoEmprego',
+                                    'garantias', 'referencias'].includes(key))
+                                  .map(([key, value]) => (
+                                    <div key={key}>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">
+                                        {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}:
+                                      </label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{value as string}</p>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
                           </div>
                         );
                       } catch (e) {
-                        // Tenta mostrar de outra forma se falhar o parsing de JSON
+                        // Mostra dados brutos formatados em JSON se falhar o parsing
                         return (
-                          <div className="bg-slate-100 dark:bg-slate-800 rounded-md p-4">
-                            <p className="text-sm whitespace-pre-wrap">{selectedFinancing.vehicleInfo}</p>
+                          <div className="bg-blue-100 dark:bg-blue-900/40 rounded-md p-4">
+                            <p className="text-sm whitespace-pre-wrap font-mono">{selectedFinancing.vehicleInfo}</p>
                           </div>
                         );
                       }
