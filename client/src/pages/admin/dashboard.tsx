@@ -2434,43 +2434,45 @@ export default function AdminDashboard() {
               </DialogHeader>
               
               {selectedFinancing && (
-                <div className="space-y-4">
+                <div className="space-y-5">
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-sm font-medium mb-1">Nome do Cliente</h3>
-                      <p>{selectedFinancing.name}</p>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium">Nome do Cliente</h3>
+                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">{selectedFinancing.name}</p>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-medium mb-1">Data da Solicitação</h3>
-                      <p>{selectedFinancing.requestDate}</p>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium">Data da Solicitação</h3>
+                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">
+                        {new Date(selectedFinancing.requestDate).toLocaleString('pt-BR')}
+                      </p>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-sm font-medium mb-1">Email</h3>
-                      <p>{selectedFinancing.email}</p>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium">Email</h3>
+                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">{selectedFinancing.email}</p>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-medium mb-1">Telefone</h3>
-                      <p>{selectedFinancing.phone}</p>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium">Telefone</h3>
+                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">{selectedFinancing.phone}</p>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-sm font-medium mb-1">Renda Declarada</h3>
-                      <p>{selectedFinancing.income}</p>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium">Renda Declarada</h3>
+                      <p className="p-2 bg-slate-100 dark:bg-slate-800 rounded-md">R$ {selectedFinancing.income}</p>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-medium mb-1">Status da Solicitação</h3>
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-medium">Status da Solicitação</h3>
                       <Select 
                         defaultValue={selectedFinancing.status}
                         onValueChange={(value) => {
                           setSelectedFinancing(prev => prev ? {...prev, status: value as any} : null);
                         }}
                       >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="w-full bg-white dark:bg-slate-950">
                           <SelectValue placeholder="Selecione o status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -2483,53 +2485,110 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   
-                  <div className="mt-4">
-                    <h3 className="text-sm font-medium mb-2">Veículo de Interesse</h3>
-                    <div className="rounded-md bg-slate-100 dark:bg-slate-800 p-4">
-                      {(() => {
-                        try {
-                          const vehicleData = JSON.parse(selectedFinancing.vehicleInfo);
-                          return (
-                            <div className="space-y-2">
-                              <div className="grid grid-cols-3 gap-2">
-                                <div>
-                                  <span className="text-xs text-slate-500">Marca</span>
-                                  <p className="font-medium">{vehicleData.marca}</p>
-                                </div>
-                                <div>
-                                  <span className="text-xs text-slate-500">Modelo</span>
-                                  <p className="font-medium">{vehicleData.modelo}</p>
-                                </div>
-                                <div>
-                                  <span className="text-xs text-slate-500">Ano</span>
-                                  <p className="font-medium">{vehicleData.ano}</p>
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-medium">Detalhes do Financiamento</h3>
+                    {(() => {
+                      try {
+                        const vehicleData = JSON.parse(selectedFinancing.vehicleInfo);
+                        return (
+                          <div className="bg-slate-100 dark:bg-slate-800 rounded-md p-4 space-y-4">
+                            <div className="grid grid-cols-3 gap-4">
+                              <div className="border-r border-slate-200 dark:border-slate-700 pr-4">
+                                <h4 className="text-xs text-slate-500">Veículo</h4>
+                                <div className="mt-1 space-y-3">
+                                  <div>
+                                    <label className="block text-xs text-slate-400">Marca:</label>
+                                    <p className="font-medium">{vehicleData.marca}</p>
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-slate-400">Modelo:</label>
+                                    <p className="font-medium">{vehicleData.modelo}</p>
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-slate-400">Ano:</label>
+                                    <p className="font-medium">{vehicleData.ano}</p>
+                                  </div>
                                 </div>
                               </div>
-                              <div className="grid grid-cols-3 gap-2">
-                                <div>
-                                  <span className="text-xs text-slate-500">Valor</span>
-                                  <p className="font-medium">{vehicleData.valor}</p>
+                              
+                              <div className="border-r border-slate-200 dark:border-slate-700 pr-4">
+                                <h4 className="text-xs text-slate-500">Valores</h4>
+                                <div className="mt-1 space-y-3">
+                                  <div>
+                                    <label className="block text-xs text-slate-400">Valor do veículo:</label>
+                                    <p className="font-medium">{vehicleData.valor}</p>
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-slate-400">Entrada:</label>
+                                    <p className="font-medium">{vehicleData.entrada}</p>
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-slate-400">Valor financiado:</label>
+                                    <p className="font-medium">
+                                      {vehicleData.valorFinanciado || "Não informado"}
+                                    </p>
+                                  </div>
                                 </div>
-                                <div>
-                                  <span className="text-xs text-slate-500">Entrada</span>
-                                  <p className="font-medium">{vehicleData.entrada}</p>
-                                </div>
-                                <div>
-                                  <span className="text-xs text-slate-500">Parcelas</span>
-                                  <p className="font-medium">{vehicleData.parcelas}x {vehicleData.valorParcela && `de R$ ${vehicleData.valorParcela}`}</p>
+                              </div>
+                              
+                              <div>
+                                <h4 className="text-xs text-slate-500">Parcelamento</h4>
+                                <div className="mt-1 space-y-3">
+                                  <div>
+                                    <label className="block text-xs text-slate-400">Parcelas:</label>
+                                    <p className="font-medium">{vehicleData.parcelas}x</p>
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-slate-400">Valor da parcela:</label>
+                                    <p className="font-medium">
+                                      {vehicleData.valorParcela ? `R$ ${vehicleData.valorParcela}` : "Não informado"}
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
                             </div>
-                          );
-                        } catch (e) {
-                          return <p className="text-sm text-red-500">Erro ao processar dados do veículo: {selectedFinancing.vehicleInfo}</p>
-                        }
-                      })()}
-                    </div>
+                            
+                            {vehicleData.cpf && (
+                              <div className="border-t border-slate-200 dark:border-slate-700 pt-3 mt-3">
+                                <h4 className="text-xs text-slate-500">Dados Complementares</h4>
+                                <div className="mt-2 grid grid-cols-2 gap-4">
+                                  <div>
+                                    <label className="block text-xs text-slate-400">CPF:</label>
+                                    <p className="font-medium">{vehicleData.cpf}</p>
+                                  </div>
+                                  <div>
+                                    <label className="block text-xs text-slate-400">RG:</label>
+                                    <p className="font-medium">{vehicleData.rg || "Não informado"}</p>
+                                  </div>
+                                  {vehicleData.dataNascimento && (
+                                    <div>
+                                      <label className="block text-xs text-slate-400">Data de Nascimento:</label>
+                                      <p className="font-medium">{vehicleData.dataNascimento}</p>
+                                    </div>
+                                  )}
+                                  {vehicleData.estadoCivil && (
+                                    <div>
+                                      <label className="block text-xs text-slate-400">Estado Civil:</label>
+                                      <p className="font-medium">{vehicleData.estadoCivil}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      } catch (e) {
+                        // Tenta mostrar de outra forma se falhar o parsing de JSON
+                        return (
+                          <div className="bg-slate-100 dark:bg-slate-800 rounded-md p-4">
+                            <p className="text-sm whitespace-pre-wrap">{selectedFinancing.vehicleInfo}</p>
+                          </div>
+                        );
+                      }
+                    })()}
                   </div>
                   
-                  <div>
-                    <h3 className="text-sm font-medium mb-1">Observações</h3>
+                  <div className="hidden">
                     <Textarea 
                       className="h-24" 
                       placeholder="Observações sobre a solicitação"
