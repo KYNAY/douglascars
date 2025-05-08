@@ -174,14 +174,8 @@ export default function Finance() {
     // Calcular o pagamento final
     const payment = calculateMonthlyPayment();
     
-    // Preparar dados para API
-    const financingRequest = {
-      nome: values.nome,
-      email: values.email,
-      telefone: values.telefone,
-      celular: values.celular,
-      cpf: values.cpf,
-      rg: values.rg,
+    // Preparar informações do veículo em formato estruturado para armazenar no campo vehicleInfo
+    const vehicleDetails = {
       marca: values.marca,
       modelo: values.modelo,
       ano: values.ano,
@@ -189,6 +183,60 @@ export default function Finance() {
       entrada: values.entrada,
       parcelas: values.parcelas,
       valorParcela: payment,
+    };
+    
+    // Preparar informações pessoais e de contato
+    const personalDetails = {
+      cpf: values.cpf,
+      rg: values.rg,
+      dataNascimento: values.data_nascimento,
+      estadoCivil: values.estado_civil,
+      nomeMae: values.nome_mae,
+      nomePai: values.nome_pai,
+      endereco: {
+        logradouro: values.endereco,
+        numero: values.numero,
+        complemento: values.complemento,
+        bairro: values.bairro,
+        cidade: values.cidade,
+        estado: values.estado,
+        cep: values.cep,
+        tempoResidencia: values.tempo_residencia
+      },
+      emprego: {
+        empresa: values.empresa,
+        cargo: values.cargo,
+        endereco: values.endereco_empresa,
+        telefone: values.telefone_empresa,
+        tempo: values.tempo_empresa
+      },
+      banco: {
+        nome: values.banco,
+        agencia: values.agencia,
+        conta: values.conta,
+        tempoConta: values.tempo_conta
+      },
+      referencias: {
+        referencia1: {
+          nome: values.referencia_nome1,
+          telefone: values.referencia_telefone1
+        },
+        referencia2: {
+          nome: values.referencia_nome2,
+          telefone: values.referencia_telefone2
+        }
+      },
+      observacoes: values.info_adicional
+    };
+    
+    // Preparar dados finais para API (seguindo o formato esperado pelo backend)
+    const financingRequest = {
+      name: values.nome,
+      email: values.email,
+      phone: values.celular || values.telefone, // Usar celular se disponível, senão o telefone fixo
+      vehicleInfo: JSON.stringify(vehicleDetails), // Campo vehicleInfo armazena informações do veículo
+      income: values.renda, // Campo income armazena a renda do solicitante
+      notes: JSON.stringify(personalDetails) // Campo notes armazena detalhes adicionais
     };
     
     console.log("Enviando dados:", financingRequest);
