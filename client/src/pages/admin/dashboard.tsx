@@ -2459,33 +2459,73 @@ export default function AdminDashboard() {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium mb-1">Veículo de Interesse</h3>
-                      <p>{selectedFinancing.vehicleInfo}</p>
-                    </div>
-                    <div>
                       <h3 className="text-sm font-medium mb-1">Renda Declarada</h3>
                       <p>{selectedFinancing.income}</p>
                     </div>
+                    <div>
+                      <h3 className="text-sm font-medium mb-1">Status da Solicitação</h3>
+                      <Select 
+                        defaultValue={selectedFinancing.status}
+                        onValueChange={(value) => {
+                          setSelectedFinancing(prev => prev ? {...prev, status: value as any} : null);
+                        }}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Selecione o status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pendente</SelectItem>
+                          <SelectItem value="in_review">Em Análise</SelectItem>
+                          <SelectItem value="approved">Aprovado</SelectItem>
+                          <SelectItem value="denied">Negado</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   
-                  <div>
-                    <h3 className="text-sm font-medium mb-1">Status da Solicitação</h3>
-                    <Select 
-                      defaultValue={selectedFinancing.status}
-                      onValueChange={(value) => {
-                        setSelectedFinancing(prev => prev ? {...prev, status: value as any} : null);
-                      }}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Selecione o status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pendente</SelectItem>
-                        <SelectItem value="in_review">Em Análise</SelectItem>
-                        <SelectItem value="approved">Aprovado</SelectItem>
-                        <SelectItem value="denied">Negado</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="mt-4">
+                    <h3 className="text-sm font-medium mb-2">Veículo de Interesse</h3>
+                    <div className="rounded-md bg-slate-100 dark:bg-slate-800 p-4">
+                      {(() => {
+                        try {
+                          const vehicleData = JSON.parse(selectedFinancing.vehicleInfo);
+                          return (
+                            <div className="space-y-2">
+                              <div className="grid grid-cols-3 gap-2">
+                                <div>
+                                  <span className="text-xs text-slate-500">Marca</span>
+                                  <p className="font-medium">{vehicleData.marca}</p>
+                                </div>
+                                <div>
+                                  <span className="text-xs text-slate-500">Modelo</span>
+                                  <p className="font-medium">{vehicleData.modelo}</p>
+                                </div>
+                                <div>
+                                  <span className="text-xs text-slate-500">Ano</span>
+                                  <p className="font-medium">{vehicleData.ano}</p>
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-3 gap-2">
+                                <div>
+                                  <span className="text-xs text-slate-500">Valor</span>
+                                  <p className="font-medium">{vehicleData.valor}</p>
+                                </div>
+                                <div>
+                                  <span className="text-xs text-slate-500">Entrada</span>
+                                  <p className="font-medium">{vehicleData.entrada}</p>
+                                </div>
+                                <div>
+                                  <span className="text-xs text-slate-500">Parcelas</span>
+                                  <p className="font-medium">{vehicleData.parcelas}x {vehicleData.valorParcela && `de R$ ${vehicleData.valorParcela}`}</p>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        } catch (e) {
+                          return <p className="text-sm text-red-500">Erro ao processar dados do veículo: {selectedFinancing.vehicleInfo}</p>
+                        }
+                      })()}
+                    </div>
                   </div>
                   
                   <div>
