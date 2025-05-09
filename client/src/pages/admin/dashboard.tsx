@@ -2098,9 +2098,25 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell>
-                                    <div className="max-w-[200px] truncate" title={request.vehicleInfo}>
-                                      {request.vehicleInfo}
-                                    </div>
+                                    {(() => {
+                                      try {
+                                        const vehicleData = JSON.parse(request.vehicleInfo);
+                                        return (
+                                          <div className="max-w-[200px]">
+                                            <p className="font-medium">{vehicleData.marca} {vehicleData.modelo}</p>
+                                            <p className="text-xs text-gray-500">
+                                              {vehicleData.ano} • {vehicleData.valor}
+                                            </p>
+                                          </div>
+                                        );
+                                      } catch (e) {
+                                        return (
+                                          <div className="max-w-[200px] truncate" title={request.vehicleInfo}>
+                                            {request.vehicleInfo}
+                                          </div>
+                                        );
+                                      }
+                                    })()}
                                   </TableCell>
                                   <TableCell>
                                     {request.status === 'pending' && (
@@ -2503,9 +2519,21 @@ export default function AdminDashboard() {
                     <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">Detalhes do Financiamento</h3>
                     {(() => {
                       try {
+                        // Parse dos dados do veículo
                         const vehicleData = JSON.parse(selectedFinancing.vehicleInfo);
+                        // Parse dos dados pessoais (armazenados no campo notes)
+                        let personalData = {};
+                        try {
+                          if (selectedFinancing.notes) {
+                            personalData = JSON.parse(selectedFinancing.notes);
+                          }
+                        } catch (e) {
+                          console.error("Erro ao fazer parse dos dados pessoais", e);
+                        }
+                        
                         return (
                           <div className="bg-blue-100 dark:bg-blue-900/40 rounded-md p-4 space-y-4">
+                            {/* Seção de Dados do Veículo */}
                             <div className="grid grid-cols-3 gap-4">
                               <div className="border-r border-blue-200 dark:border-blue-800 pr-4">
                                 <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Veículo</h4>
@@ -2562,32 +2590,45 @@ export default function AdminDashboard() {
                               </div>
                             </div>
                             
-                            {(vehicleData.cpf || vehicleData.rg || vehicleData.dataNascimento || vehicleData.estadoCivil) && (
+                            {/* Dados Pessoais */}
+                            {personalData && (
                               <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
                                 <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Pessoais</h4>
                                 <div className="mt-2 grid grid-cols-2 gap-4">
-                                  {vehicleData.cpf && (
+                                  {personalData.cpf && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">CPF:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.cpf}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.cpf}</p>
                                     </div>
                                   )}
-                                  {vehicleData.rg && (
+                                  {personalData.rg && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">RG:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.rg}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.rg}</p>
                                     </div>
                                   )}
-                                  {vehicleData.dataNascimento && (
+                                  {personalData.dataNascimento && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Data de Nascimento:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.dataNascimento}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.dataNascimento}</p>
                                     </div>
                                   )}
-                                  {vehicleData.estadoCivil && (
+                                  {personalData.estadoCivil && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Estado Civil:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.estadoCivil}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.estadoCivil}</p>
+                                    </div>
+                                  )}
+                                  {personalData.nomeMae && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Nome da Mãe:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.nomeMae}</p>
+                                    </div>
+                                  )}
+                                  {personalData.nomePai && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Nome do Pai:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.nomePai}</p>
                                     </div>
                                   )}
                                 </div>
@@ -2595,65 +2636,48 @@ export default function AdminDashboard() {
                             )}
                             
                             {/* Dados de Endereço */}
-                            {(vehicleData.endereco || vehicleData.bairro || vehicleData.cidade || vehicleData.estado) && (
+                            {personalData && personalData.endereco && (
                               <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
                                 <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Endereço</h4>
                                 <div className="mt-2 grid grid-cols-2 gap-4">
-                                  {vehicleData.endereco && (
+                                  {personalData.endereco.logradouro && (
                                     <div className="col-span-2">
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Endereço:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.endereco}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">
+                                        {personalData.endereco.logradouro}
+                                        {personalData.endereco.numero ? `, ${personalData.endereco.numero}` : ''}
+                                        {personalData.endereco.complemento ? ` - ${personalData.endereco.complemento}` : ''}
+                                      </p>
                                     </div>
                                   )}
-                                  {vehicleData.bairro && (
+                                  {personalData.endereco.bairro && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Bairro:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.bairro}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.bairro}</p>
                                     </div>
                                   )}
-                                  {vehicleData.cidade && (
+                                  {personalData.endereco.cidade && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Cidade:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.cidade}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.cidade}</p>
                                     </div>
                                   )}
-                                  {vehicleData.estado && (
+                                  {personalData.endereco.estado && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Estado:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.estado}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.estado}</p>
                                     </div>
                                   )}
-                                  {vehicleData.cep && (
+                                  {personalData.endereco.cep && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">CEP:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.cep}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.cep}</p>
                                     </div>
                                   )}
-                                </div>
-                              </div>
-                            )}
-                            
-                            {/* Dados Bancários */}
-                            {(vehicleData.banco || vehicleData.agencia || vehicleData.conta) && (
-                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Bancários</h4>
-                                <div className="mt-2 grid grid-cols-3 gap-4">
-                                  {vehicleData.banco && (
+                                  {personalData.endereco.tempoResidencia && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Banco:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.banco}</p>
-                                    </div>
-                                  )}
-                                  {vehicleData.agencia && (
-                                    <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Agência:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.agencia}</p>
-                                    </div>
-                                  )}
-                                  {vehicleData.conta && (
-                                    <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Conta:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.conta}</p>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Tempo de Residência:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.tempoResidencia}</p>
                                     </div>
                                   )}
                                 </div>
@@ -2661,87 +2685,138 @@ export default function AdminDashboard() {
                             )}
                             
                             {/* Dados Profissionais */}
-                            {(vehicleData.profissao || vehicleData.empresa || vehicleData.cargo) && (
+                            {personalData && personalData.emprego && (
                               <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
                                 <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Profissionais</h4>
-                                <div className="mt-2 grid grid-cols-3 gap-4">
-                                  {vehicleData.profissao && (
-                                    <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Profissão:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.profissao}</p>
-                                    </div>
-                                  )}
-                                  {vehicleData.empresa && (
+                                <div className="mt-2 grid grid-cols-2 gap-4">
+                                  {personalData.emprego.empresa && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Empresa:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.empresa}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.empresa}</p>
                                     </div>
                                   )}
-                                  {vehicleData.cargo && (
+                                  {personalData.emprego.cargo && (
                                     <div>
                                       <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Cargo:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.cargo}</p>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.cargo}</p>
                                     </div>
                                   )}
-                                  {vehicleData.tempoEmprego && (
+                                  {personalData.emprego.endereco && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Tempo de Emprego:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.tempoEmprego}</p>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Endereço da Empresa:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.endereco}</p>
+                                    </div>
+                                  )}
+                                  {personalData.emprego.telefone && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Telefone da Empresa:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.telefone}</p>
+                                    </div>
+                                  )}
+                                  {personalData.emprego.tempo && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Tempo de Empresa:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.tempo}</p>
                                     </div>
                                   )}
                                 </div>
                               </div>
                             )}
                             
-                            {/* Garantias e Referências */}
-                            {(vehicleData.garantias || vehicleData.referencias) && (
+                            {/* Dados Bancários */}
+                            {personalData && personalData.banco && (
                               <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Garantias e Referências</h4>
-                                <div className="mt-2 grid grid-cols-1 gap-4">
-                                  {vehicleData.garantias && (
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Bancários</h4>
+                                <div className="mt-2 grid grid-cols-3 gap-4">
+                                  {personalData.banco.nome && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Garantias:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.garantias}</p>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Banco:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.banco.nome}</p>
                                     </div>
                                   )}
-                                  {vehicleData.referencias && (
+                                  {personalData.banco.agencia && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Referências:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.referencias}</p>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Agência:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.banco.agencia}</p>
+                                    </div>
+                                  )}
+                                  {personalData.banco.conta && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Conta:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.banco.conta}</p>
+                                    </div>
+                                  )}
+                                  {personalData.banco.tempoConta && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Tempo de Conta:</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.banco.tempoConta}</p>
                                     </div>
                                   )}
                                 </div>
                               </div>
                             )}
                             
-                            {/* Exibe qualquer outro dado extra que possa estar no JSON */}
-                            <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
-                              <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Adicionais</h4>
-                              <div className="mt-2 grid grid-cols-2 gap-4">
-                                {Object.entries(vehicleData)
-                                  .filter(([key]) => !['marca', 'modelo', 'ano', 'valor', 'entrada', 'valorFinanciado', 
-                                    'parcelas', 'valorParcela', 'cpf', 'rg', 'dataNascimento', 'estadoCivil',
-                                    'endereco', 'bairro', 'cidade', 'estado', 'cep', 
-                                    'banco', 'agencia', 'conta',
-                                    'profissao', 'empresa', 'cargo', 'tempoEmprego',
-                                    'garantias', 'referencias'].includes(key))
-                                  .map(([key, value]) => (
-                                    <div key={key}>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">
-                                        {key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()}:
-                                      </label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{value as string}</p>
+                            {/* Referências */}
+                            {personalData && personalData.referencias && (
+                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Referências Pessoais</h4>
+                                <div className="mt-2 grid grid-cols-2 gap-4">
+                                  {personalData.referencias.referencia1 && personalData.referencias.referencia1.nome && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Nome (1ª Referência):</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.referencias.referencia1.nome}</p>
                                     </div>
-                                  ))}
+                                  )}
+                                  {personalData.referencias.referencia1 && personalData.referencias.referencia1.telefone && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Telefone (1ª Referência):</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.referencias.referencia1.telefone}</p>
+                                    </div>
+                                  )}
+                                  {personalData.referencias.referencia2 && personalData.referencias.referencia2.nome && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Nome (2ª Referência):</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.referencias.referencia2.nome}</p>
+                                    </div>
+                                  )}
+                                  {personalData.referencias.referencia2 && personalData.referencias.referencia2.telefone && (
+                                    <div>
+                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Telefone (2ª Referência):</label>
+                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.referencias.referencia2.telefone}</p>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
+                            )}
+                            
+                            {/* Observações */}
+                            {personalData && personalData.observacoes && (
+                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Observações</h4>
+                                <div className="mt-2">
+                                  <p className="font-semibold text-blue-900 dark:text-blue-50 whitespace-pre-wrap">{personalData.observacoes}</p>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         );
                       } catch (e) {
+                        console.error("Erro ao exibir detalhes do financiamento:", e);
                         // Mostra dados brutos formatados em JSON se falhar o parsing
                         return (
                           <div className="bg-blue-100 dark:bg-blue-900/40 rounded-md p-4">
-                            <p className="text-sm whitespace-pre-wrap font-mono">{selectedFinancing.vehicleInfo}</p>
+                            <p className="text-sm whitespace-pre-wrap font-mono overflow-auto">
+                              <strong>Dados do veículo:</strong> 
+                              {JSON.stringify(JSON.parse(selectedFinancing.vehicleInfo), null, 2)}
+                              
+                              {selectedFinancing.notes && (
+                                <>
+                                  <br/><br/>
+                                  <strong>Dados pessoais:</strong>
+                                  {JSON.stringify(JSON.parse(selectedFinancing.notes), null, 2)}
+                                </>
+                              )}
+                            </p>
                           </div>
                         );
                       }
