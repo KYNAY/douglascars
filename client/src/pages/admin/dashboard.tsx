@@ -2522,7 +2522,7 @@ export default function AdminDashboard() {
                         // Parse dos dados do veículo
                         const vehicleData = JSON.parse(selectedFinancing.vehicleInfo);
                         // Parse dos dados pessoais (armazenados no campo notes)
-                        let personalData = {};
+                        let personalData: any = {};
                         try {
                           if (selectedFinancing.notes) {
                             personalData = JSON.parse(selectedFinancing.notes);
