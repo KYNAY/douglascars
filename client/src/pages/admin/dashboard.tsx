@@ -2240,9 +2240,23 @@ export default function AdminDashboard() {
                                     </div>
                                   </TableCell>
                                   <TableCell>
-                                    <div className="max-w-[200px] truncate" title={request.vehicleInfo}>
-                                      {request.vehicleInfo}
-                                    </div>
+                                    {(() => {
+                                      try {
+                                        const vehicleData = JSON.parse(request.vehicleInfo);
+                                        return (
+                                          <div className="max-w-[200px]">
+                                            <p className="font-medium">{vehicleData.marca} {vehicleData.modelo}</p>
+                                            <p className="text-xs text-muted-foreground">{vehicleData.ano} • {vehicleData.valor}</p>
+                                          </div>
+                                        );
+                                      } catch (e) {
+                                        return (
+                                          <div className="max-w-[200px] truncate" title={request.vehicleInfo}>
+                                            {request.vehicleInfo}
+                                          </div>
+                                        );
+                                      }
+                                    })()}
                                   </TableCell>
                                   <TableCell>{request.income}</TableCell>
                                   <TableCell>
