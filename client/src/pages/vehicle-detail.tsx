@@ -444,7 +444,7 @@ export default function VehicleDetail() {
                     <div>
                       <h3 className="font-medium mb-1">Garantia</h3>
                       <p className="text-gray-300">
-                        {vehicle.warranty || "Garantia de fábrica"} 
+                        {vehicle.warranty || "Consultar"} 
                       </p>
                     </div>
                   </div>
