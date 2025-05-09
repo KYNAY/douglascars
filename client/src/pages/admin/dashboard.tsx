@@ -2455,10 +2455,10 @@ export default function AdminDashboard() {
               setSelectedFinancing(null);
             }
           }}>
-            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto">
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-h-[90vh] h-[80vh] sm:h-auto bg-[#131c2b] text-white border-slate-700">
               <DialogHeader>
-                <DialogTitle>Detalhes do Financiamento</DialogTitle>
-                <DialogDescription>
+                <DialogTitle className="text-white">Detalhes do Financiamento</DialogTitle>
+                <DialogDescription className="text-gray-300">
                   Informações sobre a solicitação de financiamento.
                 </DialogDescription>
               </DialogHeader>
@@ -2467,12 +2467,12 @@ export default function AdminDashboard() {
                 <div className="space-y-5">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Nome do Cliente</h3>
-                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">{selectedFinancing.name}</p>
+                      <h3 className="text-sm font-medium text-slate-300 mb-1">Nome do Cliente</h3>
+                      <p className="p-2 bg-[#1b2639] text-white rounded-md font-medium border border-slate-700">{selectedFinancing.name}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Data da Solicitação</h3>
-                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">
+                      <h3 className="text-sm font-medium text-slate-300 mb-1">Data da Solicitação</h3>
+                      <p className="p-2 bg-[#1b2639] text-white rounded-md font-medium border border-slate-700">
                         {new Date(selectedFinancing.requestDate).toLocaleString('pt-BR')}
                       </p>
                     </div>
@@ -2480,32 +2480,32 @@ export default function AdminDashboard() {
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Email</h3>
-                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">{selectedFinancing.email}</p>
+                      <h3 className="text-sm font-medium text-slate-300 mb-1">Email</h3>
+                      <p className="p-2 bg-[#1b2639] text-white rounded-md font-medium border border-slate-700">{selectedFinancing.email}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Telefone</h3>
-                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">{selectedFinancing.phone}</p>
+                      <h3 className="text-sm font-medium text-slate-300 mb-1">Telefone</h3>
+                      <p className="p-2 bg-[#1b2639] text-white rounded-md font-medium border border-slate-700">{selectedFinancing.phone}</p>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Renda Declarada</h3>
-                      <p className="p-2 bg-blue-100 dark:bg-blue-900/40 text-blue-900 dark:text-blue-50 rounded-md font-medium">R$ {selectedFinancing.income}</p>
+                      <h3 className="text-sm font-medium text-slate-300 mb-1">Renda Declarada</h3>
+                      <p className="p-2 bg-[#1b2639] text-white rounded-md font-medium border border-slate-700">R$ {selectedFinancing.income}</p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">Status da Solicitação</h3>
+                      <h3 className="text-sm font-medium text-slate-300 mb-1">Status da Solicitação</h3>
                       <Select 
                         defaultValue={selectedFinancing.status}
                         onValueChange={(value) => {
                           setSelectedFinancing(prev => prev ? {...prev, status: value as any} : null);
                         }}
                       >
-                        <SelectTrigger className="w-full bg-blue-100 dark:bg-blue-900/40 border-blue-200 dark:border-blue-800">
+                        <SelectTrigger className="w-full bg-[#1b2639] text-white border-slate-700">
                           <SelectValue placeholder="Selecione o status" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-[#1b2639] text-white border-slate-700">
                           <SelectItem value="pending">Pendente</SelectItem>
                           <SelectItem value="in_review">Em Análise</SelectItem>
                           <SelectItem value="approved">Aprovado</SelectItem>
@@ -2516,7 +2516,7 @@ export default function AdminDashboard() {
                   </div>
                   
                   <div>
-                    <h3 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">Detalhes do Financiamento</h3>
+                    <h3 className="text-sm font-medium text-slate-300 mb-2">Detalhes do Financiamento</h3>
                     {(() => {
                       try {
                         // Parse dos dados do veículo
@@ -2532,7 +2532,7 @@ export default function AdminDashboard() {
                         }
                         
                         return (
-                          <div className="bg-blue-100 dark:bg-blue-900/40 rounded-md p-4 space-y-4">
+                          <div className="bg-[#1b2639] rounded-md p-4 space-y-4 border border-slate-700">
                             {/* Seção de Dados do Veículo */}
                             <div className="grid grid-cols-3 gap-4">
                               <div className="border-r border-blue-200 dark:border-blue-800 pr-4">
