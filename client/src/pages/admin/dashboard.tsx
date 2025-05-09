@@ -2900,13 +2900,28 @@ export default function AdminDashboard() {
             // Atualizar o campo hidden de optionals para envio
             const optionalsJSON = allOptionals.length > 0 ? JSON.stringify(allOptionals) : null;
             
+            // Processar preço e remover formatação R$
+            let price = formData.get('price') as string;
+            if (price) {
+              // Remover R$ e outros caracteres não numéricos exceto ponto e vírgula
+              price = price.replace(/[^\d,\.]/g, '');
+              // Substituir vírgulas por pontos para valores decimais
+              price = price.replace(',', '.');
+            }
+            
+            let originalPrice = formData.get('originalPrice') as string;
+            if (originalPrice) {
+              originalPrice = originalPrice.replace(/[^\d,\.]/g, '');
+              originalPrice = originalPrice.replace(',', '.');
+            }
+            
             const vehicleData = {
               model: formData.get('model') as string,
               brandId: Number(formData.get('brandId')),
               year: formData.get('year') as string,
               color: formData.get('color') as string,
-              price: formData.get('price') as string,
-              originalPrice: formData.get('originalPrice') as string || null,
+              price: price,
+              originalPrice: originalPrice || null,
               mileage: Number(formData.get('mileage')),
               transmission: formData.get('transmission') as string,
               fuel: formData.get('fuel') as string,
@@ -2917,8 +2932,7 @@ export default function AdminDashboard() {
               specialFeatured: formData.get('specialFeatured') === 'on',
               doors: formData.get('doors') ? Number(formData.get('doors')) : null,
               enginePower: formData.get('enginePower') as string || null,
-              engineTorque: formData.get('engineTorque') as string || null,
-              warranty: formData.get('warranty') as string || null,
+              warranty: formData.get('warranty') as string || 'Consultar',
               optionals: optionalsJSON,
               sold: false
             };
@@ -3107,22 +3121,12 @@ export default function AdminDashboard() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="engineTorque">Torque do Motor</Label>
-                <Input 
-                  id="engineTorque" 
-                  name="engineTorque" 
-                  placeholder="Ex: 16,8 kgfm" 
-                  defaultValue={selectedVehicle?.engineTorque || ''}
-                />
-              </div>
-
-              <div className="space-y-2">
                 <Label htmlFor="warranty">Garantia</Label>
                 <Input 
                   id="warranty" 
                   name="warranty" 
                   placeholder="Ex: 3 anos de fábrica" 
-                  defaultValue={selectedVehicle?.warranty || ''}
+                  defaultValue={selectedVehicle?.warranty || 'Consultar'}
                 />
               </div>
 
@@ -3256,12 +3260,10 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 
-                {/* Gerenciador de imagens adicionais - só aparece quando está editando um veículo existente */}
-                {selectedVehicle.id > 0 && (
-                  <div className="border-t pt-6 mt-6">
-                    <VehicleImagesManager vehicleId={selectedVehicle.id} />
-                  </div>
-                )}
+                {/* Gerenciador de imagens adicionais - aparece para todos os veículos existentes */}
+                <div className="border-t pt-6 mt-6">
+                  <VehicleImagesManager vehicleId={selectedVehicle.id} />
+                </div>
               </>
             )}
             
