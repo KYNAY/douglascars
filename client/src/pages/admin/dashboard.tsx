@@ -2535,38 +2535,38 @@ export default function AdminDashboard() {
                           <div className="bg-[#1b2639] rounded-md p-4 space-y-4 border border-slate-700">
                             {/* Seção de Dados do Veículo */}
                             <div className="grid grid-cols-3 gap-4">
-                              <div className="border-r border-blue-200 dark:border-blue-800 pr-4">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Veículo</h4>
+                              <div className="border-r border-slate-700 pr-4">
+                                <h4 className="font-semibold text-sm text-white">Veículo</h4>
                                 <div className="mt-1 space-y-3">
                                   <div>
-                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Marca:</label>
-                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.marca}</p>
+                                    <label className="block text-xs font-medium text-slate-300">Marca:</label>
+                                    <p className="font-semibold text-white">{vehicleData.marca}</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Modelo:</label>
-                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.modelo}</p>
+                                    <label className="block text-xs font-medium text-slate-300">Modelo:</label>
+                                    <p className="font-semibold text-white">{vehicleData.modelo}</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Ano:</label>
-                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.ano}</p>
+                                    <label className="block text-xs font-medium text-slate-300">Ano:</label>
+                                    <p className="font-semibold text-white">{vehicleData.ano}</p>
                                   </div>
                                 </div>
                               </div>
                               
-                              <div className="border-r border-blue-200 dark:border-blue-800 pr-4">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Valores</h4>
+                              <div className="border-r border-slate-700 pr-4">
+                                <h4 className="font-semibold text-sm text-white">Valores</h4>
                                 <div className="mt-1 space-y-3">
                                   <div>
-                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Valor do veículo:</label>
-                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.valor}</p>
+                                    <label className="block text-xs font-medium text-slate-300">Valor do veículo:</label>
+                                    <p className="font-semibold text-white">{vehicleData.valor}</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Entrada:</label>
-                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.entrada}</p>
+                                    <label className="block text-xs font-medium text-slate-300">Entrada:</label>
+                                    <p className="font-semibold text-white">{vehicleData.entrada}</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Valor financiado:</label>
-                                    <p className="font-semibold text-blue-900 dark:text-blue-50">
+                                    <label className="block text-xs font-medium text-slate-300">Valor financiado:</label>
+                                    <p className="font-semibold text-white">
                                       {vehicleData.valorFinanciado || "Não informado"}
                                     </p>
                                   </div>
@@ -2574,15 +2574,15 @@ export default function AdminDashboard() {
                               </div>
                               
                               <div>
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Parcelamento</h4>
+                                <h4 className="font-semibold text-sm text-white">Parcelamento</h4>
                                 <div className="mt-1 space-y-3">
                                   <div>
-                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Parcelas:</label>
-                                    <p className="font-semibold text-blue-900 dark:text-blue-50">{vehicleData.parcelas}x</p>
+                                    <label className="block text-xs font-medium text-slate-300">Parcelas:</label>
+                                    <p className="font-semibold text-white">{vehicleData.parcelas}x</p>
                                   </div>
                                   <div>
-                                    <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Valor da parcela:</label>
-                                    <p className="font-semibold text-blue-900 dark:text-blue-50">
+                                    <label className="block text-xs font-medium text-slate-300">Valor da parcela:</label>
+                                    <p className="font-semibold text-white">
                                       {vehicleData.valorParcela ? `R$ ${vehicleData.valorParcela}` : "Não informado"}
                                     </p>
                                   </div>
@@ -2592,43 +2592,43 @@ export default function AdminDashboard() {
                             
                             {/* Dados Pessoais */}
                             {personalData && (
-                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Pessoais</h4>
+                              <div className="border-t border-slate-700 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-white">Dados Pessoais</h4>
                                 <div className="mt-2 grid grid-cols-2 gap-4">
                                   {personalData.cpf && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">CPF:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.cpf}</p>
+                                      <label className="block text-xs font-medium text-slate-300">CPF:</label>
+                                      <p className="font-semibold text-white">{personalData.cpf}</p>
                                     </div>
                                   )}
                                   {personalData.rg && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">RG:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.rg}</p>
+                                      <label className="block text-xs font-medium text-slate-300">RG:</label>
+                                      <p className="font-semibold text-white">{personalData.rg}</p>
                                     </div>
                                   )}
                                   {personalData.dataNascimento && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Data de Nascimento:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.dataNascimento}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Data de Nascimento:</label>
+                                      <p className="font-semibold text-white">{personalData.dataNascimento}</p>
                                     </div>
                                   )}
                                   {personalData.estadoCivil && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Estado Civil:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.estadoCivil}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Estado Civil:</label>
+                                      <p className="font-semibold text-white">{personalData.estadoCivil}</p>
                                     </div>
                                   )}
                                   {personalData.nomeMae && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Nome da Mãe:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.nomeMae}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Nome da Mãe:</label>
+                                      <p className="font-semibold text-white">{personalData.nomeMae}</p>
                                     </div>
                                   )}
                                   {personalData.nomePai && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Nome do Pai:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.nomePai}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Nome do Pai:</label>
+                                      <p className="font-semibold text-white">{personalData.nomePai}</p>
                                     </div>
                                   )}
                                 </div>
@@ -2637,13 +2637,13 @@ export default function AdminDashboard() {
                             
                             {/* Dados de Endereço */}
                             {personalData && personalData.endereco && (
-                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Endereço</h4>
+                              <div className="border-t border-slate-700 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-white">Endereço</h4>
                                 <div className="mt-2 grid grid-cols-2 gap-4">
                                   {personalData.endereco.logradouro && (
                                     <div className="col-span-2">
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Endereço:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">
+                                      <label className="block text-xs font-medium text-slate-300">Endereço:</label>
+                                      <p className="font-semibold text-white">
                                         {personalData.endereco.logradouro}
                                         {personalData.endereco.numero ? `, ${personalData.endereco.numero}` : ''}
                                         {personalData.endereco.complemento ? ` - ${personalData.endereco.complemento}` : ''}
@@ -2652,32 +2652,32 @@ export default function AdminDashboard() {
                                   )}
                                   {personalData.endereco.bairro && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Bairro:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.bairro}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Bairro:</label>
+                                      <p className="font-semibold text-white">{personalData.endereco.bairro}</p>
                                     </div>
                                   )}
                                   {personalData.endereco.cidade && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Cidade:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.cidade}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Cidade:</label>
+                                      <p className="font-semibold text-white">{personalData.endereco.cidade}</p>
                                     </div>
                                   )}
                                   {personalData.endereco.estado && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Estado:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.estado}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Estado:</label>
+                                      <p className="font-semibold text-white">{personalData.endereco.estado}</p>
                                     </div>
                                   )}
                                   {personalData.endereco.cep && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">CEP:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.cep}</p>
+                                      <label className="block text-xs font-medium text-slate-300">CEP:</label>
+                                      <p className="font-semibold text-white">{personalData.endereco.cep}</p>
                                     </div>
                                   )}
                                   {personalData.endereco.tempoResidencia && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Tempo de Residência:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.endereco.tempoResidencia}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Tempo de Residência:</label>
+                                      <p className="font-semibold text-white">{personalData.endereco.tempoResidencia}</p>
                                     </div>
                                   )}
                                 </div>
@@ -2686,37 +2686,37 @@ export default function AdminDashboard() {
                             
                             {/* Dados Profissionais */}
                             {personalData && personalData.emprego && (
-                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Profissionais</h4>
+                              <div className="border-t border-slate-700 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-white">Dados Profissionais</h4>
                                 <div className="mt-2 grid grid-cols-2 gap-4">
                                   {personalData.emprego.empresa && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Empresa:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.empresa}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Empresa:</label>
+                                      <p className="font-semibold text-white">{personalData.emprego.empresa}</p>
                                     </div>
                                   )}
                                   {personalData.emprego.cargo && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Cargo:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.cargo}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Cargo:</label>
+                                      <p className="font-semibold text-white">{personalData.emprego.cargo}</p>
                                     </div>
                                   )}
                                   {personalData.emprego.endereco && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Endereço da Empresa:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.endereco}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Endereço da Empresa:</label>
+                                      <p className="font-semibold text-white">{personalData.emprego.endereco}</p>
                                     </div>
                                   )}
                                   {personalData.emprego.telefone && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Telefone da Empresa:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.telefone}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Telefone da Empresa:</label>
+                                      <p className="font-semibold text-white">{personalData.emprego.telefone}</p>
                                     </div>
                                   )}
                                   {personalData.emprego.tempo && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Tempo de Empresa:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.emprego.tempo}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Tempo de Empresa:</label>
+                                      <p className="font-semibold text-white">{personalData.emprego.tempo}</p>
                                     </div>
                                   )}
                                 </div>
@@ -2725,31 +2725,31 @@ export default function AdminDashboard() {
                             
                             {/* Dados Bancários */}
                             {personalData && personalData.banco && (
-                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Dados Bancários</h4>
+                              <div className="border-t border-slate-700 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-white">Dados Bancários</h4>
                                 <div className="mt-2 grid grid-cols-3 gap-4">
                                   {personalData.banco.nome && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Banco:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.banco.nome}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Banco:</label>
+                                      <p className="font-semibold text-white">{personalData.banco.nome}</p>
                                     </div>
                                   )}
                                   {personalData.banco.agencia && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Agência:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.banco.agencia}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Agência:</label>
+                                      <p className="font-semibold text-white">{personalData.banco.agencia}</p>
                                     </div>
                                   )}
                                   {personalData.banco.conta && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Conta:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.banco.conta}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Conta:</label>
+                                      <p className="font-semibold text-white">{personalData.banco.conta}</p>
                                     </div>
                                   )}
                                   {personalData.banco.tempoConta && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Tempo de Conta:</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.banco.tempoConta}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Tempo de Conta:</label>
+                                      <p className="font-semibold text-white">{personalData.banco.tempoConta}</p>
                                     </div>
                                   )}
                                 </div>
@@ -2758,31 +2758,31 @@ export default function AdminDashboard() {
                             
                             {/* Referências */}
                             {personalData && personalData.referencias && (
-                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Referências Pessoais</h4>
+                              <div className="border-t border-slate-700 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-white">Referências Pessoais</h4>
                                 <div className="mt-2 grid grid-cols-2 gap-4">
                                   {personalData.referencias.referencia1 && personalData.referencias.referencia1.nome && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Nome (1ª Referência):</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.referencias.referencia1.nome}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Nome (1ª Referência):</label>
+                                      <p className="font-semibold text-white">{personalData.referencias.referencia1.nome}</p>
                                     </div>
                                   )}
                                   {personalData.referencias.referencia1 && personalData.referencias.referencia1.telefone && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Telefone (1ª Referência):</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.referencias.referencia1.telefone}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Telefone (1ª Referência):</label>
+                                      <p className="font-semibold text-white">{personalData.referencias.referencia1.telefone}</p>
                                     </div>
                                   )}
                                   {personalData.referencias.referencia2 && personalData.referencias.referencia2.nome && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Nome (2ª Referência):</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.referencias.referencia2.nome}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Nome (2ª Referência):</label>
+                                      <p className="font-semibold text-white">{personalData.referencias.referencia2.nome}</p>
                                     </div>
                                   )}
                                   {personalData.referencias.referencia2 && personalData.referencias.referencia2.telefone && (
                                     <div>
-                                      <label className="block text-xs font-medium text-blue-600 dark:text-blue-400">Telefone (2ª Referência):</label>
-                                      <p className="font-semibold text-blue-900 dark:text-blue-50">{personalData.referencias.referencia2.telefone}</p>
+                                      <label className="block text-xs font-medium text-slate-300">Telefone (2ª Referência):</label>
+                                      <p className="font-semibold text-white">{personalData.referencias.referencia2.telefone}</p>
                                     </div>
                                   )}
                                 </div>
@@ -2791,10 +2791,10 @@ export default function AdminDashboard() {
                             
                             {/* Observações */}
                             {personalData && personalData.observacoes && (
-                              <div className="border-t border-blue-200 dark:border-blue-800 pt-3 mt-3">
-                                <h4 className="font-semibold text-sm text-blue-700 dark:text-blue-300">Observações</h4>
+                              <div className="border-t border-slate-700 pt-3 mt-3">
+                                <h4 className="font-semibold text-sm text-white">Observações</h4>
                                 <div className="mt-2">
-                                  <p className="font-semibold text-blue-900 dark:text-blue-50 whitespace-pre-wrap">{personalData.observacoes}</p>
+                                  <p className="font-semibold text-white whitespace-pre-wrap">{personalData.observacoes}</p>
                                 </div>
                               </div>
                             )}
@@ -2804,16 +2804,20 @@ export default function AdminDashboard() {
                         console.error("Erro ao exibir detalhes do financiamento:", e);
                         // Mostra dados brutos formatados em JSON se falhar o parsing
                         return (
-                          <div className="bg-blue-100 dark:bg-blue-900/40 rounded-md p-4">
-                            <p className="text-sm whitespace-pre-wrap font-mono overflow-auto">
-                              <strong>Dados do veículo:</strong> 
-                              {JSON.stringify(JSON.parse(selectedFinancing.vehicleInfo), null, 2)}
+                          <div className="bg-[#1b2639] rounded-md p-4 border border-slate-700">
+                            <p className="text-sm whitespace-pre-wrap font-mono overflow-auto text-white">
+                              <strong className="text-blue-300">Dados do veículo:</strong> 
+                              <span className="text-slate-300">
+                                {JSON.stringify(JSON.parse(selectedFinancing.vehicleInfo), null, 2)}
+                              </span>
                               
                               {selectedFinancing.notes && (
                                 <>
                                   <br/><br/>
-                                  <strong>Dados pessoais:</strong>
-                                  {JSON.stringify(JSON.parse(selectedFinancing.notes), null, 2)}
+                                  <strong className="text-blue-300">Dados pessoais:</strong>
+                                  <span className="text-slate-300">
+                                    {JSON.stringify(JSON.parse(selectedFinancing.notes), null, 2)}
+                                  </span>
                                 </>
                               )}
                             </p>
