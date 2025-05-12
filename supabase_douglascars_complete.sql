@@ -165,7 +165,30 @@ INSERT INTO douglascars.instagram_posts VALUES (27, 'https://kiing.linsw.co/pOf3
 INSERT INTO douglascars.instagram_posts VALUES (28, 'https://kiing.linsw.co/T4gH78', 167, 'https://instagram.com/p/MNO345', '2025-05-05 11:22:15.104997');
 INSERT INTO douglascars.instagram_posts VALUES (29, 'https://kiing.linsw.co/qwEr56', 104, 'https://instagram.com/p/PQR678', '2025-05-05 11:22:15.104997');
 
--- Dados para veículos e outras tabelas serão adicionados aqui
+-- Inserir dados na tabela vehicles
+INSERT INTO douglascars.vehicles VALUES (101, 40, 'Civic Touring', '2023/2023', 'Preto', 155000.00, 165000.00, 15000, 'Honda Civic Touring 2023, completo, único dono, IPVA pago.', true, false, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vdG95b3RhL2NvcnJvbGxhLzFlZTRlM2QxLzkwMHg2NzRfeHJ3X2MxZmRmZjE5MGUuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', '2025-05-05 11:22:15.104997', '3 anos ou 100.000 km', NULL);
+INSERT INTO douglascars.vehicles VALUES (102, 54, 'Corolla XEI', '2022/2022', 'Branco', 135000.00, 140000.00, 32000, 'Toyota Corolla XEI 2.0, completo, teto solar, multimídia.', false, false, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vaG9uZGEvY2l0eS81MDlkYzZkNi85MDB4Njc0X3hyd19lN2JhZGIzM2M5LmpwZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJmaXQiOiJjb250YWluIiwid2lkdGgiOjEyMDAsImhlaWdodCI6OTAwfX19', '2025-05-05 11:22:15.104997', '3 anos ou 100.000 km', NULL);
+INSERT INTO douglascars.vehicles VALUES (103, 38, 'Pulse Impetus', '2023/2024', 'Vermelho', 98000.00, 102000.00, 8500, 'Fiat Pulse Impetus, motor 1.0 turbo, câmbio automático, completo.', true, false, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vZmlhdC9wdWxzZS9kYTU1ZTBhNS85MDB4Njc0X3hyd19kNWZlOTc5Y2I0LmpwZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJmaXQiOiJjb250YWluIiwid2lkdGgiOjEyMDAsImhlaWdodCI6OTAwfX19', '2025-05-05 11:22:15.104997', '3 anos ou 100.000 km', NULL);
+INSERT INTO douglascars.vehicles VALUES (104, 42, 'Compass Limited', '2022/2023', 'Cinza', 175000.00, 185000.00, 29000, 'Jeep Compass Limited, motor 1.3 turbo, 4x2, teto panorâmico, multimídia de 10".', false, false, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vamVlcC9jb21wYXNzLzA2OTQ0MzhmLzkwMHg2NzRfeHJ3X2UwMzM1Yjc4MjEuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', '2025-05-05 11:22:15.104997', '5 anos ou 100.000 km', NULL);
+INSERT INTO douglascars.vehicles VALUES (105, 55, 'T-Cross Highline', '2022/2023', 'Prata', 125000.00, 129000.00, 35000, 'Volkswagen T-Cross Highline, motor 1.4 TSI, completo, teto solar.', true, false, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vdm9sa3N3YWdlbi90LWNyb3NzLzNhZDRkZmJkLzkwMHg2NzRfeHJ3X2VmOTQ2MzJmODIuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', '2025-05-05 11:22:15.104997', '3 anos ou 100.000 km', NULL);
+
+-- Inserir dados na tabela vehicle_images
+INSERT INTO douglascars.vehicle_images VALUES (201, 101, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vaG9uZGEvY2l2aWMvMWVlNGUzZDEvOTAweDY3NF94cndpbnRlcmlvcjEuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', '2025-05-05 11:22:15.104997');
+INSERT INTO douglascars.vehicle_images VALUES (202, 101, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vaG9uZGEvY2l2aWMvMWVlNGUzZDEvOTAweDY3NF94cndpbnRlcmlvcjIuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', '2025-05-05 11:22:15.104997');
+INSERT INTO douglascars.vehicle_images VALUES (203, 102, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vdG95b3RhL2NvcnJvbGxhLzFkZjVkMmM5Lzk0NXg3MDlfeHJ3X2M4ZTI5ODhkNWYuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', '2025-05-05 11:22:15.104997');
+INSERT INTO douglascars.vehicle_images VALUES (204, 103, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vZmlhdC9wdWxzZS9kYTU1ZTBhNS85NTR4NzE1X3hyd19iNTYzYmQzOTU3LmpwZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJmaXQiOiJjb250YWluIiwid2lkdGgiOjEyMDAsImhlaWdodCI6OTAwfX19', '2025-05-05 11:22:15.104997');
+INSERT INTO douglascars.vehicle_images VALUES (205, 104, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vamVlcC9jb21wYXNzLzA2OTQ0MzhmLzk0NXg3MDlfeHJ3X2VhZGRkZjVkZDYuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', '2025-05-05 11:22:15.104997');
+INSERT INTO douglascars.vehicle_images VALUES (206, 105, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vdm9sa3N3YWdlbi90LWNyb3NzLzNhZDRkZmJkLzk0NXg3MDlfeHJ3X2RkY2UyMGI5NzYuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', '2025-05-05 11:22:15.104997');
+
+-- Inserir dados na tabela hero_slides
+INSERT INTO douglascars.hero_slides VALUES (1, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vamVlcC9jb21wYXNzLzA2OTQ0MzhmLzkwMHg2NzRfeHJ3X2UwMzM1Yjc4MjEuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', 'Os melhores SUVs', 'Encontre o seu Jeep Compass com os melhores preços');
+INSERT INTO douglascars.hero_slides VALUES (2, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vaG9uZGEvY2l2aWMvMWVlNGUzZDEvOTAweDY3NF94cndpbnRlcmlvcjEuanBnIiwiZWRpdHMiOnsicmVzaXplIjp7ImZpdCI6ImNvbnRhaW4iLCJ3aWR0aCI6MTIwMCwiaGVpZ2h0Ijo5MDB9fX0=', 'Sedans de Luxo', 'Conforto e tecnologia em cada detalhe');
+INSERT INTO douglascars.hero_slides VALUES (3, 'https://dfkkjsd9muayg.cloudfront.net/eyJidWNrZXQiOiJwdWJsaWNhY29lcy1jYXRhbG9nb3MiLCJrZXkiOiJpbWcvY2FjaG9laXJvLWRvLWl0YXBlbWlyaW0vZmlhdC9wdWxzZS9kYTU1ZTBhNS85NTR4NzE1X3hyd19iNTYzYmQzOTU3LmpwZyIsImVkaXRzIjp7InJlc2l6ZSI6eyJmaXQiOiJjb250YWluIiwid2lkdGgiOjEyMDAsImhlaWdodCI6OTAwfX19', 'Facilidade no financiamento', 'Aprovação rápida e as melhores taxas');
+
+-- Inserir dados na tabela sales
+INSERT INTO douglascars.sales VALUES (1, 101, 1, 152000.00, '2025-02-15 10:30:00+00');
+INSERT INTO douglascars.sales VALUES (2, 103, 3, 96500.00, '2025-03-20 15:45:00+00');
+INSERT INTO douglascars.sales VALUES (3, 104, 2, 172000.00, '2025-04-05 09:15:00+00');
 
 -- Inserir dados na tabela dealers
 INSERT INTO douglascars.dealers VALUES (1, 'João Silva', '2024-01-15 00:00:00+00', 1250, 42);
@@ -191,3 +214,7 @@ SELECT setval('douglascars.instagram_posts_id_seq', 29, true);
 SELECT setval('douglascars.dealers_id_seq', 5, true);
 SELECT setval('douglascars.evaluation_requests_id_seq', 5, true);
 SELECT setval('douglascars.financing_requests_id_seq', 9, true);
+SELECT setval('douglascars.vehicles_id_seq', 105, true);
+SELECT setval('douglascars.vehicle_images_id_seq', 206, true);
+SELECT setval('douglascars.hero_slides_id_seq', 3, true);
+SELECT setval('douglascars.sales_id_seq', 3, true);
